@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -19,6 +20,11 @@ public class CameraController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+
+    }
+
+    private void FixedUpdate()
     {
         var camTransform = transform;
         if (Physics.Raycast(transform.position, transform.forward, out var hitInfo, 100.0f))

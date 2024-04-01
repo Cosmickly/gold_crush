@@ -25,10 +25,13 @@ public class TilemapManager : MonoBehaviour
         // Debug.Log("Has tile 0,0,0 " + _tiles.ContainsKey(Vector3Int.zero));
         // Debug.Log("Has tile -100,0,0 " + _tiles.ContainsKey(new Vector3Int(-100,0,0)));
 
-        var max = _tiles.Keys.OrderBy(k => k.magnitude).Last();
-        var bounds = new Vector3(max.x + 1, 1, max.y + 1);
-        _collider.size = bounds;
-        _collider.center = new Vector3(bounds.x/2, 0, bounds.z/2);
+        var orderedKeys = _tiles.Keys.OrderBy(k => k.magnitude);
+        var min = orderedKeys.First();
+        var max = orderedKeys.Last();
+        
+        var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
+        _collider.size = size;
+        _collider.center = new Vector3(min.x + size.x/2, 0, min.y + size.z/2);
     }
 
     // Update is called once per frame
