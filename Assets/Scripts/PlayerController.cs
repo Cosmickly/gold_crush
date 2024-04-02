@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,30 +19,35 @@ public class PlayerController : MonoBehaviour
     private bool _desiredJump;
     
     public LayerMask groundMask;
-    public bool grounded;
     public float groundDrag;
+    public bool grounded;
+    // public bool aboveTile;
+    [SerializeField] private bool _falling;
     
-    // public TilemapManager tilemapManager;
-    // public bool onTile;
+    public TilemapManager tilemapManager;
 
     public TextMeshProUGUI tmp;
+    
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
+
+    }
+
+    private void Update()
+    {
+        GroundCheck();
+        TileCheck();
+        FallCheck();
         _desiredDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         _desiredDirection = Quaternion.Euler(0f, 45f, 0f) * _desiredDirection;
-
-        grounded = Physics.Raycast(transform.position, Vector3.down, _collider.bounds.extents.y + 0.1f, groundMask);
-        _rb.drag = grounded ? groundDrag : 0f;
-
+        
         _desiredJump = Input.GetKey(KeyCode.Space);
 
         if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -59,6 +65,31 @@ public class PlayerController : MonoBehaviour
         
         SpeedControl();
         tmp.text = "velocity " + _rb.velocity;
+    }
+
+    private void GroundCheck()
+    {
+        grounded = Physics.Raycast(transform.position, Vector3.down, _collider.bounds.extents.y + 0.05f, groundMask);
+        _rb.drag = grounded ? groundDrag : 0f;
+    }
+
+    private void TileCheck()
+    {
+        var pos = transform.position;
+        var flatPos = new Vector3(pos.x, 0, pos.z);
+        if (tilemapManager.HasTile(flatPos) && grounded)
+        {
+            tilemapManager.CrackTile(flatPos);
+        }
+    }
+
+    private void FallCheck()
+    {
+        if (!grounded && transform.position.y <= 1)
+        {
+            _falling = true;
+            _collider.isTrigger = true;
+        }
     }
 
     private void SpeedControl()

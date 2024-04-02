@@ -9,21 +9,21 @@ public class TilemapManager : MonoBehaviour
 {
     private Tilemap _tilemap;
     private BoxCollider _collider;
-    private Dictionary<Vector3Int, Transform> _tiles = new();
-    
-    // Start is called before the first frame update
-    void Start()
+    private Dictionary<Vector3Int, TileController> _tiles = new();
+
+    private void Awake()
     {
         _tilemap = GetComponent<Tilemap>();
         _collider = GetComponent<BoxCollider>();
-        
-        foreach (Transform tile in GetComponentInChildren<Transform>())
+    }
+
+    private void Start()
+    {
+        foreach (TileController tile in GetComponentsInChildren<TileController>())
         {
-            _tiles.Add(_tilemap.WorldToCell(tile.position), tile);
+            tile.SetTilemapManager(this);
+            _tiles.Add(_tilemap.WorldToCell(tile.transform.position), tile);
         }
-        
-        // Debug.Log("Has tile 0,0,0 " + _tiles.ContainsKey(Vector3Int.zero));
-        // Debug.Log("Has tile -100,0,0 " + _tiles.ContainsKey(new Vector3Int(-100,0,0)));
 
         var orderedKeys = _tiles.Keys.OrderBy(k => k.magnitude);
         var min = orderedKeys.First();
@@ -32,10 +32,11 @@ public class TilemapManager : MonoBehaviour
         var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
         _collider.size = size;
         _collider.center = new Vector3(min.x + size.x/2, 0, min.y + size.z/2);
+        
+        CrackTile(min);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         
     }
@@ -47,11 +48,22 @@ public class TilemapManager : MonoBehaviour
 
     public bool HasTile(Vector3 pos)
     {
-        return _tiles.ContainsKey(_tilemap.WorldToCell(pos));
+        return _tiles.TryGetValue(_tilemap.WorldToCell(pos), out _);
     }
 
-    public bool HasTile(Vector3Int pos)
+    public void CrackTile(Vector3 pos)
     {
-        return _tiles.ContainsKey(pos);
+        if (_tiles.TryGetValue(_tilemap.WorldToCell(pos), out TileController tile) && !tile.GetCracking())
+        {
+            tile.SetCracking(true);
+        }
+    }
+    
+    public void BreakTile(Vector3 pos)
+    {
+        if (_tiles.Remove(_tilemap.WorldToCell(pos), out TileController tile))
+        {
+            Destroy(tile.gameObject);
+        }
     }
 }

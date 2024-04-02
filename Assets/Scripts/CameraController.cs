@@ -12,14 +12,12 @@ public class CameraController : MonoBehaviour
     private Vector3 initPos;
     public float cameraSpeed;
     
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         initPos = transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
 
     }
