@@ -6843,7 +6843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2092752505}
-  cameraSpeed: 5
+  cameraSpeed: 3
 --- !u!4 &966088934 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5053598727946551637, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
@@ -13470,7 +13470,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -13529,7 +13529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   jumpForce: 3
-  airSpeedMultiplier: 0.8
+  airSpeedMultiplier: 1
   groundMask:
     serializedVersion: 2
     m_Bits: 64
@@ -13541,6 +13541,7 @@ MonoBehaviour:
     m_Bits: 128
   aboveTile: 0
   tmp: {fileID: 213681214}
+  actionAsset: {fileID: -944628639613478452, guid: 02f73c714b25a4e42889393e6e14d18a, type: 3}
 --- !u!1001 &2103643917
 PrefabInstance:
   m_ObjectHideFlags: 0

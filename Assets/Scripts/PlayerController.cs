@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -28,11 +29,29 @@ public class PlayerController : MonoBehaviour
 
     public TextMeshProUGUI tmp;
 
+    public InputActionAsset actionAsset;
+    private InputAction _moveAction;
+    private InputAction _jumpAction;
+
+    private void OnEnable()
+    {
+        actionAsset.Enable();
+    }
+
+    private void OnDisable()
+    {
+        actionAsset.Disable();
+    }
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
+
+        _moveAction = actionAsset.FindActionMap("Gameplay").FindAction("Move");
+        _jumpAction = actionAsset.FindActionMap("Gameplay").FindAction("Jump");
+
+        actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
     }
 
     private void Update()
@@ -40,12 +59,20 @@ public class PlayerController : MonoBehaviour
         GroundCheck();
         TileCheck();
         FallCheck();
-        _desiredDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        Input();
+    }
+
+    private void Input()
+    {
+        // _desiredDirection = new Vector3(UnityEngine.Input.GetAxisRaw("Horizontal"), 0, UnityEngine.Input.GetAxisRaw("Vertical")).normalized;
+        var input = _moveAction.ReadValue<Vector2>().normalized;
+        _desiredDirection = new Vector3(input.x, 0, input.y);
         _desiredDirection = Quaternion.Euler(0f, 45f, 0f) * _desiredDirection;
         
-        _desiredJump = Input.GetKey(KeyCode.Space);
+        // _desiredJump = UnityEngine.Input.GetKey(KeyCode.Space);
+        _desiredJump = _jumpAction.IsPressed();
 
-        if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // if (UnityEngine.Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void FixedUpdate()
@@ -55,8 +82,7 @@ public class PlayerController : MonoBehaviour
         else
             _rb.AddForce(moveSpeed * 10f * airSpeedMultiplier * _desiredDirection, ForceMode.Force);
         
-        
-        if (_desiredJump && grounded) Jump();
+        if(grounded && _desiredJump) Jump();
         
         SpeedControl();
         tmp.text = "velocity " + _rb.velocity;
@@ -97,13 +123,20 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (!grounded) return;
+        
         var velocity = _rb.velocity;
         velocity = new Vector3(velocity.x, 0, velocity.z);
         _rb.velocity = velocity;
-        
+            
         _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
-    
+
+    private void Reset()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public Vector3 GetRotatedPos()
     {
         return Quaternion.Euler(0f, 45f, 0f) * transform.position;
