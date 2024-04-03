@@ -5,37 +5,34 @@ using UnityEngine;
 
 public class TileController : MonoBehaviour
 {
+    private BoxCollider _collider;
     private MeshRenderer _mesh;
+    private Color _initialColor;
     private bool _cracking;
     private TilemapManager _tilemapManager;
 
+    [SerializeField] private float crackTime;
+    private float _crackTimer;
+
     private void Awake()
     {
+        _collider = GetComponent<BoxCollider>();
         _mesh = GetComponent<MeshRenderer>();
-    }
-
-    private void Start()
-    {
-        
-    }
-
-    private void Update()
-    {
-        
+        _initialColor = _mesh.material.color;
     }
 
     private void FixedUpdate()
     {
         if (!_cracking) return;
         
-        Color materialColor = _mesh.material.color;
-        if (materialColor.r <= 0)
+        if (_crackTimer >= crackTime)
         {
             _cracking = false;
             _tilemapManager.BreakTile(transform.position);
         }
-            
-        _mesh.material.color = materialColor - new Color(0.01f,0.01f,0.01f,0f);
+
+        _crackTimer += Time.deltaTime;
+        _mesh.material.color = Color.Lerp(_initialColor, Color.black, _crackTimer / crackTime);
     }
 
     public void SetCracking(bool toggle)
@@ -51,5 +48,10 @@ public class TileController : MonoBehaviour
     public void SetTilemapManager(TilemapManager manager)
     {
         _tilemapManager = manager;
+    }
+
+    private void SetColliderTrigger(bool toggle)
+    {
+        _collider.isTrigger = toggle;
     }
 }

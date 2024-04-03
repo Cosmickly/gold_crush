@@ -36,11 +36,6 @@ public class TilemapManager : MonoBehaviour
         CrackTile(min);
     }
 
-    private void Update()
-    {
-        
-    }
-
     public Vector3Int GetCell(Vector3 pos)
     {
         return _tilemap.WorldToCell(pos);

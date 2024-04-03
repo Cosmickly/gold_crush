@@ -15,29 +15,24 @@ public class PlayerController : MonoBehaviour
     private Vector3 _desiredDirection;
     
     public float jumpForce;
-    public float airSpeedMultipler;
+    public float airSpeedMultiplier;
     private bool _desiredJump;
     
     public LayerMask groundMask;
     public float groundDrag;
-    public bool grounded;
-    // public bool aboveTile;
-    [SerializeField] private bool _falling;
+    [SerializeField] private bool grounded;
     
     public TilemapManager tilemapManager;
+    public LayerMask tileMask;
+    [SerializeField] private bool aboveTile;
 
     public TextMeshProUGUI tmp;
-    
+
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
-    }
-
-    private void Start()
-    {
-
     }
 
     private void Update()
@@ -58,7 +53,7 @@ public class PlayerController : MonoBehaviour
         if (grounded)
             _rb.AddForce(moveSpeed * 10f * _desiredDirection, ForceMode.Force);
         else
-            _rb.AddForce(moveSpeed * 10f * airSpeedMultipler * _desiredDirection, ForceMode.Force);
+            _rb.AddForce(moveSpeed * 10f * airSpeedMultiplier * _desiredDirection, ForceMode.Force);
         
         
         if (_desiredJump && grounded) Jump();
@@ -76,33 +71,28 @@ public class PlayerController : MonoBehaviour
     private void TileCheck()
     {
         var pos = transform.position;
+        aboveTile = Physics.Raycast(pos, Vector3.down, _collider.bounds.extents.y + 10f, tileMask);
         var flatPos = new Vector3(pos.x, 0, pos.z);
-        if (tilemapManager.HasTile(flatPos) && grounded)
-        {
-            tilemapManager.CrackTile(flatPos);
-        }
+        if (grounded) tilemapManager.CrackTile(flatPos);
     }
 
     private void FallCheck()
     {
-        if (!grounded && transform.position.y <= 1)
-        {
-            _falling = true;
-            _collider.isTrigger = true;
-        }
+        if (!grounded || aboveTile) return;
+        _collider.excludeLayers = groundMask;
+        _collider.includeLayers = tileMask;
     }
+    
 
     private void SpeedControl()
     {
         var velocity = _rb.velocity;
         Vector3 flatVel = new Vector3(velocity.x, 0f, velocity.z);
-        if (flatVel.magnitude > moveSpeed)
-        {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            if (!grounded)
-                limitedVel *= airSpeedMultipler;
-            _rb.velocity = new Vector3(limitedVel.x, velocity.y, limitedVel.z);
-        }
+        
+        if (flatVel.magnitude <= moveSpeed) return;
+        Vector3 limitedVel = flatVel.normalized * moveSpeed;
+        if (!grounded) limitedVel *= airSpeedMultiplier;
+        _rb.velocity = new Vector3(limitedVel.x, velocity.y, limitedVel.z);
     }
 
     private void Jump()

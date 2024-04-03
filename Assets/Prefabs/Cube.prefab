@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 4752239408093703570}
   - component: {fileID: 3923674809286910401}
   - component: {fileID: 6033928661518195644}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Cube
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5abe90edd1a8b8c42abd215d4e7b43a0, type: 2}
+  - {fileID: 2100000, guid: bcde93b78cda70447809f52e0e7daddc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -100,7 +100,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -118,4 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47398b1f305813d49b732dc270074980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cracking: 0
+  crackTime: 1
