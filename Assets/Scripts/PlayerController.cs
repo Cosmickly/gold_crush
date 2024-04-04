@@ -14,44 +14,48 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] private float moveSpeed;
     private Vector3 _desiredDirection;
-    
-    public float jumpForce;
-    public float airSpeedMultiplier;
+
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float airSpeedMultiplier;
     private bool _desiredJump;
-    
-    public LayerMask groundMask;
-    public float groundDrag;
+
+    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float groundDrag;
     [SerializeField] private bool grounded;
-    
-    public TilemapManager tilemapManager;
-    public LayerMask tileMask;
+
+    [SerializeField] private TilemapManager tilemapManager;
+    [SerializeField] private LayerMask tileMask;
     [SerializeField] private bool aboveTile;
 
-    public TextMeshProUGUI tmp;
+    // [SerializeField] private TextMeshProUGUI tmp;
 
-    public InputActionAsset actionAsset;
+    [SerializeField] private int playerNum;
+    private InputActionAsset _actionAsset;
     private InputAction _moveAction;
     private InputAction _jumpAction;
 
+    private MeshRenderer _meshRenderer;
+
     private void OnEnable()
     {
-        actionAsset.Enable();
+        _actionAsset.Enable();
     }
 
     private void OnDisable()
     {
-        actionAsset.Disable();
+        _actionAsset.Disable();
     }
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _actionAsset = GetComponent<PlayerInput>().actions;
+        _moveAction = _actionAsset.FindActionMap("Gameplay").FindAction("Move");
+        _jumpAction = _actionAsset.FindActionMap("Gameplay").FindAction("Jump");
 
-        _moveAction = actionAsset.FindActionMap("Gameplay").FindAction("Move");
-        _jumpAction = actionAsset.FindActionMap("Gameplay").FindAction("Jump");
-
-        actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
+        _actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
     }
 
     private void Update()
@@ -64,15 +68,11 @@ public class PlayerController : MonoBehaviour
 
     private void Input()
     {
-        // _desiredDirection = new Vector3(UnityEngine.Input.GetAxisRaw("Horizontal"), 0, UnityEngine.Input.GetAxisRaw("Vertical")).normalized;
         var input = _moveAction.ReadValue<Vector2>().normalized;
         _desiredDirection = new Vector3(input.x, 0, input.y);
         _desiredDirection = Quaternion.Euler(0f, 45f, 0f) * _desiredDirection;
         
-        // _desiredJump = UnityEngine.Input.GetKey(KeyCode.Space);
         _desiredJump = _jumpAction.IsPressed();
-
-        // if (UnityEngine.Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void FixedUpdate()
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         if(grounded && _desiredJump) Jump();
         
         SpeedControl();
-        tmp.text = "velocity " + _rb.velocity;
+        // tmp.text = "velocity " + _rb.velocity;
     }
 
     private void GroundCheck()
@@ -140,5 +140,15 @@ public class PlayerController : MonoBehaviour
     public Vector3 GetRotatedPos()
     {
         return Quaternion.Euler(0f, 45f, 0f) * transform.position;
+    }
+
+    public void SetGround(TilemapManager ground)
+    {
+        tilemapManager = ground;
+    }
+
+    public void SetColour(Material material)
+    {
+        _meshRenderer.material = material;
     }
 }
