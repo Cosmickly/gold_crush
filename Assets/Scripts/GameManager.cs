@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private int numOfPlayers;
+    [SerializeField] [Range(1, 4)] private int numOfPlayers; 
 
     [SerializeField] private Material[] playerColours;
 

@@ -29,7 +29,6 @@ public class PlayerController : MonoBehaviour
 
     // [SerializeField] private TextMeshProUGUI tmp;
 
-    [SerializeField] private int playerNum;
     private InputActionAsset _actionAsset;
     private InputAction _moveAction;
     private InputAction _jumpAction;
