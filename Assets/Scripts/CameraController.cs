@@ -16,6 +16,7 @@ public class CameraController : MonoBehaviour
     
     private void FixedUpdate()
     {
+        if(!_target) return;
         var currentPos = transform.position;
         if (!Physics.Raycast(currentPos, transform.forward, out var hitInfo, 100.0f)) return;
 

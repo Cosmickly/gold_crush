@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
         string control = "Player" + i;
         var player = PlayerInput.Instantiate(_playerPrefab, pairWithDevice: Keyboard.current);
         player.user.ActivateControlScheme(control);
-        var playerController = player.GetComponent<PlayerController>();
+        var playerController = player.GetComponent<BasePlayerController>();
         playerController.SetGround(_tilemapManager);
         playerController.SetColour(_playerColours[i]);
         if (i==0) _cameraController.SetTarget(player.transform);
