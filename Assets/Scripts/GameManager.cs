@@ -8,7 +8,8 @@ using UnityEngine.Serialization;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] [Range(1, 4)] private int _numOfPlayers; 
+    [SerializeField] private GameObject _aiPlayer;
+    [SerializeField] [Range(0, 4)] private int _numOfPlayers; 
 
     [SerializeField] private Material[] _playerColours;
 
@@ -21,6 +22,8 @@ public class GameManager : MonoBehaviour
         {
             CreatePlayer(i);
         }
+        
+        CreateAIPlayer();
     }
 
     private void CreatePlayer(int i)
@@ -32,5 +35,13 @@ public class GameManager : MonoBehaviour
         playerController.SetGround(_tilemapManager);
         playerController.SetColour(_playerColours[i]);
         if (i==0) _cameraController.SetTarget(player.transform);
+    }
+
+    private void CreateAIPlayer()
+    {
+        var aiPlayer = Instantiate(_aiPlayer, transform.position, Quaternion.identity);
+        var aiController = aiPlayer.GetComponent<AIController>();
+        aiController.SetGround(_tilemapManager);
+        aiController.SetColour(_playerColours[3]);
     }
 }

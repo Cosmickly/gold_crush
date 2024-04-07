@@ -42,7 +42,7 @@ public abstract class BasePlayerController : MonoBehaviour
 
     protected virtual void GroundCheck()
     {
-        Grounded = Physics.Raycast(transform.position, Vector3.down, Collider.bounds.extents.y + 0.05f, GroundMask);
+        Grounded = Physics.Raycast(transform.position, Vector3.down, Collider.bounds.extents.y + 10f, GroundMask);
         Rb.drag = Grounded ? GroundDrag : 0f;
     }
 

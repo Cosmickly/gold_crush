@@ -29,12 +29,12 @@ public class TilemapManager : MonoBehaviour
         var orderedKeys = _tiles.Keys.OrderBy(k => k.magnitude);
         var min = orderedKeys.First();
         var max = orderedKeys.Last();
-        
+        CrackTile(min);
+
+        if (!_collider) return;
         var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
         _collider.size = size;
         _collider.center = new Vector3(min.x + size.x/2, 0, min.y + size.z/2);
-        
-        CrackTile(min);
     }
 
     public Vector3Int GetCell(Vector3 pos)
@@ -49,9 +49,9 @@ public class TilemapManager : MonoBehaviour
 
     public void CrackTile(Vector3 pos)
     {
-        if (_tiles.TryGetValue(_tilemap.WorldToCell(pos), out TileController tile) && !tile.GetCracking())
+        if (_tiles.TryGetValue(_tilemap.WorldToCell(pos), out TileController tile) && !tile.Cracking)
         {
-            tile.SetCracking(true);
+            tile.Cracking = true;
         }
     }
     

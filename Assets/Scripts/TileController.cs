@@ -8,7 +8,7 @@ public class TileController : MonoBehaviour
     private BoxCollider _collider;
     private MeshRenderer _mesh;
     private Color _initialColor;
-    private bool _cracking;
+    public bool Cracking { get; set; }
     private TilemapManager _tilemapManager;
 
     [SerializeField] private float _crackTime;
@@ -23,26 +23,16 @@ public class TileController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!_cracking) return;
+        if (!Cracking) return;
         
         if (_crackTimer >= _crackTime)
         {
-            _cracking = false;
+            Cracking = false;
             _tilemapManager.BreakTile(transform.position);
         }
 
         _crackTimer += Time.deltaTime;
         _mesh.material.color = Color.Lerp(_initialColor, Color.black, _crackTimer / _crackTime);
-    }
-
-    public void SetCracking(bool toggle)
-    {
-        _cracking = toggle;
-    }
-
-    public bool GetCracking()
-    {
-        return _cracking;
     }
 
     public void SetTilemapManager(TilemapManager manager)
