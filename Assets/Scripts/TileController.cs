@@ -11,7 +11,7 @@ public class TileController : MonoBehaviour
     private bool _cracking;
     private TilemapManager _tilemapManager;
 
-    [SerializeField] private float crackTime;
+    [SerializeField] private float _crackTime;
     private float _crackTimer;
 
     private void Awake()
@@ -25,14 +25,14 @@ public class TileController : MonoBehaviour
     {
         if (!_cracking) return;
         
-        if (_crackTimer >= crackTime)
+        if (_crackTimer >= _crackTime)
         {
             _cracking = false;
             _tilemapManager.BreakTile(transform.position);
         }
 
         _crackTimer += Time.deltaTime;
-        _mesh.material.color = Color.Lerp(_initialColor, Color.black, _crackTimer / crackTime);
+        _mesh.material.color = Color.Lerp(_initialColor, Color.black, _crackTimer / _crackTime);
     }
 
     public void SetCracking(bool toggle)

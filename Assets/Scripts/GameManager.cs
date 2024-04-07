@@ -7,17 +7,17 @@ using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] [Range(1, 4)] private int numOfPlayers; 
+    [SerializeField] private GameObject _playerPrefab;
+    [SerializeField] [Range(1, 4)] private int _numOfPlayers; 
 
-    [SerializeField] private Material[] playerColours;
+    [SerializeField] private Material[] _playerColours;
 
-    [SerializeField] private CameraController cameraController;
-    [SerializeField] private TilemapManager tilemapManager;
+    [SerializeField] private CameraController _cameraController;
+    [SerializeField] private TilemapManager _tilemapManager;
 
     private void Start()
     {
-        for (int i = 0; i < numOfPlayers; i++)
+        for (int i = 0; i < _numOfPlayers; i++)
         {
             CreatePlayer(i);
         }
@@ -26,11 +26,11 @@ public class GameManager : MonoBehaviour
     private void CreatePlayer(int i)
     {
         string control = "Player" + i;
-        var player = PlayerInput.Instantiate(playerPrefab, pairWithDevice: Keyboard.current);
+        var player = PlayerInput.Instantiate(_playerPrefab, pairWithDevice: Keyboard.current);
         player.user.ActivateControlScheme(control);
         var playerController = player.GetComponent<PlayerController>();
-        playerController.SetGround(tilemapManager);
-        playerController.SetColour(playerColours[i]);
-        if (i==0) cameraController.SetTarget(player.transform);
+        playerController.SetGround(_tilemapManager);
+        playerController.SetColour(_playerColours[i]);
+        if (i==0) _cameraController.SetTarget(player.transform);
     }
 }
