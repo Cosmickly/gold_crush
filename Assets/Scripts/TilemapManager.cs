@@ -11,6 +11,7 @@ public class TilemapManager : MonoBehaviour
     private Tilemap _tilemap;
     private BoxCollider _collider;
     private Dictionary<Vector3Int, TileController> _tiles = new();
+    [SerializeField] private bool _tileCrackEnabled;
 
     private void Awake()
     {
@@ -49,7 +50,7 @@ public class TilemapManager : MonoBehaviour
 
     public void CrackTile(Vector3 pos)
     {
-        if (_tiles.TryGetValue(_tilemap.WorldToCell(pos), out TileController tile) && !tile.Cracking)
+        if (_tileCrackEnabled && _tiles.TryGetValue(_tilemap.WorldToCell(pos), out TileController tile) && !tile.Cracking)
         {
             tile.Cracking = true;
         }

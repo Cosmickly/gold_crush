@@ -8,14 +8,14 @@ public class AIController : BasePlayerController
 	private Vector3 _target;
 	private Camera _cam;
 
-	private NavMeshAgent _agent;
+	// private NavMeshAgent _agent;
 
 	protected override void Awake()
 	{
 		base.Awake();
 
-		_agent = GetComponent<NavMeshAgent>();
-		_agent.speed = MoveSpeed;
+		// _agent = GetComponent<NavMeshAgent>();
+		// _agent.speed = MoveSpeed;
 		_cam = Camera.main;
 	}
 
@@ -23,20 +23,18 @@ public class AIController : BasePlayerController
 	{
 		base.Update();
 
-		if (Input.GetMouseButtonDown(0) && _cam && _agent)
+		if (Input.GetMouseButtonDown(0) && _cam)
 		{
 			if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f))
 			{
-				_agent.SetDestination(hit.point);
+				
 			}
-		}
-	}
 
-	protected override void FallCheck()
-	{
-		if (!Grounded || AboveTile) return;
-		Collider.excludeLayers = GroundMask;
-		Collider.includeLayers = TileMask;
-		_agent.enabled = false;
+		}
+		
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			Debug.Log("pressed space");
+		}
 	}
 }

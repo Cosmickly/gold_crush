@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _aiPlayer;
     [SerializeField] [Range(0, 4)] private int _numOfPlayers; 
+    [SerializeField] [Range(0, 4)] private int _numOfAIPlayers; 
 
     [SerializeField] private Material[] _playerColours;
 
@@ -22,8 +23,11 @@ public class GameManager : MonoBehaviour
         {
             CreatePlayer(i);
         }
-        
-        CreateAIPlayer();
+
+        for (int i = 0; i < _numOfAIPlayers; i++)
+        {
+            CreateAIPlayer();
+        }
     }
 
     private void CreatePlayer(int i)

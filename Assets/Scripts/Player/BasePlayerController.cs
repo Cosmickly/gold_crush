@@ -10,7 +10,7 @@ public abstract class BasePlayerController : MonoBehaviour
 
     [SerializeField] protected float MoveSpeed;
     [SerializeField] protected float JumpForce;
-    [SerializeField] protected float AirSpeedMultiplier;
+    // [SerializeField] protected float AirSpeedMultiplier;
 
     [SerializeField] protected LayerMask GroundMask;
     [SerializeField] protected float GroundDrag;
@@ -34,15 +34,10 @@ public abstract class BasePlayerController : MonoBehaviour
         TileCheck();
         FallCheck();
     }
-    
-    protected virtual void FixedUpdate()
-    {
-        SpeedControl();
-    }
 
     protected virtual void GroundCheck()
     {
-        Grounded = Physics.Raycast(transform.position, Vector3.down, Collider.bounds.extents.y + 10f, GroundMask);
+        Grounded = Physics.Raycast(transform.position, Vector3.down, Collider.bounds.extents.y + 0.05f, GroundMask);
         Rb.drag = Grounded ? GroundDrag : 0f;
     }
 
@@ -54,22 +49,12 @@ public abstract class BasePlayerController : MonoBehaviour
         if (Grounded) TilemapManager.CrackTile(flatPos);
     }
 
-    protected virtual void FallCheck()
+    protected virtual bool FallCheck()
     {
-        if (!Grounded || AboveTile) return;
+        if (!Grounded || AboveTile) return false;
         Collider.excludeLayers = GroundMask;
         Collider.includeLayers = TileMask;
-    }
-
-    protected virtual void SpeedControl()
-    {
-        var velocity = Rb.velocity;
-        Vector3 flatVel = new Vector3(velocity.x, 0f, velocity.z);
-        
-        if (flatVel.magnitude <= MoveSpeed) return;
-        Vector3 limitedVel = flatVel.normalized * MoveSpeed;
-        if (!Grounded) limitedVel *= AirSpeedMultiplier;
-        Rb.velocity = new Vector3(limitedVel.x, velocity.y, limitedVel.z);
+        return true;
     }
 
     protected virtual void Jump()

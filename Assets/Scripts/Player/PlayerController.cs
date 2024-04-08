@@ -9,11 +9,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : BasePlayerController
 {
-    private Vector3 _desiredDirection;
+    [SerializeField] private Vector3 _desiredDirection;
     private bool _desiredJump;
-
-    // [SerializeField] private TextMeshProUGUI tmp;
-
+    
     private InputActionAsset _actionAsset;
     private InputAction _moveAction;
     private InputAction _jumpAction;
@@ -46,23 +44,19 @@ public class PlayerController : BasePlayerController
 
     private void Input()
     {
-        var input = _moveAction.ReadValue<Vector2>().normalized;
+        var input = _moveAction.ReadValue<Vector2>();
         _desiredDirection = new Vector3(input.x, 0, input.y);
-        _desiredDirection = Quaternion.Euler(0f, 45f, 0f) * _desiredDirection;
+        _desiredDirection = (Quaternion.Euler(0f, 45f, 0f) * _desiredDirection).normalized;
         
         _desiredJump = _jumpAction.IsPressed();
     }
 
-    protected override void FixedUpdate()
+    protected void FixedUpdate()
     {
-        if (Grounded)
-            Rb.AddForce(MoveSpeed * 10f * _desiredDirection, ForceMode.Force);
-        else
-            Rb.AddForce(MoveSpeed * 10f * AirSpeedMultiplier * _desiredDirection, ForceMode.Force);
+        if (Grounded) 
+            Rb.velocity = Vector3.Lerp(Rb.velocity, MoveSpeed * _desiredDirection, Time.deltaTime);
         
         if(Grounded && _desiredJump) Jump();
-        
-        base.FixedUpdate();
         // tmp.text = "velocity " + _rb.velocity;
     }
     
