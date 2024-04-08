@@ -161,7 +161,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   AboveTile: 0
-  Velocity: {x: 0, y: 0, z: 0}
+  _desiredDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &2771018080788225963
 MonoBehaviour:
   m_ObjectHideFlags: 0
