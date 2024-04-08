@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,10 +14,13 @@ public class TilemapManager : MonoBehaviour
     private Dictionary<Vector3Int, TileController> _tiles = new();
     [SerializeField] private bool _tileCrackEnabled;
 
+    private NavMeshSurface _navMeshSurface;
+
     private void Awake()
     {
         _tilemap = GetComponent<Tilemap>();
         _collider = GetComponent<BoxCollider>();
+        _navMeshSurface = GetComponent<NavMeshSurface>();
     }
 
     private void Start()
@@ -36,6 +40,8 @@ public class TilemapManager : MonoBehaviour
         var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
         _collider.size = size;
         _collider.center = new Vector3(min.x + size.x/2, 0, min.y + size.z/2);
+        
+        _navMeshSurface.BuildNavMesh();
     }
 
     public Vector3Int GetCell(Vector3 pos)
@@ -60,7 +66,7 @@ public class TilemapManager : MonoBehaviour
     {
         if (_tiles.Remove(_tilemap.WorldToCell(pos), out TileController tile))
         {
-            Destroy(tile.gameObject);
+            tile.Break();
         }
     }
 }
