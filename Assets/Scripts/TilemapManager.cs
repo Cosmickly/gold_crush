@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.AI.Navigation;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class TilemapManager : MonoBehaviour
 {
     private Tilemap _tilemap;
-    private BoxCollider _collider;
+    private BoxCollider _boundary;
     private Dictionary<Vector3Int, TileController> _tiles = new();
     [SerializeField] private bool _tileCrackEnabled;
 
@@ -19,7 +18,7 @@ public class TilemapManager : MonoBehaviour
     private void Awake()
     {
         _tilemap = GetComponent<Tilemap>();
-        _collider = GetComponent<BoxCollider>();
+        _boundary = GetComponent<BoxCollider>();
         _navMeshSurface = GetComponent<NavMeshSurface>();
     }
 
@@ -34,12 +33,11 @@ public class TilemapManager : MonoBehaviour
         var orderedKeys = _tiles.Keys.OrderBy(k => k.magnitude);
         var min = orderedKeys.First();
         var max = orderedKeys.Last();
-        CrackTile(min);
-
-        if (!_collider) return;
+        
+        if (!_boundary) return;
         var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
-        _collider.size = size;
-        _collider.center = new Vector3(min.x + size.x/2, 0, min.y + size.z/2);
+        _boundary.size = size;
+        _boundary.center = new Vector3(min.x + size.x/2, -0.5f, min.y + size.z/2);
         
         _navMeshSurface.BuildNavMesh();
     }
@@ -67,6 +65,14 @@ public class TilemapManager : MonoBehaviour
         if (_tiles.Remove(_tilemap.WorldToCell(pos), out TileController tile))
         {
             tile.Break();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out IEntity entity))
+        {
+            entity.Fall();
         }
     }
 }

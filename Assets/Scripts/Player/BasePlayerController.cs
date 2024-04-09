@@ -1,80 +1,89 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BasePlayerController : MonoBehaviour
+namespace Player
 {
-    protected Rigidbody Rb;
-    protected Collider Collider;
-    protected MeshRenderer MeshRenderer;
+    public abstract class BasePlayerController : MonoBehaviour, IEntity
+    {
+        protected Rigidbody Rb;
+        protected Collider Collider;
+        protected MeshRenderer MeshRenderer;
 
-    [SerializeField] protected float MoveSpeed;
-    [SerializeField] protected float JumpForce;
-    // [SerializeField] protected float AirSpeedMultiplier;
+        [SerializeField] protected float MoveSpeed;
+        [SerializeField] protected float JumpForce;
+        // [SerializeField] protected float AirSpeedMultiplier;
 
-    [SerializeField] protected LayerMask GroundMask;
-    [SerializeField] protected float GroundDrag;
-    [SerializeField] protected bool Grounded;
+        [SerializeField] protected float GroundDrag;
+        [SerializeField] protected bool Grounded;
 
-    [SerializeField] protected TilemapManager TilemapManager;
-    [SerializeField] protected LayerMask TileMask;
-    [SerializeField] protected bool AboveTile;
+        [SerializeField] protected TilemapManager TilemapManager;
+        [SerializeField] protected LayerMask TileMask;
+        [SerializeField] protected bool AboveTile;
     
+        [SerializeField] protected bool Fell;
     
-    protected virtual void Awake()
-    {
-        Rb = GetComponent<Rigidbody>();
-        Collider = GetComponent<CapsuleCollider>();
-        MeshRenderer = GetComponent<MeshRenderer>();
-    }
+        protected virtual void Awake()
+        {
+            Rb = GetComponent<Rigidbody>();
+            Collider = GetComponent<CapsuleCollider>();
+            MeshRenderer = GetComponent<MeshRenderer>();
+        }
 
-    protected virtual void Update()
-    {
-        GroundCheck();
-        TileCheck();
-        FallCheck();
-    }
+        protected virtual void Update()
+        {
+            GroundCheck();
+            TileCheck();
+        }
 
-    protected virtual void GroundCheck()
-    {
-        Grounded = Physics.Raycast(transform.position, Vector3.down, Collider.bounds.extents.y + 0.05f, GroundMask);
-        Rb.drag = Grounded ? GroundDrag : 0f;
-    }
+        protected virtual void GroundCheck()
+        {
+            Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down, out var hit,
+                Quaternion.identity, Collider.bounds.extents.y + 0.05f, TileMask);
+            Rb.drag = Grounded ? GroundDrag : 0f;
+        }
 
-    protected virtual void TileCheck()
-    {
-        var pos = transform.position;
-        AboveTile = Physics.Raycast(pos, Vector3.down, Collider.bounds.extents.y + 10f, TileMask);
-        var flatPos = new Vector3(pos.x, 0, pos.z);
-        if (Grounded) TilemapManager.CrackTile(flatPos);
-    }
+        // private void OnDrawGizmosSelected()
+        // {
+        //     Gizmos.color = Color.green;
+        //     var pos = transform.position;
+        //     pos.y -= 5f;
+        //     Gizmos.DrawWireCube(pos, new Vector3(0.4f, 10f, 0.4f));
+        // }
 
-    protected virtual bool FallCheck()
-    {
-        if (!Grounded || AboveTile) return false;
-        Collider.excludeLayers = GroundMask;
-        Collider.includeLayers = TileMask;
-        return true;
-    }
-
-    protected virtual void Jump()
-    {
-        if (!Grounded) return;
+        protected virtual void TileCheck()
+        {
+            var pos = transform.position;
+            AboveTile = Physics.BoxCast(pos, new Vector3(0.2f, 0, 0.2f), Vector3.down, Quaternion.identity, 10f,
+                TileMask);
         
-        var velocity = Rb.velocity;
-        velocity = new Vector3(velocity.x, 0, velocity.z);
-        Rb.velocity = velocity;
+            var flatPos = new Vector3(pos.x, 0, pos.z);
+            if (Grounded && AboveTile) TilemapManager.CrackTile(flatPos);
+        }
+    
+        protected virtual void Jump()
+        {
+            if (!Grounded) return;
+        
+            var velocity = Rb.velocity;
+            velocity = new Vector3(velocity.x, 0, velocity.z);
+            Rb.velocity = velocity;
             
-        Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-    }
+            Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        }
 
-    public void SetGround(TilemapManager ground)
-    {
-        TilemapManager = ground;
-    }
+        public void SetGround(TilemapManager ground)
+        {
+            TilemapManager = ground;
+        }
 
-    public void SetColour(Material material)
-    {
-        MeshRenderer.material = material;
+        public void SetColour(Material material)
+        {
+            MeshRenderer.material = material;
+        }
+
+        public void Fall()
+        {
+            Fell = true;
+            Rb.AddForce(Vector3.down, ForceMode.Impulse);
+        }
     }
 }

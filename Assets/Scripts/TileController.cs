@@ -44,7 +44,7 @@ public class TileController : MonoBehaviour
     {
         Cracking = false;
         _mesh.enabled = false;
-        gameObject.layer = LayerMask.NameToLayer("Ground");
+        _collider.enabled = false;
         _navMeshObstacle.enabled = true;
     }
 
