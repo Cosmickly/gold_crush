@@ -21,6 +21,8 @@ namespace Player
         [SerializeField] protected bool AboveTile;
     
         [SerializeField] protected bool Fell;
+
+        [SerializeField] protected int NumOfGold;
     
         protected virtual void Awake()
         {
@@ -85,6 +87,11 @@ namespace Player
         {
             Fell = true;
             Rb.AddForce(Vector3.down, ForceMode.Impulse);
+        }
+
+        public void AddGold()
+        {
+            NumOfGold++;
         }
     }
 }
