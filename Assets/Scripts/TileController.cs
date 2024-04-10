@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -34,6 +35,7 @@ public class TileController : MonoBehaviour
         if (_crackTimer >= _crackTime)
         {
             _tilemapManager.BreakTile(transform.position);
+            return;
         }
 
         _crackTimer += Time.deltaTime;

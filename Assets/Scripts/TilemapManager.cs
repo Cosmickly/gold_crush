@@ -5,12 +5,14 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
 public class TilemapManager : MonoBehaviour
 {
     private Tilemap _tilemap;
     private BoxCollider _boundary;
-    private Dictionary<Vector3Int, TileController> _tiles = new();
+    private Dictionary<Vector3Int, TileController> _activeTiles = new();
+    private Dictionary<Vector3Int, TileController> _crackingTiles = new();
     [SerializeField] private bool _tileCrackEnabled;
 
     private NavMeshSurface _navMeshSurface;
@@ -27,10 +29,10 @@ public class TilemapManager : MonoBehaviour
         foreach (TileController tile in GetComponentsInChildren<TileController>())
         {
             tile.SetTilemapManager(this);
-            _tiles.Add(_tilemap.WorldToCell(tile.transform.position), tile);
+            _activeTiles.Add(_tilemap.WorldToCell(tile.transform.position), tile);
         }
-
-        var orderedKeys = _tiles.Keys.OrderBy(k => k.magnitude);
+        
+        var orderedKeys = _activeTiles.Keys.OrderBy(k => k.magnitude);
         var min = orderedKeys.First();
         var max = orderedKeys.Last();
         
@@ -40,6 +42,8 @@ public class TilemapManager : MonoBehaviour
         _boundary.center = new Vector3(min.x + size.x/2, -0.5f, min.y + size.z/2);
         
         _navMeshSurface.BuildNavMesh();
+        
+        InvokeRepeating(nameof(CrackRandomTile), 0f, 1f);
     }
 
     public Vector3Int GetCell(Vector3 pos)
@@ -49,20 +53,21 @@ public class TilemapManager : MonoBehaviour
 
     public bool HasTile(Vector3 pos)
     {
-        return _tiles.TryGetValue(_tilemap.WorldToCell(pos), out _);
+        return _activeTiles.TryGetValue(_tilemap.WorldToCell(pos), out _);
     }
 
-    public void CrackTile(Vector3 pos)
+    public void CrackTile(Vector3Int pos)
     {
-        if (_tileCrackEnabled && _tiles.TryGetValue(_tilemap.WorldToCell(pos), out TileController tile) && !tile.Cracking)
+        if (_tileCrackEnabled && _activeTiles.Remove(pos, out TileController tile))
         {
+            _crackingTiles.Add(pos, tile);
             tile.Cracking = true;
         }
     }
     
     public void BreakTile(Vector3 pos)
     {
-        if (_tiles.Remove(_tilemap.WorldToCell(pos), out TileController tile))
+        if (_crackingTiles.Remove(_tilemap.WorldToCell(pos), out TileController tile))
         {
             tile.Break();
         }
@@ -73,6 +78,26 @@ public class TilemapManager : MonoBehaviour
         if (other.gameObject.TryGetComponent(out IEntity entity))
         {
             entity.Fall();
+        }
+    }
+    
+    private Vector3Int RandomTile()
+    {
+        var keys = _activeTiles.Keys.ToList();
+        var randomInt = Random.Range(0, keys.Count);
+        var key = keys[randomInt];
+        return key;
+    }
+    
+    private void CrackRandomTile()
+    {
+        if (_activeTiles.Count > 0)
+        {
+            CrackTile(RandomTile());
+        }
+        else
+        {
+            CancelInvoke(nameof(CrackRandomTile));
         }
     }
 }

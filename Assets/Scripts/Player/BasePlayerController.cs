@@ -56,7 +56,7 @@ namespace Player
                 TileMask);
         
             var flatPos = new Vector3(pos.x, 0, pos.z);
-            if (Grounded && AboveTile) TilemapManager.CrackTile(flatPos);
+            if (Grounded && AboveTile) TilemapManager.CrackTile(TilemapManager.GetCell(flatPos));
         }
     
         protected virtual void Jump()
