@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Player
@@ -75,7 +76,7 @@ namespace Player
             TilemapManager = ground;
         }
 
-        public void SetColour(Material material)
+        public void SetMaterial(Material material)
         {
             MeshRenderer.material = material;
         }

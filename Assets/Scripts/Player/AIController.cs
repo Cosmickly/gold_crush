@@ -23,11 +23,6 @@ public class AIController : BasePlayerController
 	{
 		base.Update();
 		
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-			Rb.AddForce(5f * transform.right, ForceMode.Impulse);
-		}
-		
 		if (Input.GetMouseButtonDown(0) && _cam)
 		{
 			if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
@@ -43,7 +38,10 @@ public class AIController : BasePlayerController
 		NavMesh.CalculatePath(transform.position, (Vector3) _target, NavMesh.AllAreas, _path);
 		
 		DrawPath();
+	}
 
+	protected void FixedUpdate()
+	{
 		switch (_path.corners.Length)
 		{
 			case > 1:

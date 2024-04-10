@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 2983752196467883518}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.4677625, y: 7, z: 5.073863}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -99,7 +99,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -150,9 +150,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 20
   JumpForce: 3
-  GroundMask:
-    serializedVersion: 2
-    m_Bits: 64
   GroundDrag: 5
   Grounded: 0
   TilemapManager: {fileID: 0}
@@ -160,3 +157,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   AboveTile: 0
+  Fell: 0

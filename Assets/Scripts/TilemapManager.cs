@@ -11,11 +11,13 @@ public class TilemapManager : MonoBehaviour
 {
     private Tilemap _tilemap;
     private BoxCollider _boundary;
+    private NavMeshSurface _navMeshSurface;
+    
     private Dictionary<Vector3Int, TileController> _activeTiles = new();
     private Dictionary<Vector3Int, TileController> _crackingTiles = new();
+    
     [SerializeField] private bool _tileCrackEnabled;
-
-    private NavMeshSurface _navMeshSurface;
+    [SerializeField] private float _randomTileRate;
 
     private void Awake()
     {
@@ -43,7 +45,7 @@ public class TilemapManager : MonoBehaviour
         
         _navMeshSurface.BuildNavMesh();
         
-        InvokeRepeating(nameof(CrackRandomTile), 0f, 1f);
+        InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
     }
 
     public Vector3Int GetCell(Vector3 pos)
