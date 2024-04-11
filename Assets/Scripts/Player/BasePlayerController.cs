@@ -22,7 +22,7 @@ namespace Player
     
         [SerializeField] protected bool Fell;
 
-        [SerializeField] protected int NumOfGold;
+        [SerializeField] public int NumOfGold { get; set; }
     
         protected virtual void Awake()
         {
@@ -90,9 +90,14 @@ namespace Player
             Rb.AddForce(Vector3.down, ForceMode.Impulse);
         }
 
+        
+        public delegate void OnUpdateUI();
+        public OnUpdateUI onUpdateUI;
+        
         public void AddGold()
         {
             NumOfGold++;
+            onUpdateUI.Invoke();
         }
     }
 }

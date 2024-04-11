@@ -19,6 +19,8 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private bool _tileCrackEnabled;
     [SerializeField] private float _randomTileRate;
 
+    [SerializeField] private GoldPiece _goldPiecePrefab;
+
     private void Awake()
     {
         _tilemap = GetComponent<Tilemap>();
@@ -28,10 +30,14 @@ public class TilemapManager : MonoBehaviour
 
     private void Start()
     {
+        var goldPieceOffset = new Vector3(0, 2, 0);
         foreach (TileController tile in GetComponentsInChildren<TileController>())
         {
+            var pos = tile.transform.position;
             tile.SetTilemapManager(this);
-            _activeTiles.Add(_tilemap.WorldToCell(tile.transform.position), tile);
+            _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
+
+            if (Random.value <= 0.2) Instantiate(_goldPiecePrefab, pos + goldPieceOffset, Quaternion.identity, transform);
         }
         
         var orderedKeys = _activeTiles.Keys.OrderBy(k => k.magnitude);

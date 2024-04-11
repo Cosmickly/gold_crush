@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,13 +21,16 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private TilemapManager _tilemapManager;
+    [SerializeField] private ScoreboardController _scoreboardController;
 
-    private void Start()
+    private void Awake()
     {
         for (int i = 0; i < _totalPlayers; i++)
         {
             _players.Add(i, i < _numOfPlayers ? CreatePlayer(i) : CreateAIPlayer(i));
         }
+
+        _scoreboardController.Players = _players.Values.ToArray();
     }
 
     private BasePlayerController CreatePlayer(int i)
@@ -52,6 +56,8 @@ public class GameManager : MonoBehaviour
         controller.SetGround(_tilemapManager);
         controller.SetMaterial(_playerColours[id]);
         controller.transform.position = _spawnPoints[id].position;
+
+        // controller.onUpdateUI += UpdateUI;
 
         return controller;
     }
