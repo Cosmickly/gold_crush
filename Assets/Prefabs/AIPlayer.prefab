@@ -152,9 +152,10 @@ MonoBehaviour:
   JumpForce: 3
   GroundDrag: 5
   Grounded: 0
-  TilemapManager: {fileID: 0}
   TileMask:
     serializedVersion: 2
     m_Bits: 128
+  TilemapManager: {fileID: 0}
   AboveTile: 0
   Fell: 0
+  NumOfGold: 0

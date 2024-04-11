@@ -150,15 +150,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 20
-  JumpForce: 3
+  JumpForce: 5
   GroundDrag: 5
   Grounded: 0
-  TilemapManager: {fileID: 0}
   TileMask:
     serializedVersion: 2
     m_Bits: 128
+  TilemapManager: {fileID: 0}
   AboveTile: 0
   Fell: 0
+  NumOfGold: 0
   _desiredDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &2771018080788225963
 MonoBehaviour:

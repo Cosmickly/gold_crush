@@ -16,8 +16,8 @@ namespace Player
         [SerializeField] protected float GroundDrag;
         [SerializeField] protected bool Grounded;
 
-        [SerializeField] protected TilemapManager TilemapManager;
         [SerializeField] protected LayerMask TileMask;
+        [SerializeField] protected TilemapManager TilemapManager;
         [SerializeField] protected bool AboveTile;
     
         [SerializeField] protected bool Fell;
@@ -26,6 +26,7 @@ namespace Player
     
         protected virtual void Awake()
         {
+            // TileMask = LayerMask.NameToLayer("Tile");
             Rb = GetComponent<Rigidbody>();
             Collider = GetComponent<CapsuleCollider>();
             MeshRenderer = GetComponent<MeshRenderer>();
@@ -39,7 +40,7 @@ namespace Player
 
         protected virtual void GroundCheck()
         {
-            Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down, out var hit,
+            Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down,
                 Quaternion.identity, Collider.bounds.extents.y + 0.05f, TileMask);
             Rb.drag = Grounded ? GroundDrag : 0f;
         }
