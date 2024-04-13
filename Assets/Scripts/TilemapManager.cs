@@ -12,6 +12,8 @@ public class TilemapManager : MonoBehaviour
     private Tilemap _tilemap;
     private BoxCollider _boundary;
     private NavMeshSurface _navMeshSurface;
+
+    public Vector2Int TilemapSize;
     
     private Dictionary<Vector3Int, TileController> _activeTiles = new();
     private Dictionary<Vector3Int, TileController> _crackingTiles = new();
@@ -19,8 +21,12 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private bool _goldEnabled;
     [SerializeField] private bool _tileCrackEnabled;
     [SerializeField] private float _randomTileRate;
-
+    
+    [Header("Prefabs")] 
+    [SerializeField] private TileController _groundTile;
+    [SerializeField] private TileController _iceTile;
     [SerializeField] private GoldPiece _goldPiecePrefab;
+    private Vector3 _goldPieceOffset = new(0, 2, 0);
 
     private void Awake()
     {
@@ -31,16 +37,7 @@ public class TilemapManager : MonoBehaviour
 
     private void Start()
     {
-        var goldPieceOffset = new Vector3(0, 2, 0);
-        foreach (TileController tile in GetComponentsInChildren<TileController>())
-        {
-            var pos = tile.transform.position;
-            tile.SetTilemapManager(this);
-            _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
-
-            if (_goldEnabled && Random.value <= 0.2) 
-                Instantiate(_goldPiecePrefab, pos + goldPieceOffset, Quaternion.identity, transform);
-        }
+        BuildTiles();
         
         BuildBoundary();
         
@@ -49,8 +46,44 @@ public class TilemapManager : MonoBehaviour
         InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
     }
 
+    private void GetTilesFromChildren()
+    {
+        foreach (TileController tile in GetComponentsInChildren<TileController>())
+        {
+            var pos = tile.transform.position;
+            tile.SetTilemapManager(this);
+            _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
+        
+            SpawnGold(pos);
+        }
+    }
+
+    private void BuildTiles()
+    {
+        for (int i = 0; i < TilemapSize.x; i++)
+        {
+            for (int j = 0; j < TilemapSize.y; j++)
+            {
+                var pos = new Vector3(i, 0, j);
+                var tilePrefab = Random.value <= 0.9 ? _groundTile : _iceTile;
+                var tile = Instantiate(tilePrefab, pos, Quaternion.identity, transform);
+                tile.SetTilemapManager(this);
+                _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
+                
+                SpawnGold(pos);
+            }
+        }
+    }
+
+    private void SpawnGold(Vector3 pos)
+    {
+        if (_goldEnabled && Random.value <= 0.2)
+            Instantiate(_goldPiecePrefab, pos + _goldPieceOffset, Quaternion.identity, transform);
+    }
+
     private void BuildBoundary()
     {
+        if (_activeTiles.Count <=0) return;
         var orderedKeys = _activeTiles.Keys.OrderBy(k => k.magnitude).ToList();
         var min = orderedKeys.First();
         var max = orderedKeys.Last();
@@ -58,7 +91,7 @@ public class TilemapManager : MonoBehaviour
         if (!_boundary) return;
         var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
         _boundary.size = size;
-        _boundary.center = new Vector3(min.x + size.x/2, -0.5f, min.y + size.z/2);
+        _boundary.center = new Vector3(min.x + size.x/2 - 0.5f, -0.5f, min.y + size.z/2 - 0.5f);
     }
 
     public Vector3Int GetCell(Vector3 pos)
