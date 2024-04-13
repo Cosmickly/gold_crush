@@ -18,7 +18,13 @@ public class TileController : MonoBehaviour
     public bool Cracking { get; set; }
     [SerializeField] private float _crackTime;
     private float _crackTimer;
+    [SerializeField] private float _slipperiness;
 
+    public float Slipperiness
+    {
+        get => _slipperiness;
+        private set => _slipperiness = value;
+    }
 
     private void Awake()
     {

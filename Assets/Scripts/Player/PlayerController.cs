@@ -10,12 +10,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : BasePlayerController
 {
-    [SerializeField] private Vector3 _desiredDirection;
     private bool _desiredJump;
     
+    [Header("Input")]
     private InputActionAsset _actionAsset;
     private InputAction _moveAction;
     private InputAction _jumpAction;
+
+
     
     private void OnEnable()
     {
@@ -46,19 +48,33 @@ public class PlayerController : BasePlayerController
     private void Input()
     {
         var input = _moveAction.ReadValue<Vector2>();
-        _desiredDirection = new Vector3(input.x, 0, input.y);
-        _desiredDirection = (Quaternion.Euler(0f, 45f, 0f) * _desiredDirection).normalized;
+        DesiredDirection = new Vector3(input.x, 0, input.y);
+        DesiredDirection = (Quaternion.Euler(0f, 45f, 0f) * DesiredDirection).normalized;
         
         _desiredJump = _jumpAction.IsPressed();
     }
 
     protected void FixedUpdate()
     {
-        if (Grounded) 
-            Rb.velocity = Vector3.Lerp(Rb.velocity, MoveSpeed * _desiredDirection, Time.deltaTime);
+        Move();
+            // Rb.velocity = Vector3.Lerp(Rb.velocity, MoveSpeed * _desiredDirection,  Time.deltaTime / _speedChangeMultiplier);
         
         if(Grounded && _desiredJump) Jump();
         // tmp.text = "velocity " + _rb.velocity;
+        
+        // SpeedControl();
+    }
+
+    protected void SpeedControl()
+    {
+        var vel = Rb.velocity;
+        var flatVel = new Vector3(vel.x, 0, vel.z);
+
+        if (vel.magnitude > MoveSpeed)
+        {
+            var limitedVel = flatVel.normalized * MoveSpeed;
+            Rb.velocity = new Vector3(limitedVel.x, vel.y, limitedVel.z);
+        }
     }
     
     private void Reset()

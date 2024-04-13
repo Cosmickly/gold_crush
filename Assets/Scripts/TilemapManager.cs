@@ -15,7 +15,8 @@ public class TilemapManager : MonoBehaviour
     
     private Dictionary<Vector3Int, TileController> _activeTiles = new();
     private Dictionary<Vector3Int, TileController> _crackingTiles = new();
-    
+
+    [SerializeField] private bool _goldEnabled;
     [SerializeField] private bool _tileCrackEnabled;
     [SerializeField] private float _randomTileRate;
 
@@ -37,7 +38,8 @@ public class TilemapManager : MonoBehaviour
             tile.SetTilemapManager(this);
             _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
 
-            if (Random.value <= 0.2) Instantiate(_goldPiecePrefab, pos + goldPieceOffset, Quaternion.identity, transform);
+            if (_goldEnabled && Random.value <= 0.2) 
+                Instantiate(_goldPiecePrefab, pos + goldPieceOffset, Quaternion.identity, transform);
         }
         
         BuildBoundary();

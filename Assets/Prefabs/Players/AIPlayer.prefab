@@ -148,9 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36816dd05dd5644499d6b53c6dfd755e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 20
+  MoveSpeed: 5
   JumpForce: 3
-  GroundDrag: 5
+  _smoothTime: 0
   Grounded: 0
   TileMask:
     serializedVersion: 2

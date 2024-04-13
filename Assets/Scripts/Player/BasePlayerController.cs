@@ -12,7 +12,10 @@ namespace Player
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
 
-        [SerializeField] protected float GroundDrag;
+        protected Vector3 DesiredDirection;
+        [SerializeField] private float _smoothTime;
+        private Vector3 _velocityRef = Vector3.zero;
+        
         [SerializeField] protected bool Grounded;
 
         [SerializeField] protected LayerMask TileMask;
@@ -21,7 +24,7 @@ namespace Player
     
         [SerializeField] protected bool Fell;
 
-        [SerializeField] public int NumOfGold { get; set; }
+        public int NumOfGold { get; private set; }
     
         protected virtual void Awake()
         {
@@ -38,9 +41,13 @@ namespace Player
 
         protected virtual void GroundCheck()
         {
-            Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down,
-                Quaternion.identity, Collider.bounds.extents.y + 0.05f, TileMask);
-            Rb.drag = Grounded ? GroundDrag : 0f;
+            Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down, out var hit,
+                Quaternion.identity,  Collider.bounds.extents.y + 0.05f, TileMask);
+            
+            if (Grounded && hit.transform.TryGetComponent(out TileController tile))
+            {
+                _smoothTime = tile.Slipperiness;
+            }
         }
 
         // private void OnDrawGizmosSelected()
@@ -59,6 +66,12 @@ namespace Player
         
             var flatPos = new Vector3(pos.x, 0, pos.z);
             if (Grounded && AboveTile) TilemapManager.CrackTile(TilemapManager.GetCell(flatPos));
+        }
+
+        protected virtual void Move()
+        {
+            if (Grounded)
+                Rb.velocity = Vector3.SmoothDamp(Rb.velocity, MoveSpeed * DesiredDirection, ref _velocityRef, _smoothTime);
         }
     
         protected virtual void Jump()

@@ -120,7 +120,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -149,9 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae749d5e0b93c564b97855b3ca5b6856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 20
-  JumpForce: 5
-  GroundDrag: 5
+  MoveSpeed: 5
+  JumpForce: 3
   Grounded: 0
   TileMask:
     serializedVersion: 2
@@ -159,7 +158,7 @@ MonoBehaviour:
   TilemapManager: {fileID: 0}
   AboveTile: 0
   Fell: 0
-  _desiredDirection: {x: 0, y: 0, z: 0}
+  _smoothTime: 0.1
 --- !u!114 &2771018080788225963
 MonoBehaviour:
   m_ObjectHideFlags: 0
