@@ -692,9 +692,9 @@ GameObject:
   - component: {fileID: 93001209}
   - component: {fileID: 93001211}
   - component: {fileID: 93001210}
-  - component: {fileID: 93001214}
   - component: {fileID: 93001212}
   - component: {fileID: 93001215}
+  - component: {fileID: 93001216}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -985,30 +985,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dee9dd66ef5faae4dbf73be5d86fed98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tileCrackEnabled: 0
+  _tileCrackEnabled: 1
   _randomTileRate: 3
   _goldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
---- !u!65 &93001214
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 93001208}
-  m_Material: {fileID: 13400000, guid: 60d0865387331484ea9bb0363a38bbcc, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &93001215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,6 +1019,27 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
+--- !u!65 &93001216
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93001208}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &100006934
 PrefabInstance:
   m_ObjectHideFlags: 0

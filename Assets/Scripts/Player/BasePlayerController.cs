@@ -11,7 +11,6 @@ namespace Player
 
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
-        // [SerializeField] protected float AirSpeedMultiplier;
 
         [SerializeField] protected float GroundDrag;
         [SerializeField] protected bool Grounded;
@@ -26,7 +25,6 @@ namespace Player
     
         protected virtual void Awake()
         {
-            // TileMask = LayerMask.NameToLayer("Tile");
             Rb = GetComponent<Rigidbody>();
             Collider = GetComponent<CapsuleCollider>();
             MeshRenderer = GetComponent<MeshRenderer>();
@@ -87,7 +85,8 @@ namespace Player
         public void Fall()
         {
             Fell = true;
-            Rb.AddForce(Vector3.down, ForceMode.Impulse);
+            Destroy(gameObject);
+            // Rb.AddForce(Vector3.down, ForceMode.Impulse);
         }
 
         

@@ -40,7 +40,16 @@ public class TilemapManager : MonoBehaviour
             if (Random.value <= 0.2) Instantiate(_goldPiecePrefab, pos + goldPieceOffset, Quaternion.identity, transform);
         }
         
-        var orderedKeys = _activeTiles.Keys.OrderBy(k => k.magnitude);
+        BuildBoundary();
+        
+        _navMeshSurface.BuildNavMesh();
+        
+        InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
+    }
+
+    private void BuildBoundary()
+    {
+        var orderedKeys = _activeTiles.Keys.OrderBy(k => k.magnitude).ToList();
         var min = orderedKeys.First();
         var max = orderedKeys.Last();
         
@@ -48,10 +57,6 @@ public class TilemapManager : MonoBehaviour
         var size = new Vector3(max.x - min.x + 1, 1, max.y - min.y + 1);
         _boundary.size = size;
         _boundary.center = new Vector3(min.x + size.x/2, -0.5f, min.y + size.z/2);
-        
-        _navMeshSurface.BuildNavMesh();
-        
-        InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
     }
 
     public Vector3Int GetCell(Vector3 pos)
@@ -80,14 +85,6 @@ public class TilemapManager : MonoBehaviour
             tile.Break();
         }
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.TryGetComponent(out IEntity entity))
-        {
-            entity.Fall();
-        }
-    }
     
     private Vector3Int RandomTile()
     {
@@ -106,6 +103,14 @@ public class TilemapManager : MonoBehaviour
         else
         {
             CancelInvoke(nameof(CrackRandomTile));
+        }
+    }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out IEntity entity))
+        {
+            entity.Fall();
         }
     }
 }

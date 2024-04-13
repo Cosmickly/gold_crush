@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8121586193573354479}
   - component: {fileID: 2652680059638574156}
   - component: {fileID: 2771018080788225963}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +159,6 @@ MonoBehaviour:
   TilemapManager: {fileID: 0}
   AboveTile: 0
   Fell: 0
-  NumOfGold: 0
   _desiredDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &2771018080788225963
 MonoBehaviour:
