@@ -228,7 +228,7 @@ Tilemap:
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
   m_TileAnchor: {x: 0, y: 0, z: 0}
-  m_TileOrientation: 0
+  m_TileOrientation: 1
   m_TileOrientationMatrix:
     e00: 1
     e01: 0
@@ -258,8 +258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dee9dd66ef5faae4dbf73be5d86fed98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TilemapSize: {x: 15, y: 2}
-  _goldEnabled: 1
+  TilemapSize: {x: 15, y: 15}
+  _goldEnabled: 0
   _tileCrackEnabled: 1
   _randomTileRate: 1
   _groundTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
@@ -757,8 +757,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
-  _numOfPlayers: 0
-  _totalPlayers: 0
+  _numOfPlayers: 1
+  _totalPlayers: 1
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}
@@ -898,7 +898,7 @@ Camera:
   far clip plane: 1000
   field of view: 50
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1112,7 +1112,7 @@ Transform:
   m_GameObject: {fileID: 1762904623}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

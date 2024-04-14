@@ -8,8 +8,9 @@ using UnityEngine.AI;
 
 public class TileController : MonoBehaviour
 {
-    private TilemapManager _tilemapManager;
-    
+    public TilemapManager TilemapManager { private get; set; }
+    public Vector3Int Cell { get; set; }
+
     private BoxCollider _collider;
     private MeshRenderer _mesh;
     private Color _initialColor;
@@ -40,24 +41,22 @@ public class TileController : MonoBehaviour
         
         if (_crackTimer >= _crackTime)
         {
-            _tilemapManager.BreakTile(transform.position);
-            return;
+            if (TilemapManager.RemoveTile(Cell))
+            {
+                Break();
+                return;
+            }
         }
 
         _crackTimer += Time.deltaTime;
         _mesh.material.color = Color.Lerp(_initialColor, Color.black, _crackTimer / _crackTime);
     }
 
-    public void Break()
+    private void Break()
     {
         Cracking = false;
         _mesh.enabled = false;
         _collider.enabled = false;
         _navMeshObstacle.enabled = true;
-    }
-
-    public void SetTilemapManager(TilemapManager manager)
-    {
-        _tilemapManager = manager;
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class GoldPiece : MonoBehaviour, IEntity, ICollectable
 {
+    public Vector3Int Cell { get; set; }
+    public TilemapManager TilemapManager { private get; set; }
     [SerializeField] private float _centerPos;
     [SerializeField] private float _amplitude;
     [SerializeField] private float _frequency;
@@ -26,7 +28,10 @@ public class GoldPiece : MonoBehaviour, IEntity, ICollectable
 
     public void Fall()
     {
-        Destroy(gameObject);
+        if (TilemapManager.RemoveGoldPiece(Cell))
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void Collect(BasePlayerController player)
