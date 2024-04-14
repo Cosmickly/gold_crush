@@ -26,7 +26,9 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private TileController _groundTile;
     [SerializeField] private TileController _iceTile;
     [SerializeField] private GoldPiece _goldPiecePrefab;
-    private Vector3 _goldPieceOffset = new(0, 2, 0);
+    [SerializeField] private RockObstacle _rockObstaclePrefab;
+    
+    private readonly Vector3 _topLayerOffset = new(0, 1, 0);
 
     private void Awake()
     {
@@ -54,7 +56,7 @@ public class TilemapManager : MonoBehaviour
             tile.SetTilemapManager(this);
             _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
         
-            SpawnGold(pos);
+            SpawnTopLayerObject(pos);
         }
     }
 
@@ -70,15 +72,18 @@ public class TilemapManager : MonoBehaviour
                 tile.SetTilemapManager(this);
                 _activeTiles.Add(_tilemap.WorldToCell(pos), tile);
                 
-                SpawnGold(pos);
+                SpawnTopLayerObject(pos);
             }
         }
     }
 
-    private void SpawnGold(Vector3 pos)
+    private void SpawnTopLayerObject(Vector3 pos)
     {
-        if (_goldEnabled && Random.value <= 0.2)
-            Instantiate(_goldPiecePrefab, pos + _goldPieceOffset, Quaternion.identity, transform);
+        var rand = Random.value;
+        if (_goldEnabled && rand <= 0.1f)
+            Instantiate(_goldPiecePrefab, pos + _topLayerOffset, Quaternion.identity, transform);
+        if (rand is > 0.1f and <= 0.2f)
+            Instantiate(_rockObstaclePrefab, pos + _topLayerOffset, Quaternion.identity, transform);
     }
 
     private void BuildBoundary()
