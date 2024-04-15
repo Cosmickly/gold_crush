@@ -17,9 +17,18 @@ public class GroundTile : MonoBehaviour
     private NavMeshObstacle _navMeshObstacle;
     
     public bool Cracking { get; set; }
-    [SerializeField] private float _crackTime;
     private float _crackTimer;
+    [SerializeField] private float _crackTime;
+    [SerializeField] private float _crackMultiplier;
+    
     [SerializeField] private float _slipperiness;
+
+    public bool PlayerOnMe
+    {
+        get => _playerOnMe;
+        set => _playerOnMe = value;
+    }
+    [SerializeField] private bool _playerOnMe;
 
     public float Slipperiness
     {
@@ -48,7 +57,7 @@ public class GroundTile : MonoBehaviour
             }
         }
 
-        _crackTimer += Time.deltaTime;
+        _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
         _mesh.material.color = Color.Lerp(_initialColor, Color.black, _crackTimer / _crackTime);
     }
 

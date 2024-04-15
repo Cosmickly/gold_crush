@@ -32,6 +32,8 @@ public class TilemapManager : MonoBehaviour
 
     private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
 
+    private Dictionary<int, Vector3Int> _playerLocations = new();
+
     private void Awake()
     {
         _tilemap = GetComponent<Tilemap>();
@@ -49,7 +51,7 @@ public class TilemapManager : MonoBehaviour
         
         InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
     }
-
+    
     private void GetTilesFromChildren()
     {
         foreach (GroundTile tile in GetComponentsInChildren<GroundTile>())
@@ -152,9 +154,11 @@ public class TilemapManager : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out IEntity entity))
+        if (!other.gameObject.TryGetComponent(out IEntity entity)) return;
+        entity.Fall();
+        if (other.gameObject.TryGetComponent(out BasePlayer player))
         {
-            entity.Fall();
+            ExitedTile(_playerLocations[player.ID]);
         }
     }
 
@@ -166,5 +170,31 @@ public class TilemapManager : MonoBehaviour
     public bool RemoveObstacle(Vector3Int pos)
     {
         return _obstacles.Remove(pos);
+    }
+
+    // TODO: find a better way to handle tile checks
+    public void UpdatePlayerLocation(int id, Vector3Int pos)
+    {
+        if (_playerLocations.TryGetValue(id, out var cell))
+        {
+            ExitedTile(cell);
+        }
+        
+        EnteredTile(pos);
+        _playerLocations[id] = pos;
+    }
+
+    private void EnteredTile(Vector3Int pos)
+    {
+        CrackTile(pos);
+        if(_crackingTiles.TryGetValue(pos, out var tile))
+            tile.PlayerOnMe = true;
+    }
+
+    private void ExitedTile(Vector3Int pos)
+    {
+        CrackTile(pos);
+        if (_crackingTiles.TryGetValue(pos, out var tile))
+            tile.PlayerOnMe = false;
     }
 }

@@ -18,10 +18,14 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
     [SerializeField] protected bool Grounded;
 
     [SerializeField] protected LayerMask TileMask;
-    [SerializeField] protected TilemapManager TilemapManager;
+    [SerializeField] public TilemapManager TilemapManager { private get; set; }
     [SerializeField] protected bool AboveTile;
-
+    [SerializeField] private Vector3Int _currentCell;
     [SerializeField] protected bool Fell;
+
+    // [SerializeField] private Collider _tileCheckCollider;
+    
+    public int ID { get; set; }
 
     public int NumOfGold { get; private set; }
 
@@ -59,12 +63,20 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
 
     protected virtual void TileCheck()
     {
-        var pos = transform.position;
-        AboveTile = Physics.BoxCast(pos, new Vector3(0.2f, 0, 0.2f), Vector3.down, Quaternion.identity, 10f,
-            TileMask);
-    
-        var flatPos = new Vector3(pos.x, 0, pos.z);
-        if (Grounded && AboveTile) TilemapManager.CrackTile(TilemapManager.GetCell(flatPos));
+        AboveTile = Physics.BoxCast(transform.position, new Vector3(0.2f, 0, 0.2f), Vector3.down, out var hit,
+                Quaternion.identity, 10f, TileMask);
+
+        if (!Grounded || !AboveTile) return;
+        
+        var cell = TilemapManager.GetCell(hit.transform.position);
+        
+        if (_currentCell == cell) return;
+        
+        _currentCell = cell;
+        TilemapManager.UpdatePlayerLocation(ID, _currentCell);
+        
+        // var flatPos = new Vector3(pos.x, 0, pos.z);
+        // if (Grounded && AboveTile) TilemapManager.UpdatePlayerLocation(ID, TilemapManager.GetCell(flatPos));
     }
 
     protected virtual void Move()
@@ -84,10 +96,10 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
         Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
     }
 
-    public void SetGround(TilemapManager ground)
-    {
-        TilemapManager = ground;
-    }
+    // public void SetGround(TilemapManager ground)
+    // {
+    //     TilemapManager = ground;
+    // }
 
     public void SetMaterial(Material material)
     {

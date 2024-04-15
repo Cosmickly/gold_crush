@@ -49,15 +49,16 @@ public class GameManager : MonoBehaviour
         return PlayerSetup(aiPlayer, i);
     }
 
-    private BasePlayer PlayerSetup(GameObject player, int id)
+    private BasePlayer PlayerSetup(GameObject playerObject, int id)
     {
-        var controller = player.GetComponent<BasePlayer>();
-        controller.SetGround(_tilemapManager);
-        controller.SetMaterial(_playerColours[id]);
-        controller.transform.position = _spawnPoints[id].position;
+        var player = playerObject.GetComponent<BasePlayer>();
+        player.ID = id;
+        player.TilemapManager = _tilemapManager;
+        player.SetMaterial(_playerColours[id]);
+        player.transform.position = _spawnPoints[id].position;
 
         // controller.onUpdateUI += UpdateUI;
 
-        return controller;
+        return player;
     }
 }
