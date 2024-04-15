@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Player;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AIController : BasePlayerController
+public class AIPlayer : BasePlayer
 {
 	private Vector3? _target;
 	private Camera _cam;

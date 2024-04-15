@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Player;
 using UnityEngine;
 
 public interface ICollectable
 {
-    public void Collect(BasePlayerController player);
+    public void Collect(BasePlayer player);
 }

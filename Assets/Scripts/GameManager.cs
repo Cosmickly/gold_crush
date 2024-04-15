@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -14,14 +13,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Range(0, 4)] private int _numOfPlayers; 
     [SerializeField] [Range(0, 4)] private int _totalPlayers; 
     
-    private Dictionary<int, BasePlayerController> _players = new ();
+    private Dictionary<int, BasePlayer> _players = new ();
 
     [SerializeField] private Material[] _playerColours;
     [SerializeField] private Transform[] _spawnPoints;
 
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private TilemapManager _tilemapManager;
-    [SerializeField] private ScoreboardController _scoreboardController;
+    [SerializeField] private Scoreboard _scoreboard;
 
     private void Awake()
     {
@@ -30,10 +29,10 @@ public class GameManager : MonoBehaviour
             _players.Add(i, i < _numOfPlayers ? CreatePlayer(i) : CreateAIPlayer(i));
         }
 
-        _scoreboardController.Players = _players.Values.ToArray();
+        _scoreboard.Players = _players.Values.ToArray();
     }
 
-    private BasePlayerController CreatePlayer(int i)
+    private BasePlayer CreatePlayer(int i)
     {
         var player = PlayerInput.Instantiate(_playerPrefab, pairWithDevice: Keyboard.current);
         player.user.ActivateControlScheme("Player" + i);
@@ -44,15 +43,15 @@ public class GameManager : MonoBehaviour
         return playerController;
     }
 
-    private BasePlayerController CreateAIPlayer(int i)
+    private BasePlayer CreateAIPlayer(int i)
     {
         var aiPlayer = Instantiate(_aiPlayer, transform.position, Quaternion.identity);
         return PlayerSetup(aiPlayer, i);
     }
 
-    private BasePlayerController PlayerSetup(GameObject player, int id)
+    private BasePlayer PlayerSetup(GameObject player, int id)
     {
-        var controller = player.GetComponent<BasePlayerController>();
+        var controller = player.GetComponent<BasePlayer>();
         controller.SetGround(_tilemapManager);
         controller.SetMaterial(_playerColours[id]);
         controller.transform.position = _spawnPoints[id].position;

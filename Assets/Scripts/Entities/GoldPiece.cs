@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Player;
 using UnityEngine;
 
 public class GoldPiece : MonoBehaviour, IEntity, ICollectable
@@ -34,7 +33,7 @@ public class GoldPiece : MonoBehaviour, IEntity, ICollectable
         }
     }
 
-    public void Collect(BasePlayerController player)
+    public void Collect(BasePlayer player)
     {
         player.AddGold();
         Destroy(gameObject);
@@ -42,7 +41,7 @@ public class GoldPiece : MonoBehaviour, IEntity, ICollectable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out BasePlayerController player))
+        if (other.gameObject.TryGetComponent(out BasePlayer player))
         {
             Collect(player);
         }

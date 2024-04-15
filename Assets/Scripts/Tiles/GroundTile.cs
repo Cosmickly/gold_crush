@@ -6,7 +6,7 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class TileController : MonoBehaviour
+public class GroundTile : MonoBehaviour
 {
     public TilemapManager TilemapManager { private get; set; }
     public Vector3Int Cell { get; set; }

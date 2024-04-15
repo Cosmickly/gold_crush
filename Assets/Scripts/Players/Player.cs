@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 
-public class PlayerController : BasePlayerController
+public class Player : BasePlayer
 {
     private bool _desiredJump;
     

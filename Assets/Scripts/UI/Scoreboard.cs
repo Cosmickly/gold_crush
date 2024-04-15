@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Player;
 using TMPro;
 using UnityEngine;
 
-public class ScoreboardController : MonoBehaviour
+public class Scoreboard : MonoBehaviour
 {
-    public BasePlayerController[] Players { get; set; }
+    public BasePlayer[] Players { get; set; }
     private TextMeshProUGUI[] _scoreUIs;
     
     private void Awake()

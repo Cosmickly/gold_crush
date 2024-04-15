@@ -12,21 +12,21 @@ public class TilemapManager : MonoBehaviour
     private Tilemap _tilemap;
     private BoxCollider _boundary;
     private NavMeshSurface _navMeshSurface;
-
-    public Vector2Int TilemapSize;
     
-    private Dictionary<Vector3Int, TileController> _activeTiles = new();
-    private Dictionary<Vector3Int, TileController> _crackingTiles = new();
+    private Dictionary<Vector3Int, GroundTile> _activeTiles = new();
+    private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
     private List<Vector3Int> _goldPieces = new();
     private List<Vector3Int> _obstacles = new();
 
+    [Header("Parameters")]
+    public Vector2Int TilemapSize;
     [SerializeField] private bool _goldEnabled;
     [SerializeField] private bool _tileCrackEnabled;
     [SerializeField] private float _randomTileRate;
     
     [Header("Prefabs")] 
-    [SerializeField] private TileController _groundTile;
-    [SerializeField] private TileController _iceTile;
+    [SerializeField] private GroundTile _rockTile;
+    [SerializeField] private GroundTile _iceTile;
     [SerializeField] private GoldPiece _goldPiecePrefab;
     [SerializeField] private RockObstacle _rockObstaclePrefab;
 
@@ -52,7 +52,7 @@ public class TilemapManager : MonoBehaviour
 
     private void GetTilesFromChildren()
     {
-        foreach (TileController tile in GetComponentsInChildren<TileController>())
+        foreach (GroundTile tile in GetComponentsInChildren<GroundTile>())
         {
             var pos = tile.transform.position;
             tile.TilemapManager = this;
@@ -69,7 +69,7 @@ public class TilemapManager : MonoBehaviour
             for (int j = 0; j < TilemapSize.y; j++)
             {
                 var pos = new Vector3Int(i, 0, j);
-                var tilePrefab = Random.value <= 0.9 ? _groundTile : _iceTile;
+                var tilePrefab = Random.value <= 0.9 ? _rockTile : _iceTile;
                 var tile = Instantiate(tilePrefab, pos, Quaternion.identity, transform);
                 tile.Cell = pos;
                 tile.TilemapManager = this;
@@ -97,7 +97,6 @@ public class TilemapManager : MonoBehaviour
             obstacle.Cell = pos;
             obstacle.TilemapManager = this;
             _obstacles.Add(pos);
-            Debug.Log("obstacle is at " + pos);
         }
     }
 
@@ -121,7 +120,7 @@ public class TilemapManager : MonoBehaviour
 
     public void CrackTile(Vector3Int pos)
     {
-        if (_tileCrackEnabled && _activeTiles.Remove(pos, out TileController tile))
+        if (_tileCrackEnabled && _activeTiles.Remove(pos, out GroundTile tile))
         {
             _crackingTiles.Add(pos, tile);
             tile.Cracking = true;
@@ -143,14 +142,12 @@ public class TilemapManager : MonoBehaviour
     
     private void CrackRandomTile()
     {
-        if (_activeTiles.Count > 0)
-        {
-            CrackTile(RandomTile());
-        }
-        else
+        if (_activeTiles.Count <= 0)
         {
             CancelInvoke(nameof(CrackRandomTile));
+            return;
         }
+        CrackTile(RandomTile());
     }
     
     private void OnTriggerEnter(Collider other)

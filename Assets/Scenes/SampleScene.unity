@@ -262,7 +262,7 @@ MonoBehaviour:
   _goldEnabled: 0
   _tileCrackEnabled: 1
   _randomTileRate: 1
-  _groundTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
+  _rockTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
   _iceTile: {fileID: 6033928661518195644, guid: 145982e1bf55fc842b1228e6269b5ab8, type: 3}
   _goldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
@@ -771,7 +771,7 @@ MonoBehaviour:
   - {fileID: 780918851}
   _cameraController: {fileID: 963194229}
   _tilemapManager: {fileID: 93001212}
-  _scoreboardController: {fileID: 366411310}
+  _scoreboard: {fileID: 366411310}
 --- !u!114 &839806891
 MonoBehaviour:
   m_ObjectHideFlags: 0
