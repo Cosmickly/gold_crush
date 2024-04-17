@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Scoreboard : MonoBehaviour
 {
-    public BasePlayer[] Players { get; set; }
+    public List<BasePlayer> Players = new ();
     private TextMeshProUGUI[] _scoreUIs;
     
     private void Awake()
@@ -26,7 +26,7 @@ public class Scoreboard : MonoBehaviour
     
     private void UpdateUI()
     {
-        for (int i = 0; i < Players.Length; i++)
+        for (int i = 0; i < Players.Count; i++)
         {
             _scoreUIs[i].text = "P" + (i + 1) + ": " + Players[i].NumOfGold;
         }

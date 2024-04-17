@@ -9,7 +9,6 @@ public class RockObstacle : MonoBehaviour, IEntity
 
     public void Fall()
     {
-        if (TilemapManager.RemoveObstacle(Cell))
-            Destroy(gameObject);
+	    Destroy(gameObject);
     }
 }

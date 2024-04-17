@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
             _players.Add(i, i < _numOfPlayers ? CreatePlayer(i) : CreateAIPlayer(i));
         }
 
-        _scoreboard.Players = _players.Values.ToArray();
+        _scoreboard.Players = _players.Values.ToList();
     }
 
     private BasePlayer CreatePlayer(int i)
@@ -56,9 +56,7 @@ public class GameManager : MonoBehaviour
         player.TilemapManager = _tilemapManager;
         player.SetMaterial(_playerColours[id]);
         player.transform.position = _spawnPoints[id].position;
-
-        // controller.onUpdateUI += UpdateUI;
-
+        
         return player;
     }
 }

@@ -27,10 +27,7 @@ public class GoldPiece : MonoBehaviour, IEntity, ICollectable
 
     public void Fall()
     {
-        if (TilemapManager.RemoveGoldPiece(Cell))
-        {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 
     public void Collect(BasePlayer player)
