@@ -35,7 +35,8 @@ public class Player : BasePlayer
         _moveAction = _actionAsset.FindActionMap("Gameplay").FindAction("Move");
         _jumpAction = _actionAsset.FindActionMap("Gameplay").FindAction("Jump");
 
-        _actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
+        // TODO replace with actual pause
+        // _actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
     }
 
     protected override void Update()

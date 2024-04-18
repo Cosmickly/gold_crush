@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5823329762541104940}
   - component: {fileID: 8121586193573354479}
   - component: {fileID: 5726276027358650132}
+  - component: {fileID: 1202807486505499631}
   m_Layer: 6
   m_Name: AIPlayer
   m_TagString: Player
@@ -119,7 +120,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -148,13 +149,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36816dd05dd5644499d6b53c6dfd755e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
-  JumpForce: 3
-  _smoothTime: 0
+  MoveSpeed: 3
+  JumpForce: 3.5
+  _smoothTime: 0.1
   Grounded: 0
   TileMask:
     serializedVersion: 2
     m_Bits: 128
-  TilemapManager: {fileID: 0}
   AboveTile: 0
+  _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
+  JumpHeight: 0.2
+  JumpDuration: 0.3
+  Thing: 0
+--- !u!195 &1202807486505499631
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2983752196467883518}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.1
+  m_Speed: 0
+  m_Acceleration: 0
+  avoidancePriority: 50
+  m_AngularSpeed: 0
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 0
+  m_AutoRepath: 0
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

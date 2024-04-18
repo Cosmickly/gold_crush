@@ -149,14 +149,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae749d5e0b93c564b97855b3ca5b6856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
+  MoveSpeed: 3
   JumpForce: 3
   _smoothTime: 0.1
   Grounded: 0
   TileMask:
     serializedVersion: 2
     m_Bits: 128
-  TilemapManager: {fileID: 0}
   AboveTile: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0

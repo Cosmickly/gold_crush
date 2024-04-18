@@ -23,7 +23,7 @@ public class TilemapBuilder : MonoBehaviour
     [SerializeField] private GroundTile _iceTile;
     [SerializeField] private GoldPiece _goldPiecePrefab;
     [SerializeField] private RockObstacle _rockObstaclePrefab;
-
+    [SerializeField] private List<GameObject> _layouts = new();
 
     private void Awake()
     {
@@ -35,7 +35,9 @@ public class TilemapBuilder : MonoBehaviour
 
     public void Build()
     {
-        BuildTiles();
+        // BuildTiles();
+        SpawnLayouts();
+        GetTilesFromChildren();
         _navMeshSurface.BuildNavMesh();
         BuildBoundary();
     }
@@ -100,5 +102,29 @@ public class TilemapBuilder : MonoBehaviour
         var size = new Vector3(TilemapSize.x, 1, TilemapSize.y);
         _boundary.size = size;
         _boundary.center = new Vector3(size.x/2, -0.5f, size.z/2);
+    }
+
+    private void SpawnLayouts()
+    {
+        // Instantiate(_layouts[0], new Vector3(0, 0, 0), Quaternion.identity, transform);
+        // Instantiate(_layouts[0], new Vector3(0, 0, 14), Quaternion.identity, transform);
+        // Instantiate(_layouts[0], new Vector3(14, 0, 0), Quaternion.identity, transform);
+        // Instantiate(_layouts[0], new Vector3(14, 0, 14), Quaternion.identity, transform);
+
+        
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (i is 0 or 2 && j is 0 or 2)
+                    Instantiate(_layouts[0], new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
+                else
+                {
+                    var layout = _layouts[Random.Range(1, _layouts.Count - 1)];
+                    Instantiate(layout, new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
+                }
+
+            }
+        }
     }
 }
