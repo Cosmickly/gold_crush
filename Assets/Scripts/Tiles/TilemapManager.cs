@@ -14,9 +14,9 @@ public class TilemapManager : MonoBehaviour
     private TilemapBuilder _tilemapBuilder;
     private Tilemap _tilemap;
 
-    private Dictionary<Vector3Int, GroundTile> _activeTiles = new();
+    public Dictionary<Vector3Int, GroundTile> ActiveTiles { private get; set; } = new();
     private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
-    private Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> _offMeshLinks = new();
+    public Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> OffMeshLinks { private get; set; } = new();
     private Dictionary<int, Vector3Int> _playerLocations = new();
     
     public bool GoldEnabled
@@ -35,6 +35,17 @@ public class TilemapManager : MonoBehaviour
         _tilemap = GetComponent<Tilemap>();
     }
 
+    // private void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.R))
+    //     {
+    //         foreach (var link in OffMeshLinks.Keys)
+    //         {
+    //             link.UpdatePositions();
+    //         }
+    //     }
+    // }
+
     private void Start()
     {
         _tilemapBuilder.Build();
@@ -48,7 +59,7 @@ public class TilemapManager : MonoBehaviour
 
     private void CrackTile(Vector3Int pos)
     {
-        if (_tileCrackEnabled && _activeTiles.Remove(pos, out GroundTile tile))
+        if (_tileCrackEnabled && ActiveTiles.Remove(pos, out GroundTile tile))
         {
             _crackingTiles.Add(pos, tile);
             tile.Cracking = true;
@@ -59,7 +70,8 @@ public class TilemapManager : MonoBehaviour
     {
         if (_crackingTiles.ContainsKey(pos))
         {
-            UpdateLinks(pos);
+            ClearLinks(pos);
+            GenerateNewLinks(pos);
             _crackingTiles.Remove(pos);
             return true;
         }
@@ -69,7 +81,7 @@ public class TilemapManager : MonoBehaviour
     
     private Vector3Int RandomTile()
     {
-        var keys = _activeTiles.Keys.ToList();
+        var keys = ActiveTiles.Keys.ToList();
         var randomInt = Random.Range(0, keys.Count);
         var key = keys[randomInt];
         return key;
@@ -77,7 +89,7 @@ public class TilemapManager : MonoBehaviour
     
     private void CrackRandomTile()
     {
-        if (_activeTiles.Count <= 0)
+        if (ActiveTiles.Count <= 0)
         {
             CancelInvoke(nameof(CrackRandomTile));
             return;
@@ -121,16 +133,16 @@ public class TilemapManager : MonoBehaviour
             tile.PlayerOnMe = false;
     }
 
-    public void AddTile(GroundTile tile)
-    {
-        _activeTiles.Add(tile.Cell, tile);
-    }
+    // public bool HasTile(Vector3Int pos)
+    // {
+    //     return ActiveTiles.ContainsKey(pos);
+    // }
 
-    private void UpdateLinks(Vector3Int pos)
+    private void ClearLinks(Vector3Int pos)
     {
         var removeList = new List<OffMeshLink>();
 
-        foreach (var (key, tiles) in _offMeshLinks)
+        foreach (var (key, tiles) in OffMeshLinks)
         {
             if (tiles.Item1 == pos || tiles.Item2 == pos)
             {
@@ -140,14 +152,12 @@ public class TilemapManager : MonoBehaviour
 
         foreach (var link in removeList)
         {
-            _offMeshLinks.Remove(link);
+            OffMeshLinks.Remove(link);
             Destroy(link);
         }
-        
-        GenerateNewLinks(pos);
     }
 
-    private void GenerateNewLinks(Vector3Int pos)
+    public void GenerateNewLinks(Vector3Int pos)
     {
         var n = pos + new Vector3Int(1, 1, 0);
         var ne = pos + new Vector3Int(1, 0, 0);
@@ -158,7 +168,7 @@ public class TilemapManager : MonoBehaviour
         var w = pos + new Vector3Int(-1, 1, 0);
         var nw = pos + new Vector3Int(0, 1, 0);
 
-        var allTiles = _activeTiles.Concat(_crackingTiles).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        var allTiles = ActiveTiles.Concat(_crackingTiles).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         
         if (allTiles.TryGetValue(n, out var tileN) && allTiles.TryGetValue(s, out var tileS))
             CreateLink(tileN, tileS);
@@ -171,24 +181,23 @@ public class TilemapManager : MonoBehaviour
             
         if (allTiles.TryGetValue(se, out var tileSE) && allTiles.TryGetValue(nw, out var tileNW))
             CreateLink(tileSE, tileNW);
-            
-
-        //TODO generate links at start to store them
     }
-
+    
+    
     private void CreateLink(GroundTile a, GroundTile b)
     {
         var link = gameObject.AddComponent<OffMeshLink>();
         link.startTransform = a.transform;
         link.endTransform = b.transform;
         link.biDirectional = true;
-        _offMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(a.Cell, b.Cell));
+        OffMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(a.Cell, b.Cell));
         
-        // link.UpdatePositions();
-        // _offMeshLinks.Add(link);
-        // link.startTransform = new Vector3(a.x, 0.5f, a.y) - _offset;
-        // link.endPoint = new Vector3(b.x, 0.5f, b.y) - _offset;
+        // TODO create two methods for adjacent and diagonal links.
+        // order parameters so that one is lower. calculate offset accordingly 
+        // var link = gameObject.AddComponent<NavMeshLink>();
+        // link.startPoint = a.transform.position;
+        // link.endPoint = b.transform.position;
         // link.bidirectional = true;
-        // link.width = 1f;
+        // link.width = 0.9f;
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
@@ -13,10 +14,12 @@ public class TilemapBuilder : MonoBehaviour
     private Tilemap _tilemap;
     private NavMeshSurface _navMeshSurface;
     private BoxCollider _boundary;
-
     
-    public Vector2Int TilemapSize;
+    private Vector2Int _tilemapSize;
     private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
+
+    private Dictionary<Vector3Int, GroundTile> _tiles = new();
+    private Dictionary<OffMeshLink, Vector3Int> _offLinkMeshes = new();
 
     [Header("Prefabs")] 
     [SerializeField] private GroundTile _rockTile;
@@ -38,22 +41,26 @@ public class TilemapBuilder : MonoBehaviour
         // BuildTiles();
         SpawnLayouts();
         GetTilesFromChildren();
+        _tilemapManager.ActiveTiles = _tiles;
+        
+        FindEmptyTiles();
+        
         _navMeshSurface.BuildNavMesh();
         BuildBoundary();
     }
     
     private void BuildTiles()
     {
-        for (int i = 0; i < TilemapSize.x; i++)
+        for (int i = 0; i < _tilemapSize.x; i++)
         {
-            for (int j = 0; j < TilemapSize.y; j++)
+            for (int j = 0; j < _tilemapSize.y; j++)
             {
                 var pos = new Vector3Int(i, 0, j);
                 var tilePrefab = Random.value <= 0.9 ? _rockTile : _iceTile;
                 var tile = Instantiate(tilePrefab, pos, Quaternion.identity, transform);
                 tile.Cell = _tilemap.WorldToCell(pos);
                 tile.TilemapManager = _tilemapManager;
-                _tilemapManager.AddTile(tile);
+                _tiles.Add(tile.Cell, tile);
                 
                 SpawnTopLayerObject(pos + _topLayerOffset);
             }
@@ -85,10 +92,15 @@ public class TilemapBuilder : MonoBehaviour
             var pos = tile.transform.position;
             tile.Cell = _tilemap.WorldToCell(pos);
             tile.TilemapManager = _tilemapManager;
-            _tilemapManager.AddTile(tile);
-        
+            _tiles.Add(tile.Cell, tile);
+
+            if (tile.Cell.x > _tilemapSize.x) _tilemapSize.x = tile.Cell.x;
+            if (tile.Cell.y > _tilemapSize.y) _tilemapSize.y = tile.Cell.y;
+
             // SpawnTopLayerObject(pos);
         }
+
+        _tilemapSize += new Vector2Int(1, 1);
     }
     
     private void BuildBoundary()
@@ -99,7 +111,7 @@ public class TilemapBuilder : MonoBehaviour
         // var max = orderedKeys.Last();
         
         if (!_boundary) return;
-        var size = new Vector3(TilemapSize.x, 1, TilemapSize.y);
+        var size = new Vector3(_tilemapSize.x, 1, _tilemapSize.y);
         _boundary.size = size;
         _boundary.center = new Vector3(size.x/2, -0.5f, size.z/2);
     }
@@ -126,5 +138,20 @@ public class TilemapBuilder : MonoBehaviour
         //
         //     }
         // }
+    }
+    
+    private void FindEmptyTiles()
+    {
+        for (int i = 0; i < _tilemapSize.x; i++)
+        {
+            for (int j = 0; j < _tilemapSize.y; j++)
+            {
+                var pos = new Vector3Int(i, j, 0);
+                if (!_tiles.ContainsKey(pos))
+                {
+                    _tilemapManager.GenerateNewLinks(pos);
+                }
+            }
+        }
     }
 }
