@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 public class AIPlayer : BasePlayer
 {
-	private Vector3? _target;
+	private Vector3 _target;
 	private Camera _cam;
 	private NavMeshPath _path;
 	private NavMeshAgent _agent;
@@ -25,18 +25,18 @@ public class AIPlayer : BasePlayer
 		_cam = Camera.main;
 		_path = new NavMeshPath();
 		_agent = GetComponent<NavMeshAgent>();
-		_agent.enabled = false;
 	}
 
-	private IEnumerator Start()
+	private void Start()
 	{
-		yield return new WaitUntil(() => Grounded);
-		_agent.enabled = true;
+		_target = transform.position;
 	}
 
 	protected override void Update()
 	{
 		base.Update();
+
+		_agent.enabled = Grounded;
 		
 		if (Input.GetMouseButton(0) && _cam && _agent.enabled)
 		{
@@ -54,19 +54,13 @@ public class AIPlayer : BasePlayer
 			case > 0:
 				DesiredDirection = (_path.corners.Last() - transform.position).normalized; break;
 		}
-
-		if (_target == null)
-		{
-			DesiredDirection = Vector3.zero;		
-			return;
-		}
 		
 		if(_agent.isOnOffMeshLink)
 		{
 			StartCoroutine(RigidBodyJump());
 		}
 		
-		NavMesh.CalculatePath(transform.position, (Vector3) _target, NavMesh.AllAreas, _path);
+		NavMesh.CalculatePath(transform.position, _target, NavMesh.AllAreas, _path);
 		if (_drawPath) DrawPath();
 	}
 
@@ -81,18 +75,18 @@ public class AIPlayer : BasePlayer
 		var data = _agent.currentOffMeshLinkData;
 		var endPos = data.endPos;
 		var direction = (new Vector3(endPos.x, pos.y, endPos.z) - pos).normalized;
-
+	
 		_agent.enabled = false;
 		Rb.velocity = MoveSpeed * direction;
 		Jump();
-
+	
 		yield return new WaitForSeconds(0.2f);
 		yield return new WaitUntil(() => Grounded);
-
-		_agent.enabled = true;
+	
 		_agent.CompleteOffMeshLink();
 	}
 
+	// Deprecated, use RigidBodyJump
 	private IEnumerator ParabolaJump(float height, float duration)
 	{
 		OffMeshLinkData data = _agent.currentOffMeshLinkData;
@@ -114,25 +108,25 @@ public class AIPlayer : BasePlayer
 	}
 
 	// No Longer needed with auto braking
-	private void CheckTarget()
-	{
-		if (_target == null) return;
-		
-		var pos = transform.position;
-		var target = (Vector3)_target;
-		var diff = (new Vector3(pos.x, 0, pos.z) - new Vector3(target.x, 0, target.z)).magnitude;
-		
-		if (diff <= 0.1f)
-		{
-			_target = null;
-		}
-	}
+	// private void CheckTarget()
+	// {
+	// 	if (_target == null) return;
+	// 	
+	// 	var pos = transform.position;
+	// 	var target = (Vector3)_target;
+	// 	var diff = (new Vector3(pos.x, 0, pos.z) - new Vector3(target.x, 0, target.z)).magnitude;
+	// 	
+	// 	if (diff <= 0.1f)
+	// 	{
+	// 		_target = null;
+	// 	}
+	// }
 	
 	private void DrawPath()
 	{
 		for (int i = 0; i < _path.corners.Length - 1; i++)
 		{
-			Debug.DrawLine(_path.corners[i], _path.corners[i + 1], Color.red);
+			Debug.DrawLine(_path.corners[i], _path.corners[i + 1], MeshRenderer.material.color);
 		}
 	}
 }

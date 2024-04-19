@@ -15,11 +15,11 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
     [SerializeField] private float _smoothTime;
     private Vector3 _velocityRef = Vector3.zero;
     
-    [SerializeField] protected bool Grounded;
 
-    [SerializeField] protected LayerMask TileMask;
     public TilemapManager TilemapManager { private get; set; }
+    [SerializeField] protected LayerMask TileMask;
     [SerializeField] protected bool AboveTile;
+    [SerializeField] protected bool Grounded;
     [SerializeField] private Vector3Int _currentCell;
     [SerializeField] protected bool Fell;
 
@@ -39,7 +39,7 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
     protected virtual void Update()
     {
         GroundCheck();
-        // TileCheck();
+        TileCheck();
     }
 
     protected virtual void GroundCheck()

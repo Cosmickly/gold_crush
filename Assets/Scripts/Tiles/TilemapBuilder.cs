@@ -106,7 +106,7 @@ public class TilemapBuilder : MonoBehaviour
 
     private void SpawnLayouts()
     {
-        Instantiate(_layouts[0], new Vector3(0, 0, 0), Quaternion.identity, transform);
+        Instantiate(_layouts[2], new Vector3(0, 0, 0), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(0, 0, 14), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(14, 0, 0), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(14, 0, 14), Quaternion.identity, transform);

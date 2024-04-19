@@ -152,16 +152,15 @@ MonoBehaviour:
   MoveSpeed: 3
   JumpForce: 3.5
   _smoothTime: 0.1
-  Grounded: 0
   TileMask:
     serializedVersion: 2
     m_Bits: 128
   AboveTile: 0
+  Grounded: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
-  JumpHeight: 0.2
-  JumpDuration: 0.3
-  Thing: 0
+  _drawPath: 1
+  OnLink: 0
 --- !u!195 &1202807486505499631
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -178,7 +177,7 @@ NavMeshAgent:
   m_AngularSpeed: 0
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 0
-  m_AutoBraking: 0
+  m_AutoBraking: 1
   m_AutoRepath: 0
   m_Height: 2
   m_BaseOffset: 1
