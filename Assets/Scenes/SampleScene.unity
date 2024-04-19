@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _goldEnabled: 0
-  _tileCrackEnabled: 0
+  _tileCrackEnabled: 1
   _randomTileRate: 1
 --- !u!114 &93001215
 MonoBehaviour:
@@ -289,7 +289,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.033333335
+  m_VoxelSize: 0.016666668
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: bc6dcbddd79eb1646a43f893487fefce, type: 2}
   m_BuildHeightMesh: 0
@@ -333,9 +333,9 @@ MonoBehaviour:
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
   _layouts:
   - {fileID: 692553254407564009, guid: 62ee3a748d5f85a448ebc6adb5890fb9, type: 3}
-  - {fileID: 6217066759393504011, guid: bc587ee06c7873e45b9367d924cdb51b, type: 3}
   - {fileID: 7241570900354425795, guid: ce2141bbc65227240bf70462a5a41e26, type: 3}
-  - {fileID: 4940518844471938648, guid: dde9688d311de7946a6e0dd8435cc04e, type: 3}
+  - {fileID: 7241570900354425795, guid: ce2141bbc65227240bf70462a5a41e26, type: 3}
+  - {fileID: 7241570900354425795, guid: ce2141bbc65227240bf70462a5a41e26, type: 3}
 --- !u!1 &359417994
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,8 +367,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
-  _numOfPlayers: 1
-  _totalPlayers: 2
+  _numOfPlayers: 0
+  _totalPlayers: 1
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}

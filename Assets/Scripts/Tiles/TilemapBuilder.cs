@@ -66,14 +66,14 @@ public class TilemapBuilder : MonoBehaviour
         if (_tilemapManager.GoldEnabled && rand <= 0.1f)
         {
             var goldPiece = Instantiate(_goldPiecePrefab, pos, Quaternion.identity, transform);
-            goldPiece.Cell = pos;
+            goldPiece.Cell = _tilemap.WorldToCell(pos);
             goldPiece.TilemapManager = _tilemapManager;
         }
 
         if (rand is > 0.1f and <= 0.2f)
         {
             var obstacle = Instantiate(_rockObstaclePrefab, pos, Quaternion.identity, transform);
-            obstacle.Cell = pos;
+            obstacle.Cell = _tilemap.WorldToCell(pos);
             obstacle.TilemapManager = _tilemapManager;
         }
     }
@@ -106,25 +106,25 @@ public class TilemapBuilder : MonoBehaviour
 
     private void SpawnLayouts()
     {
-        // Instantiate(_layouts[0], new Vector3(0, 0, 0), Quaternion.identity, transform);
+        Instantiate(_layouts[0], new Vector3(0, 0, 0), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(0, 0, 14), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(14, 0, 0), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(14, 0, 14), Quaternion.identity, transform);
 
         
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                if (i is 0 or 2 && j is 0 or 2)
-                    Instantiate(_layouts[0], new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
-                else
-                {
-                    var layout = _layouts[Random.Range(1, _layouts.Count - 1)];
-                    Instantiate(layout, new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
-                }
-
-            }
-        }
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     for (int j = 0; j < 3; j++)
+        //     {
+        //         if (i is 0 or 2 && j is 0 or 2)
+        //             Instantiate(_layouts[0], new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
+        //         else
+        //         {
+        //             var layout = _layouts[Random.Range(1, _layouts.Count - 1)];
+        //             Instantiate(layout, new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
+        //         }
+        //
+        //     }
+        // }
     }
 }

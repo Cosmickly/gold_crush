@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
@@ -14,8 +16,9 @@ public class TilemapManager : MonoBehaviour
 
     private Dictionary<Vector3Int, GroundTile> _activeTiles = new();
     private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
+    private Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> _offMeshLinks = new();
     private Dictionary<int, Vector3Int> _playerLocations = new();
-
+    
     public bool GoldEnabled
     {
         get => _goldEnabled;
@@ -54,7 +57,14 @@ public class TilemapManager : MonoBehaviour
     
     public bool RemoveTile(Vector3Int pos)
     {
-        return _crackingTiles.Remove(pos);
+        if (_crackingTiles.ContainsKey(pos))
+        {
+            UpdateLinks(pos);
+            _crackingTiles.Remove(pos);
+            return true;
+        }
+        
+        return false;
     }
     
     private Vector3Int RandomTile()
@@ -114,5 +124,71 @@ public class TilemapManager : MonoBehaviour
     public void AddTile(GroundTile tile)
     {
         _activeTiles.Add(tile.Cell, tile);
+    }
+
+    private void UpdateLinks(Vector3Int pos)
+    {
+        var removeList = new List<OffMeshLink>();
+
+        foreach (var (key, tiles) in _offMeshLinks)
+        {
+            if (tiles.Item1 == pos || tiles.Item2 == pos)
+            {
+                removeList.Add(key);
+            }
+        }
+
+        foreach (var link in removeList)
+        {
+            _offMeshLinks.Remove(link);
+            Destroy(link);
+        }
+        
+        GenerateNewLinks(pos);
+    }
+
+    private void GenerateNewLinks(Vector3Int pos)
+    {
+        var n = pos + new Vector3Int(1, 1, 0);
+        var ne = pos + new Vector3Int(1, 0, 0);
+        var e = pos + new Vector3Int(1, -1, 0);
+        var se = pos + new Vector3Int(0, -1, 0);
+        var s = pos + new Vector3Int(-1, -1, 0);
+        var sw = pos + new Vector3Int(-1, 0, 0);
+        var w = pos + new Vector3Int(-1, 1, 0);
+        var nw = pos + new Vector3Int(0, 1, 0);
+
+        var allTiles = _activeTiles.Concat(_crackingTiles).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        
+        if (allTiles.TryGetValue(n, out var tileN) && allTiles.TryGetValue(s, out var tileS))
+            CreateLink(tileN, tileS);
+        
+        if (allTiles.TryGetValue(ne, out var tileNE) && allTiles.TryGetValue(sw, out var tileSW))
+            CreateLink(tileNE, tileSW);
+            
+        if (allTiles.TryGetValue(e, out var tileE) && allTiles.TryGetValue(w, out var tileW))
+            CreateLink(tileE, tileW);
+            
+        if (allTiles.TryGetValue(se, out var tileSE) && allTiles.TryGetValue(nw, out var tileNW))
+            CreateLink(tileSE, tileNW);
+            
+
+        //TODO generate links at start to store them
+    }
+
+    private void CreateLink(GroundTile a, GroundTile b)
+    {
+        var link = gameObject.AddComponent<OffMeshLink>();
+        link.startTransform = a.transform;
+        link.endTransform = b.transform;
+        link.biDirectional = true;
+        _offMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(a.Cell, b.Cell));
+        
+        // link.UpdatePositions();
+        // _offMeshLinks.Add(link);
+        // link.startTransform = new Vector3(a.x, 0.5f, a.y) - _offset;
+        // link.endPoint = new Vector3(b.x, 0.5f, b.y) - _offset;
+        // link.bidirectional = true;
+        // link.width = 1f;
     }
 }

@@ -18,7 +18,7 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
     [SerializeField] protected bool Grounded;
 
     [SerializeField] protected LayerMask TileMask;
-    [SerializeField] public TilemapManager TilemapManager { private get; set; }
+    public TilemapManager TilemapManager { private get; set; }
     [SerializeField] protected bool AboveTile;
     [SerializeField] private Vector3Int _currentCell;
     [SerializeField] protected bool Fell;
@@ -39,7 +39,7 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
     protected virtual void Update()
     {
         GroundCheck();
-        TileCheck();
+        // TileCheck();
     }
 
     protected virtual void GroundCheck()
@@ -96,11 +96,6 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
         Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
     }
 
-    // public void SetGround(TilemapManager ground)
-    // {
-    //     TilemapManager = ground;
-    // }
-
     public void SetMaterial(Material material)
     {
         MeshRenderer.material = material;
@@ -112,7 +107,6 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
         Destroy(gameObject);
         // Rb.AddForce(Vector3.down, ForceMode.Impulse);
     }
-
     
     public delegate void OnUpdateUI();
     public OnUpdateUI onUpdateUI;
