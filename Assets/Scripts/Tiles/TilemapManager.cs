@@ -16,7 +16,8 @@ public class TilemapManager : MonoBehaviour
 
     public Dictionary<Vector3Int, GroundTile> ActiveTiles { private get; set; } = new();
     private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
-    public Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> OffMeshLinks { private get; set; } = new();
+    // private Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> OffMeshLinks { get; set; } = new();
+    private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> NavMeshLinks { get; set; } = new();
     private Dictionary<int, Vector3Int> _playerLocations = new();
     
     public bool GoldEnabled
@@ -34,17 +35,6 @@ public class TilemapManager : MonoBehaviour
         _tilemapBuilder = GetComponent<TilemapBuilder>();
         _tilemap = GetComponent<Tilemap>();
     }
-
-    // private void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.R))
-    //     {
-    //         foreach (var link in OffMeshLinks.Keys)
-    //         {
-    //             link.UpdatePositions();
-    //         }
-    //     }
-    // }
 
     private void Start()
     {
@@ -140,9 +130,9 @@ public class TilemapManager : MonoBehaviour
 
     private void ClearLinks(Vector3Int pos)
     {
-        var removeList = new List<OffMeshLink>();
+        var removeList = new List<NavMeshLink>();
 
-        foreach (var (key, tiles) in OffMeshLinks)
+        foreach (var (key, tiles) in NavMeshLinks)
         {
             if (tiles.Item1 == pos || tiles.Item2 == pos)
             {
@@ -152,7 +142,7 @@ public class TilemapManager : MonoBehaviour
 
         foreach (var link in removeList)
         {
-            OffMeshLinks.Remove(link);
+            NavMeshLinks.Remove(link);
             Destroy(link);
         }
     }
@@ -169,35 +159,35 @@ public class TilemapManager : MonoBehaviour
         var nw = pos + new Vector3Int(0, 1, 0);
 
         var allTiles = ActiveTiles.Concat(_crackingTiles).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        if (allTiles.ContainsKey(n) && allTiles.ContainsKey(s))
+            CreateNavMeshLink(n, s, 0.2f);
         
-        if (allTiles.TryGetValue(n, out var tileN) && allTiles.TryGetValue(s, out var tileS))
-            CreateLink(tileN, tileS);
+        if (allTiles.ContainsKey(e) && allTiles.ContainsKey(w))
+            CreateNavMeshLink(e, w, 0.2f);
         
-        if (allTiles.TryGetValue(ne, out var tileNE) && allTiles.TryGetValue(sw, out var tileSW))
-            CreateLink(tileNE, tileSW);
+        if (allTiles.ContainsKey(ne) && allTiles.ContainsKey(sw))
+            CreateNavMeshLink(ne, sw, 0.8f);
             
-        if (allTiles.TryGetValue(e, out var tileE) && allTiles.TryGetValue(w, out var tileW))
-            CreateLink(tileE, tileW);
-            
-        if (allTiles.TryGetValue(se, out var tileSE) && allTiles.TryGetValue(nw, out var tileNW))
-            CreateLink(tileSE, tileNW);
+        if (allTiles.ContainsKey(se) && allTiles.ContainsKey(nw))
+            CreateNavMeshLink(se, nw, 0.8f);
     }
     
-    
-    private void CreateLink(GroundTile a, GroundTile b)
+    private void CreateNavMeshLink(Vector3Int cellA, Vector3Int cellB, float width)
     {
-        var link = gameObject.AddComponent<OffMeshLink>();
-        link.startTransform = a.transform;
-        link.endTransform = b.transform;
-        link.biDirectional = true;
-        OffMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(a.Cell, b.Cell));
-        
-        // TODO create two methods for adjacent and diagonal links.
-        // order parameters so that one is lower. calculate offset accordingly 
-        // var link = gameObject.AddComponent<NavMeshLink>();
-        // link.startPoint = a.transform.position;
-        // link.endPoint = b.transform.position;
-        // link.bidirectional = true;
-        // link.width = 0.9f;
+        var link = gameObject.AddComponent<NavMeshLink>();
+
+        var diff = (cellA - cellB) / 2;
+        var offset = new Vector3(diff.x * 0.4f, 0, diff.y * 0.4f);
+        link.startPoint = CellToWorld(cellA) - offset;
+        link.endPoint = CellToWorld(cellB) + offset;
+        link.bidirectional = true;
+        link.width = width;
+        NavMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(cellA, cellB));
+    }
+
+    private Vector3 CellToWorld(Vector3Int cell)
+    {
+        return new Vector3(cell.x + 0.5f, 0.5f, cell.y + 0.5f);
     }
 }

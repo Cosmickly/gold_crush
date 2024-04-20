@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _goldEnabled: 0
-  _tileCrackEnabled: 0
+  _tileCrackEnabled: 1
   _randomTileRate: 1
 --- !u!114 &93001215
 MonoBehaviour:
@@ -332,9 +332,9 @@ MonoBehaviour:
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
   _layouts:
   - {fileID: 692553254407564009, guid: 62ee3a748d5f85a448ebc6adb5890fb9, type: 3}
+  - {fileID: 6217066759393504011, guid: bc587ee06c7873e45b9367d924cdb51b, type: 3}
   - {fileID: 7241570900354425795, guid: ce2141bbc65227240bf70462a5a41e26, type: 3}
-  - {fileID: 7241570900354425795, guid: ce2141bbc65227240bf70462a5a41e26, type: 3}
-  - {fileID: 7241570900354425795, guid: ce2141bbc65227240bf70462a5a41e26, type: 3}
+  - {fileID: 4940518844471938648, guid: dde9688d311de7946a6e0dd8435cc04e, type: 3}
 --- !u!1 &359417994
 GameObject:
   m_ObjectHideFlags: 0

@@ -55,10 +55,7 @@ public class AIPlayer : BasePlayer
 				DesiredDirection = (_path.corners.Last() - transform.position).normalized; break;
 		}
 		
-		if(_agent.isOnOffMeshLink)
-		{
-			StartCoroutine(RigidBodyJump());
-		}
+
 		
 		NavMesh.CalculatePath(transform.position, _target, NavMesh.AllAreas, _path);
 		if (_drawPath) DrawPath();
@@ -67,6 +64,11 @@ public class AIPlayer : BasePlayer
 	protected void FixedUpdate()
 	{
 		Move();
+		
+		if(_agent.isOnOffMeshLink)
+		{
+			StartCoroutine(RigidBodyJump());
+		}
 	}
 
 	private IEnumerator RigidBodyJump()

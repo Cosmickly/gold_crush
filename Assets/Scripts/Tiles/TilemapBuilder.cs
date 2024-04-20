@@ -19,7 +19,7 @@ public class TilemapBuilder : MonoBehaviour
     private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
 
     private Dictionary<Vector3Int, GroundTile> _tiles = new();
-    private Dictionary<OffMeshLink, Vector3Int> _offLinkMeshes = new();
+    // private Dictionary<OffMeshLink, Vector3Int> _offLinkMeshes = new();
 
     [Header("Prefabs")] 
     [SerializeField] private GroundTile _rockTile;
@@ -118,26 +118,26 @@ public class TilemapBuilder : MonoBehaviour
 
     private void SpawnLayouts()
     {
-        Instantiate(_layouts[2], new Vector3(0, 0, 0), Quaternion.identity, transform);
+        // Instantiate(_layouts[0], new Vector3(0, 0, 0), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(0, 0, 14), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(14, 0, 0), Quaternion.identity, transform);
         // Instantiate(_layouts[0], new Vector3(14, 0, 14), Quaternion.identity, transform);
 
         
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     for (int j = 0; j < 3; j++)
-        //     {
-        //         if (i is 0 or 2 && j is 0 or 2)
-        //             Instantiate(_layouts[0], new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
-        //         else
-        //         {
-        //             var layout = _layouts[Random.Range(1, _layouts.Count - 1)];
-        //             Instantiate(layout, new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
-        //         }
-        //
-        //     }
-        // }
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (i is 0 or 2 && j is 0 or 2)
+                    Instantiate(_layouts[0], new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
+                else
+                {
+                    var layout = _layouts[Random.Range(1, _layouts.Count - 1)];
+                    Instantiate(layout, new Vector3(i*7, 0, j*7), Quaternion.identity, transform);
+                }
+        
+            }
+        }
     }
     
     private void FindEmptyTiles()
