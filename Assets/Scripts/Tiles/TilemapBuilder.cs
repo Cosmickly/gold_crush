@@ -77,17 +77,17 @@ public class TilemapBuilder : MonoBehaviour
         {
             for (int j = 0; j < _numOfLayouts.y; j++)
             {
-                GameObject layout = _layouts[0];
+                GameObject layout;
                 var pos = new Vector3Int(i * _layoutSize.x, 0, j * _layoutSize.y);
-                // if (i is 0 or 4 && j is 0 or 4)
-                // {
-                //     layout = _layouts[0];
-                // }
-                // else
-                // {
-                //     layout = _layouts[Random.Range(0, _layouts.Count)];
-                //     // SpawnObstacleLayout(pos, layout); 
-                // }
+                if (i is 0 or 4 && j is 0 or 4)
+                {
+                    layout = _layouts[0];
+                }
+                else
+                {
+                    layout = _layouts[Random.Range(0, _layouts.Count)];
+                    SpawnObstacleLayout(pos, layout); 
+                }
                 Instantiate(layout, pos, Quaternion.identity, transform);
             }
         }

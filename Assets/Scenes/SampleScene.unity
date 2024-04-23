@@ -311,7 +311,25 @@ MonoBehaviour:
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
   _layouts:
   - {fileID: 4749451391229938566, guid: 1d4ef9893b94f614a9d73bfe2ad347a7, type: 3}
-  _obstacleLayouts: []
+  - {fileID: 2735814303693569913, guid: 5e03209b98186a5458a86dc67ca06e03, type: 3}
+  - {fileID: 4158854040318871685, guid: 729ac61ddc8a1c449bdc92589156d29e, type: 3}
+  - {fileID: 5662900556963109290, guid: 0d25365f3f38c8544b213586529a35b5, type: 3}
+  - {fileID: 6848895132987736652, guid: 2e707310e89fa41469e6c86374802545, type: 3}
+  - {fileID: 7460984283358996249, guid: 1111257b6bfd5344e8ae19e68b562d4a, type: 3}
+  - {fileID: 5925825456748985464, guid: badf7e3fa91ddb040a270d6063f5a626, type: 3}
+  - {fileID: 3669472028025985735, guid: 159350d0ab4b3424ba724264a100d5c2, type: 3}
+  - {fileID: 5726446516194054436, guid: 7bfdaa766ad343a4596f9e4f36060cf4, type: 3}
+  _obstacleLayouts:
+  - {fileID: 1249636282614667974, guid: c08a3652d1645214a8c1c9fa292744c3, type: 3}
+  - {fileID: 961970968154353068, guid: 4537d09ac9e4ac047be8d2465fa37c58, type: 3}
+  - {fileID: 768038127578687194, guid: e2945421e21917344aed1d91280139f8, type: 3}
+  - {fileID: 6895756639153772915, guid: 7ce94ae12fcffbb4e9f4e845b557b00d, type: 3}
+  - {fileID: 1850201829465283591, guid: ab3020a8ec935854aa5dda8cdeb8b3a7, type: 3}
+  - {fileID: 7567503940452783126, guid: 83979964fbfd15e4f8e7b1ffa3f1033c, type: 3}
+  - {fileID: 2465510531413420425, guid: 0858c559580f5864799e86f87893e254, type: 3}
+  - {fileID: 6832148668485281293, guid: f1f344aea9ef7744c85f02b3b44ca88a, type: 3}
+  - {fileID: 9932413898837300, guid: 7dadcd6dee8a1104ba993621706302c3, type: 3}
+  - {fileID: 413936611958728705, guid: 4fe6be874f44f0747be991a6fe2e3128, type: 3}
   _layoutSize: {x: 5, y: 5}
   _numOfLayouts: {x: 5, y: 5}
 --- !u!1 &359417994
