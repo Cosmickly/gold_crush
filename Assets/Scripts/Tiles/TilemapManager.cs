@@ -14,11 +14,11 @@ public class TilemapManager : MonoBehaviour
     private TilemapBuilder _tilemapBuilder;
     private Tilemap _tilemap;
 
-    public Dictionary<Vector3Int, GroundTile> ActiveTiles { private get; set; } = new();
+    public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; private set; } = new();
     private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
     // private Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> OffMeshLinks { get; set; } = new();
-    private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> NavMeshLinks { get; set; } = new();
-    private Dictionary<int, Vector3Int> _playerLocations = new();
+    private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> NavMeshLinks = new();
+    public Dictionary<int, Vector3Int> PlayerLocations { get; private set; } = new();
     
     public bool GoldEnabled
     {
@@ -87,26 +87,18 @@ public class TilemapManager : MonoBehaviour
         CrackTile(RandomTile());
     }
     
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!other.gameObject.TryGetComponent(out IEntity entity)) return;
-        entity.Fall();
-        if (other.gameObject.TryGetComponent(out BasePlayer player))
-        {
-            ExitedTile(_playerLocations[player.ID]);
-        }
-    }
+
 
     // TODO: find a better way to handle tile checks
     public void UpdatePlayerLocation(int id, Vector3Int pos)
     {
-        if (_playerLocations.TryGetValue(id, out var cell))
+        if (PlayerLocations.TryGetValue(id, out var cell))
         {
             ExitedTile(cell);
         }
         
         EnteredTile(pos);
-        _playerLocations[id] = pos;
+        PlayerLocations[id] = pos;
     }
 
     private void EnteredTile(Vector3Int pos)
@@ -118,9 +110,14 @@ public class TilemapManager : MonoBehaviour
 
     private void ExitedTile(Vector3Int pos)
     {
-        CrackTile(pos);
+        // CrackTile(pos);
         if (_crackingTiles.TryGetValue(pos, out var tile))
             tile.PlayerOnMe = false;
+    }
+
+    public void PlayerFell(BasePlayer player)
+    {
+        ExitedTile(PlayerLocations[player.ID]);
     }
 
     // public bool HasTile(Vector3Int pos)

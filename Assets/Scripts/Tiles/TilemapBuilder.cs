@@ -13,13 +13,10 @@ public class TilemapBuilder : MonoBehaviour
     private TilemapManager _tilemapManager;
     private Tilemap _tilemap;
     private NavMeshSurface _navMeshSurface;
-    private BoxCollider _boundary;
+    [SerializeField] private Boundary _boundary;
     
     private Vector2Int _tilemapSize;
     private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
-
-    private Dictionary<Vector3Int, GroundTile> _tiles = new();
-    // private Dictionary<OffMeshLink, Vector3Int> _offLinkMeshes = new();
 
     [Header("Prefabs")] 
     [SerializeField] private GroundTile _rockTile;
@@ -33,7 +30,7 @@ public class TilemapBuilder : MonoBehaviour
         _tilemapManager = GetComponent<TilemapManager>();
         _tilemap = GetComponent<Tilemap>();
         _navMeshSurface = GetComponent<NavMeshSurface>();
-        _boundary = GetComponent<BoxCollider>();
+        _boundary.TilemapManager = _tilemapManager;
     }
 
     public void Build()
@@ -41,12 +38,10 @@ public class TilemapBuilder : MonoBehaviour
         // BuildTiles();
         SpawnLayouts();
         GetTilesFromChildren();
-        _tilemapManager.ActiveTiles = _tiles;
         
         FindEmptyTiles();
-        
         _navMeshSurface.BuildNavMesh();
-        BuildBoundary();
+        _boundary.BuildBoundary(_tilemapSize);
     }
     
     private void BuildTiles()
@@ -60,7 +55,7 @@ public class TilemapBuilder : MonoBehaviour
                 var tile = Instantiate(tilePrefab, pos, Quaternion.identity, transform);
                 tile.Cell = _tilemap.WorldToCell(pos);
                 tile.TilemapManager = _tilemapManager;
-                _tiles.Add(tile.Cell, tile);
+                _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
                 
                 SpawnTopLayerObject(pos + _topLayerOffset);
             }
@@ -92,7 +87,7 @@ public class TilemapBuilder : MonoBehaviour
             var pos = tile.transform.position;
             tile.Cell = _tilemap.WorldToCell(pos);
             tile.TilemapManager = _tilemapManager;
-            _tiles.Add(tile.Cell, tile);
+            _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
 
             if (tile.Cell.x > _tilemapSize.x) _tilemapSize.x = tile.Cell.x;
             if (tile.Cell.y > _tilemapSize.y) _tilemapSize.y = tile.Cell.y;
@@ -101,19 +96,6 @@ public class TilemapBuilder : MonoBehaviour
         }
 
         _tilemapSize += new Vector2Int(1, 1);
-    }
-    
-    private void BuildBoundary()
-    {
-        // if (_tilemapManager._activeTiles.Count <=0) return;
-        // var orderedKeys = _tilemapManager._activeTiles.Keys.OrderBy(k => k.magnitude).ToList();
-        // var min = orderedKeys.First();
-        // var max = orderedKeys.Last();
-        
-        if (!_boundary) return;
-        var size = new Vector3(_tilemapSize.x, 1, _tilemapSize.y);
-        _boundary.size = size;
-        _boundary.center = new Vector3(size.x/2, -0.5f, size.z/2);
     }
 
     private void SpawnLayouts()
@@ -147,7 +129,7 @@ public class TilemapBuilder : MonoBehaviour
             for (int j = 0; j < _tilemapSize.y; j++)
             {
                 var pos = new Vector3Int(i, j, 0);
-                if (!_tiles.ContainsKey(pos))
+                if (!_tilemapManager.ActiveTiles.ContainsKey(pos))
                 {
                     _tilemapManager.GenerateNewLinks(pos);
                 }
