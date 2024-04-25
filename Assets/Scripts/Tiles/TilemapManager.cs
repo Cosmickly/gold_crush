@@ -183,7 +183,7 @@ public class TilemapManager : MonoBehaviour
         NavMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(cellA, cellB));
     }
 
-    private Vector3 CellToWorld(Vector3Int cell)
+    public Vector3 CellToWorld(Vector3Int cell)
     {
         return new Vector3(cell.x + 0.5f, 0.5f, cell.y + 0.5f);
     }

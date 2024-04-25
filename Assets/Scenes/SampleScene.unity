@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _goldEnabled: 0
-  _tileCrackEnabled: 0
+  _tileCrackEnabled: 1
   _randomTileRate: 1
 --- !u!114 &93001215
 MonoBehaviour:
@@ -305,7 +305,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundary: {fileID: 917700853}
-  _rockTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
+  _iceTileRate: 0.3
+  _obstacleRemoveRate: 0.554
   _iceTile: {fileID: 6033928661518195644, guid: 145982e1bf55fc842b1228e6269b5ab8, type: 3}
   _goldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
@@ -363,8 +364,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
-  _numOfPlayers: 1
-  _totalPlayers: 1
+  _numOfPlayers: 2
+  _totalPlayers: 3
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}

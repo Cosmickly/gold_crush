@@ -12,14 +12,18 @@ public class TilemapBuilder : MonoBehaviour
 {
     private TilemapManager _tilemapManager;
     private Tilemap _tilemap;
-    private NavMeshSurface _navMeshSurface;
-    [SerializeField] private Boundary _boundary;
-    
     private Vector2Int _tilemapSize;
+    private NavMeshSurface _navMeshSurface;
+
+    private Dictionary<Vector3Int, RockObstacle> _obstacles = new();
     private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
+    
+    [SerializeField] private Boundary _boundary;
+    [SerializeField] [Range(0, 1)] private float _iceTileRate;
+    [SerializeField] [Range(0, 1)] private float _obstacleRemoveRate;
 
     [Header("Prefabs")] 
-    [SerializeField] private GroundTile _rockTile;
+    // [SerializeField] private GroundTile _rockTile;
     [SerializeField] private GroundTile _iceTile;
     [SerializeField] private GoldPiece _goldPiecePrefab;
     [SerializeField] private RockObstacle _rockObstaclePrefab;
@@ -41,7 +45,9 @@ public class TilemapBuilder : MonoBehaviour
         // BuildTiles();
         SpawnLayouts();
         GetTilesFromChildren();
-        
+        GetObstaclesFromChildren();
+        SpawnIceTiles();
+        EditObstacles();
         FindEmptyTiles();
         _navMeshSurface.BuildNavMesh();
         _boundary.BuildBoundary(_tilemapSize);
@@ -66,6 +72,15 @@ public class TilemapBuilder : MonoBehaviour
         _tilemapSize += new Vector2Int(1, 1);
     }
 
+    private void GetObstaclesFromChildren()
+    {
+        foreach (var rockObstacle in GetComponentsInChildren<RockObstacle>())
+        {
+            rockObstacle.Cell = _tilemap.WorldToCell(rockObstacle.transform.position);
+            _obstacles.Add(rockObstacle.Cell, rockObstacle);
+        }
+    }
+    
     private void SpawnLayouts()
     {
         // Instantiate(_layouts[0], new Vector3(0, 0, 0), Quaternion.identity, transform);
@@ -77,22 +92,18 @@ public class TilemapBuilder : MonoBehaviour
         {
             for (int j = 0; j < _numOfLayouts.y; j++)
             {
-                GameObject layout;
                 var pos = new Vector3Int(i * _layoutSize.x, 0, j * _layoutSize.y);
-                if (i is 0 or 4 && j is 0 or 4)
+                GameObject layout = _layouts[0];
+                if (i is not 0 and not 4 || j is not 0 and not 4)
                 {
-                    layout = _layouts[0];
-                }
-                else
-                {
-                    layout = _layouts[Random.Range(0, _layouts.Count)];
+                    // layout = _layouts[Random.Range(0, _layouts.Count)];
                     SpawnObstacleLayout(pos, layout); 
                 }
                 Instantiate(layout, pos, Quaternion.identity, transform);
             }
         }
     }
-
+    
     private void SpawnObstacleLayout(Vector3Int pos, GameObject layout)
     {
         var tiles = layout.GetComponentsInChildren<GroundTile>();
@@ -120,6 +131,60 @@ public class TilemapBuilder : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void SpawnIceTiles()
+    {
+        var offsetX = Random.Range(0,100);
+        var offsetY = Random.Range(0,100);
+        for (int i = 0; i < _tilemapSize.x; i++)
+        {
+            for (int j = 0; j < _tilemapSize.y; j++)
+            {
+                var perlin = Mathf.PerlinNoise(i * 0.1f + offsetX, j * 0.1f + offsetY);
+                
+                if (perlin > _iceTileRate) continue;
+                var cell = new Vector3Int(i, j, 0);
+                
+                if (!_tilemapManager.ActiveTiles.TryGetValue(cell, out var tile)) continue;
+                Destroy(tile.gameObject);
+                var iceTile = Instantiate(_iceTile, new Vector3(cell.x, 0, cell.y), Quaternion.identity, transform);
+                iceTile.Cell = cell;
+                iceTile.TilemapManager = _tilemapManager;
+                _tilemapManager.ActiveTiles[cell] = iceTile;
+            }
+        }
+    }
+
+    private void EditObstacles()
+    {
+        var offsetX = Random.Range(0,100);
+        var offsetY = Random.Range(0,100);
+
+        for (int i = 0; i < _tilemapSize.x; i++)
+        {
+            for (int j = 0; j < _tilemapSize.y; j++)
+            {
+                var perlin = Mathf.PerlinNoise(i * 0.1f + offsetX, j * 0.1f + offsetY);
+                
+                if (perlin > _obstacleRemoveRate) continue;
+                var cell = new Vector3Int(i, j, 0);
+
+                if (!_obstacles.TryGetValue(cell, out var obstacle)) continue;
+                Destroy(obstacle.gameObject);
+                _obstacles.Remove(cell);
+            }
+        }
+        // var keys = _obstacles.Keys;
+        // for (int i = 0; i < keys.Count; i++)
+        // {
+        //     var pos = keys.ElementAt(i);
+        //     var perlin = Mathf.PerlinNoise(pos.x * 0.5f + offsetX, pos.y * 0.5f + offsetY); 
+        //     if (perlin < 0.5f)
+        //     {
+
+        //     }
+        // }
     }
     
     // private void BuildTiles()
