@@ -304,9 +304,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91bff0f035f64a54094fd00bc2a15994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tilemapSize: {x: 25, y: 25}
   _boundary: {fileID: 917700853}
-  _iceTileRate: 0.3
-  _obstacleRemoveRate: 0.554
+  _iceTileRate: 33
+  _obstacleFillRate: 15
+  _layoutFillRate: 70
+  _smoothMapRate: 3
+  _rockTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
   _iceTile: {fileID: 6033928661518195644, guid: 145982e1bf55fc842b1228e6269b5ab8, type: 3}
   _goldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
@@ -321,16 +325,9 @@ MonoBehaviour:
   - {fileID: 3669472028025985735, guid: 159350d0ab4b3424ba724264a100d5c2, type: 3}
   - {fileID: 5726446516194054436, guid: 7bfdaa766ad343a4596f9e4f36060cf4, type: 3}
   _obstacleLayouts:
-  - {fileID: 1249636282614667974, guid: c08a3652d1645214a8c1c9fa292744c3, type: 3}
-  - {fileID: 961970968154353068, guid: 4537d09ac9e4ac047be8d2465fa37c58, type: 3}
-  - {fileID: 768038127578687194, guid: e2945421e21917344aed1d91280139f8, type: 3}
-  - {fileID: 6895756639153772915, guid: 7ce94ae12fcffbb4e9f4e845b557b00d, type: 3}
-  - {fileID: 1850201829465283591, guid: ab3020a8ec935854aa5dda8cdeb8b3a7, type: 3}
   - {fileID: 7567503940452783126, guid: 83979964fbfd15e4f8e7b1ffa3f1033c, type: 3}
-  - {fileID: 2465510531413420425, guid: 0858c559580f5864799e86f87893e254, type: 3}
   - {fileID: 6832148668485281293, guid: f1f344aea9ef7744c85f02b3b44ca88a, type: 3}
-  - {fileID: 9932413898837300, guid: 7dadcd6dee8a1104ba993621706302c3, type: 3}
-  - {fileID: 413936611958728705, guid: 4fe6be874f44f0747be991a6fe2e3128, type: 3}
+  - {fileID: 8222930602900946373, guid: e4d637a084d3cb94bae9a7dbcc4890b7, type: 3}
   _layoutSize: {x: 5, y: 5}
   _numOfLayouts: {x: 5, y: 5}
 --- !u!1 &359417994
@@ -364,8 +361,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
-  _numOfPlayers: 2
-  _totalPlayers: 3
+  _numOfHumans: 1
+  _totalPlayers: 1
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}

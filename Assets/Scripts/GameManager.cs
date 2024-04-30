@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _aiPlayer;
-    [SerializeField] [Range(0, 4)] private int _numOfPlayers; 
+    [SerializeField] [Range(0, 4)] private int _numOfHumans; 
     [SerializeField] [Range(0, 4)] private int _totalPlayers; 
     
     private Dictionary<int, BasePlayer> _players = new ();
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < _totalPlayers; i++)
         {
-            _players.Add(i, i < _numOfPlayers ? CreatePlayer(i) : CreateAIPlayer(i));
+            _players.Add(i, i < _numOfHumans ? CreatePlayer(i) : CreateAIPlayer(i));
         }
 
         _scoreboard.Players = _players.Values.ToList();
