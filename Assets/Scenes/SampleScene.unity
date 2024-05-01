@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -306,30 +306,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tilemapSize: {x: 25, y: 25}
   _boundary: {fileID: 917700853}
-  _iceTileRate: 33
-  _obstacleFillRate: 15
-  _layoutFillRate: 70
-  _smoothMapRate: 3
+  _iceTileRate: 45
+  _iceSmoothRate: 3
+  _obstacleFillRate: 10
+  _layoutFillRate: 75
+  _obstacleSmoothRate: 3
   _rockTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
   _iceTile: {fileID: 6033928661518195644, guid: 145982e1bf55fc842b1228e6269b5ab8, type: 3}
   _goldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
-  _layouts:
-  - {fileID: 4749451391229938566, guid: 1d4ef9893b94f614a9d73bfe2ad347a7, type: 3}
-  - {fileID: 2735814303693569913, guid: 5e03209b98186a5458a86dc67ca06e03, type: 3}
-  - {fileID: 4158854040318871685, guid: 729ac61ddc8a1c449bdc92589156d29e, type: 3}
-  - {fileID: 5662900556963109290, guid: 0d25365f3f38c8544b213586529a35b5, type: 3}
-  - {fileID: 6848895132987736652, guid: 2e707310e89fa41469e6c86374802545, type: 3}
-  - {fileID: 7460984283358996249, guid: 1111257b6bfd5344e8ae19e68b562d4a, type: 3}
-  - {fileID: 5925825456748985464, guid: badf7e3fa91ddb040a270d6063f5a626, type: 3}
-  - {fileID: 3669472028025985735, guid: 159350d0ab4b3424ba724264a100d5c2, type: 3}
-  - {fileID: 5726446516194054436, guid: 7bfdaa766ad343a4596f9e4f36060cf4, type: 3}
-  _obstacleLayouts:
-  - {fileID: 7567503940452783126, guid: 83979964fbfd15e4f8e7b1ffa3f1033c, type: 3}
-  - {fileID: 6832148668485281293, guid: f1f344aea9ef7744c85f02b3b44ca88a, type: 3}
-  - {fileID: 8222930602900946373, guid: e4d637a084d3cb94bae9a7dbcc4890b7, type: 3}
-  _layoutSize: {x: 5, y: 5}
-  _numOfLayouts: {x: 5, y: 5}
 --- !u!1 &359417994
 GameObject:
   m_ObjectHideFlags: 0
