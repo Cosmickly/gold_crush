@@ -15,6 +15,9 @@ public class TilemapBuilder : MonoBehaviour
     private Random _random = new();
     private TilemapManager _tilemapManager;
     private Tilemap _tilemap;
+    
+    private Dictionary<Vector3Int, GroundTile> _allTiles = new();
+    
     [SerializeField] private Vector2Int _tilemapSize;
     private NavMeshSurface _navMeshSurface;
 
@@ -57,7 +60,8 @@ public class TilemapBuilder : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             ClearObstacles();
-            CellularAutomataObstacles();
+            _tilemapManager.ClearAllTiles();
+            Build();
         }
     }
 
@@ -73,7 +77,7 @@ public class TilemapBuilder : MonoBehaviour
         // FindEmptyTiles();
         
         CellularAutomataGround();
-        // CellularAutomataObstacles();
+        CellularAutomataObstacles();
         
         _navMeshSurface.BuildNavMesh();
         _boundary.BuildBoundary(_tilemapSize);

@@ -87,7 +87,21 @@ public class TilemapManager : MonoBehaviour
         CrackTile(RandomTile());
     }
     
+	public void ClearAllTiles()
+    {
+        foreach (var tile in ActiveTiles)
+        {
+            Destroy(tile.Value.gameObject);
+        }
 
+		foreach (var tile in _crackingTiles)
+		{
+            Destroy(tile.Value.gameObject);
+        }
+        _crackingTiles.Clear();
+        ActiveTiles.Clear();
+		ClearLinks(Vector3Int.zero);
+    }
 
     // TODO: find a better way to handle tile checks
     public void UpdatePlayerLocation(int id, Vector3Int pos)
