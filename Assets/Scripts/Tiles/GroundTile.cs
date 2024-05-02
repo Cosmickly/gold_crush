@@ -11,6 +11,7 @@ namespace Tiles
         
         private BoxCollider _collider;
         private MeshRenderer _meshRenderer;
+        private GameObject _meshObject;
         private NavMeshObstacle _navMeshObstacle;
     
         public bool Cracking { get; set; }
@@ -19,12 +20,19 @@ namespace Tiles
         [SerializeField] private float _crackTime;
         [SerializeField] private float _crackMultiplier;
         
+        [Header("Shake Parameters")]
+        [SerializeField] private float _amplitude;
+        [SerializeField] private float _frequency;
+        
+        [Header("Ice Parameters")]
         public bool Ice;
         [SerializeField] private Material _defaultMaterial;
         [SerializeField] private Material _iceMaterial;
         [SerializeField] private float _defaultSlipperiness;
         [SerializeField] private float _iceSlipperiness;
         public float Slipperiness => Ice ? _iceSlipperiness : _defaultSlipperiness;
+
+        private Color _initialColor;
 
         public bool PlayerOnMe
         {
@@ -37,6 +45,8 @@ namespace Tiles
         {
             _collider = GetComponent<BoxCollider>();
             _meshRenderer = GetComponentInChildren<MeshRenderer>();
+            _meshObject = _meshRenderer.gameObject;
+            _initialColor = _meshRenderer.material.color;
             _navMeshObstacle = GetComponentInChildren<NavMeshObstacle>();
         }
 
@@ -54,8 +64,11 @@ namespace Tiles
             }
 
             _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
-            var currentColor = _meshRenderer.material.color;
-            _meshRenderer.material.color = Color.Lerp(currentColor, Color.black, _crackTimer / _crackTime);
+            var crackRatio = _crackTimer / _crackTime;
+            _meshRenderer.material.color = Color.Lerp(_initialColor, Color.black, crackRatio);
+            
+            var newY = Mathf.Sin(Time.fixedTime * Mathf.PI * _frequency * crackRatio) * (_amplitude * crackRatio);
+            _meshObject.transform.localPosition = new Vector3(0, newY, 0);
         }
 
         private void Break()
@@ -70,6 +83,7 @@ namespace Tiles
         {
             Ice = togglIce;
             _meshRenderer.material = Ice ? _iceMaterial : _defaultMaterial;
+            _initialColor = _meshRenderer.material.color;
         }
     }
 }

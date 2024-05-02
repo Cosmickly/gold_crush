@@ -201,6 +201,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _crackTime: 10
   _crackMultiplier: 4
+  _amplitude: 0.05
+  _frequency: 4
   Ice: 0
   _defaultMaterial: {fileID: 2100000, guid: bcde93b78cda70447809f52e0e7daddc, type: 2}
   _iceMaterial: {fileID: 2100000, guid: f3fd852e3640682429b90f2f4f86f106, type: 2}

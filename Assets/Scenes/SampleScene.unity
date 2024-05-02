@@ -260,7 +260,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _goldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldEnabled: 0
-  _tileCrackEnabled: 0
+  _tileCrackEnabled: 1
   _randomTileRate: 1
 --- !u!114 &93001215
 MonoBehaviour:
@@ -346,7 +346,7 @@ MonoBehaviour:
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
   _numOfHumans: 1
-  _totalPlayers: 1
+  _totalPlayers: 0
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}
