@@ -11,7 +11,8 @@ namespace Entities
 
         public void Fall()
         {
-            Destroy(gameObject);
+            if (TilemapManager.RemoveObstacle(Cell)) 
+                Destroy(gameObject); 
         }
         
         public void Hit()

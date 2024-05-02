@@ -67,4 +67,29 @@ public class GameManager : MonoBehaviour
         
         return player;
     }
+
+    public void PlayerFell(BasePlayer player)
+    {
+        player.gameObject.SetActive(false);
+        _tilemapManager.PlayerFell(player);
+
+        bool allFell = _players.Values.All(p => p.Fell);
+
+        if (allFell)
+        {
+            Debug.Log("Reset level");
+            StartCoroutine(_tilemapManager.ResetLevel());
+        }
+    }
+
+    public void ResetPlayers()
+    {
+        foreach (var player in _players)
+        {
+            BasePlayer basePlayer = player.Value;
+            basePlayer.transform.position = _spawnPoints[player.Key].position;
+            basePlayer.Fell = false;
+            basePlayer.gameObject.SetActive(true);
+        }
+    }
 }

@@ -6,7 +6,8 @@ namespace Tiles
 {
     public class Boundary : MonoBehaviour
     {
-        public TilemapManager TilemapManager { private get; set; }
+        // public TilemapManager TilemapManager { private get; set; }
+        [SerializeField] private GameManager _gameManager;
         private BoxCollider[] _boundaryColliders;
 
         private void Awake()
@@ -20,7 +21,7 @@ namespace Tiles
             entity.Fall();
             if (other.gameObject.TryGetComponent(out BasePlayer player))
             {
-                TilemapManager.PlayerFell(player); //TODO should message game manager -> tilemap manager & scoreboard
+                _gameManager.PlayerFell(player);
             }
         }
 

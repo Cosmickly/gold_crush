@@ -34,8 +34,11 @@ namespace Entities
 
         public void Collect(BasePlayer player)
         {
-            player.AddGold();
-            Destroy(gameObject);
+            if (TilemapManager.RemoveGoldPiece(this))
+            {
+                player.AddGold();
+                Destroy(gameObject);
+            }
         }
 
         private void OnTriggerEnter(Collider other)

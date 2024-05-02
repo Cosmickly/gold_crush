@@ -12,7 +12,6 @@ namespace Players
         protected Animator Animator;
         private int _pickaxeAnimationID;
 
-
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
@@ -29,7 +28,7 @@ namespace Players
         [SerializeField] protected bool AboveTile;
         [SerializeField] protected bool Grounded;
         [SerializeField] private Vector3Int _currentCell;
-        [SerializeField] protected bool Fell;
+        [SerializeField] public bool Fell;
         
         public int ID { get; set; }
 
@@ -127,7 +126,6 @@ namespace Players
         protected virtual void SwingPickaxe()
         {
             if (!Grounded || PickaxeTimer > 0) return;
-            Debug.Log("Swing Pickaxe");
             PickaxeTimer = PickaxeCooldown;
             RaycastHit[] hits = new RaycastHit[10];
             int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, hits, transform.rotation, 1f);
@@ -166,8 +164,6 @@ namespace Players
         public void Fall()
         {
             Fell = true;
-            Destroy(gameObject);
-            // Rb.AddForce(Vector3.down, ForceMode.Impulse);
         }
 
         protected Vector3 GetRotatedVector(Vector3 vector)

@@ -41,7 +41,6 @@ namespace Tiles
         {
             _tilemapManager = GetComponent<TilemapManager>();
             _navMeshSurface = GetComponent<NavMeshSurface>();
-            _boundary.TilemapManager = _tilemapManager;
         }
 
         public void Build()

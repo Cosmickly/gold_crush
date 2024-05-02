@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Entities;
@@ -12,6 +13,7 @@ namespace Tiles
 {
     public class TilemapManager : MonoBehaviour
     {
+        [SerializeField] private GameManager _gameManager;
         private TilemapBuilder _tilemapBuilder;
         private Tilemap _tilemap;
         private HashSet<Vector3Int> _allTilePositions; 
@@ -19,7 +21,7 @@ namespace Tiles
         public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; } = new();
         private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
         public Dictionary<Vector3Int, RockObstacle> Obstacles { get; } = new();
-    
+        private List<GoldPiece> _goldPieces = new();
         private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> _navMeshLinks = new();
 
         private Dictionary<int, Vector3Int> _playerLocations = new();
@@ -50,15 +52,32 @@ namespace Tiles
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
-                ClearAllTiles();
-                ClearObstacles();
-                _tilemapBuilder.Build();
+                ManualResetLevel();
             }
         }
     
         /*
          * TILES
          */
+
+        public IEnumerator ResetLevel()
+        {
+            ClearAllTiles();
+            CancelInvoke(nameof(SpawnRandomCoin));
+            CancelInvoke(nameof(CrackRandomTile));
+            yield return new WaitForSeconds(2f);
+            _tilemapBuilder.Build();
+            _gameManager.ResetPlayers();
+            InvokeRepeating(nameof(SpawnRandomCoin), 1f, 1f);
+            InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
+        }
+
+        private void ManualResetLevel()
+        {
+            ClearAllTiles();
+            ClearObstacles();
+            _tilemapBuilder.Build();
+        }
 
         private void ClearAllTiles()
         {
@@ -75,8 +94,6 @@ namespace Tiles
             ActiveTiles.Clear();
             ClearLinksToCell(Vector3Int.zero);
         }
-    
-
     
         private void CrackTile(Vector3Int pos)
         {
@@ -135,7 +152,7 @@ namespace Tiles
         }
     
         /*
-         * COINS
+         * GOLD PIECES
          */
 
         private void SpawnRandomCoin()
@@ -147,8 +164,25 @@ namespace Tiles
         {
             if (_goldEnabled)
             {
-                Instantiate(_goldPiecePrefab, pos + new Vector3Int(0, 1, 0), Quaternion.identity, transform);
+                var goldPiece = Instantiate(_goldPiecePrefab, pos + new Vector3Int(0, 1, 0), Quaternion.identity, transform);
+                goldPiece.TilemapManager = this;
+                _goldPieces.Add(goldPiece);
             }
+        }
+
+        public bool RemoveGoldPiece(GoldPiece goldPiece)
+        {
+            return _goldPieces.Remove(goldPiece);
+        }
+
+        private void ClearAllGoldPieces()
+        {
+            for (int i = 0; i < _goldPieces.Count; i++)
+            {
+                Destroy(_goldPieces[i]);
+            }
+            
+            _goldPieces.Clear();
         }
     
         /*
