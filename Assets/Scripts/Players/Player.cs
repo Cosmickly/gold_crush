@@ -7,11 +7,14 @@ namespace Players
     public class Player : BasePlayer
     {
         private bool _desiredJump;
+        private bool _desiredPickaxe;
+
     
         [Header("Input")]
         private InputActionAsset _actionAsset;
         private InputAction _moveAction;
         private InputAction _jumpAction;
+        private InputAction _pickaxeAction;
     
     
         private void OnEnable()
@@ -30,6 +33,7 @@ namespace Players
             _actionAsset = GetComponent<PlayerInput>().actions;
             _moveAction = _actionAsset.FindActionMap("Gameplay").FindAction("Move");
             _jumpAction = _actionAsset.FindActionMap("Gameplay").FindAction("Jump");
+            _pickaxeAction = _actionAsset.FindActionMap("Gameplay").FindAction("Pickaxe");
 
             // TODO replace with actual pause
             // _actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
@@ -48,6 +52,7 @@ namespace Players
             DesiredDirection = GetRotatedVector(DesiredDirection).normalized;
         
             _desiredJump = _jumpAction.IsPressed();
+            _desiredPickaxe = _pickaxeAction.IsPressed();
         }
 
         protected void FixedUpdate()
@@ -55,6 +60,8 @@ namespace Players
             Move();
             if(Grounded && _desiredJump) Jump();
             Rotate();
+
+            if (_desiredPickaxe && PickaxeTimer <= 0) SwingPickaxe();
         }
 
         protected void SpeedControl()

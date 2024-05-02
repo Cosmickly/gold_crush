@@ -57,8 +57,8 @@ namespace Tiles
         }
     
         /*
-     * TILES
-     */
+         * TILES
+         */
 
         private void ClearAllTiles()
         {
@@ -73,14 +73,10 @@ namespace Tiles
             }
             _crackingTiles.Clear();
             ActiveTiles.Clear();
-            ClearLinks(Vector3Int.zero);
+            ClearLinksToCell(Vector3Int.zero);
         }
     
-        private void ClearObstacles()
-        {
-            foreach (var obstacle in Obstacles) Destroy(obstacle.Value.gameObject);
-            Obstacles.Clear();
-        }
+
     
         private void CrackTile(Vector3Int pos)
         {
@@ -95,7 +91,7 @@ namespace Tiles
         {
             if (_crackingTiles.ContainsKey(pos))
             {
-                ClearLinks(pos);
+                ClearLinksToCell(pos);
                 GenerateNewLinks(pos);
                 _crackingTiles.Remove(pos);
                 return true;
@@ -121,10 +117,26 @@ namespace Tiles
             }
             CrackTile(RandomTile());
         }
+        
+        /*
+         * OBSTACLES
+         */
+        
+        public bool RemoveObstacle(Vector3Int pos)
+        {
+            return Obstacles.Remove(pos, out RockObstacle obstacle);
+
+        }
+        
+        private void ClearObstacles()
+        {
+            foreach (var obstacle in Obstacles) Destroy(obstacle.Value.gameObject);
+            Obstacles.Clear();
+        }
     
         /*
-     * COINS
-     */
+         * COINS
+         */
 
         private void SpawnRandomCoin()
         {
@@ -140,8 +152,8 @@ namespace Tiles
         }
     
         /*
-     * PLAYER LOCATIONS
-     */
+         * PLAYER LOCATIONS
+         */
 
         // TODO: find a better way to handle tile checks
         public void UpdatePlayerLocation(int id, Vector3Int pos)
@@ -175,10 +187,10 @@ namespace Tiles
         }
     
         /*
-     * NAVMESH LINKS
-     */
+         * NAVMESH LINKS
+         */
 
-        private void ClearLinks(Vector3Int pos)
+        private void ClearLinksToCell(Vector3Int pos)
         {
             var removeList = new List<NavMeshLink>();
 
@@ -237,8 +249,8 @@ namespace Tiles
         }
     
         /*
-     * HELPER
-     */
+         * HELPER
+         */
 
         public Vector3 CellToWorld(Vector3Int cell)
         {

@@ -14,6 +14,8 @@ namespace Players
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
         [SerializeField] private float _smoothTime;
+        [SerializeField] protected float PickaxeCooldown = 0.5f;
+        protected float PickaxeTimer;
 
         protected Vector3 DesiredDirection;
         private Vector3 _velocityRef = Vector3.zero;
@@ -25,9 +27,7 @@ namespace Players
         [SerializeField] protected bool Grounded;
         [SerializeField] private Vector3Int _currentCell;
         [SerializeField] protected bool Fell;
-
-        // [SerializeField] private Collider _tileCheckCollider;
-    
+        
         public int ID { get; set; }
 
         public int NumOfGold { get; private set; }
@@ -43,11 +43,13 @@ namespace Players
         {
             GroundCheck();
             TileCheck();
+            
+            if (PickaxeTimer > 0) PickaxeTimer -= Time.deltaTime;
         }
     
         /*
-     * CHECKS
-     */
+         * CHECKS
+         */
 
         protected virtual void GroundCheck()
         {
@@ -87,8 +89,8 @@ namespace Players
         }
     
         /*
-     * MOVEMENT
-     */
+         * MOVEMENT
+         */
 
         protected virtual void Move()
         {
@@ -114,18 +116,27 @@ namespace Players
         }
     
         /*
-     * ABILITIES
-     */
+         * ABILITIES
+         */
 
         protected virtual void SwingPickaxe()
         {
-            Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.forward, out var hit);
-        
+            Debug.Log("Swing Pickaxe");
+            PickaxeTimer = PickaxeCooldown;
+            RaycastHit[] hits = new RaycastHit[10];
+            int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, hits, transform.rotation, 1f);
+            for (int i=0; i<numFound; i++)
+            {
+                if (hits[i].transform.TryGetComponent(out IHittable hittable))
+                {
+                    hittable.Hit();
+                }
+            }
         }
     
         /*
-     * EVENTS
-     */
+         * EVENTS
+         */
     
         public delegate void OnUpdateUI();
         public OnUpdateUI onUpdateUI;
@@ -137,8 +148,8 @@ namespace Players
         }
     
         /*
-     * MISC
-     */
+         * MISC
+         */
 
         public void SetMaterial(Material material)
         {

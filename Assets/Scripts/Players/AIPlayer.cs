@@ -39,6 +39,7 @@ namespace Players
 			base.Update();
 		
 			_target = GetNearestGoldPiece();
+			if (Rb.velocity.magnitude < 0.1f && _target != transform.position) SwingPickaxe();
 
 			_agent.enabled = Grounded;
 		
@@ -59,8 +60,7 @@ namespace Players
 					DesiredDirection = (_path.corners.Last() - transform.position).normalized; break;
 			}
 		
-
-		
+			
 			NavMesh.CalculatePath(transform.position, _target, NavMesh.AllAreas, _path);
 			if (_drawPath) DrawPath();
 		}
@@ -139,7 +139,7 @@ namespace Players
 		private Vector3 GetNearestGoldPiece()
 		{
 			float closestDistance = float.MaxValue;
-			Vector3 closestPosition = transform.position;
+			Vector3 closestPosition = _target;
 		
 			int maxSearch = 10;
 			Collider[] hits = new Collider[maxSearch];

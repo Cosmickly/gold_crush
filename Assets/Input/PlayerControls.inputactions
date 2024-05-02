@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Pickaxe",
+                    "type": "Button",
+                    "id": "c58baa15-d0c1-4b47-bcb5-ac4452c87957",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -306,6 +315,17 @@
                     "processors": "",
                     "groups": "Player0",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4fc1ff15-e8b1-4d1e-a67d-0c6cdb04964d",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player0",
+                    "action": "Pickaxe",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
