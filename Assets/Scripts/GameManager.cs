@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Players;
 using Tiles;
+using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -25,6 +27,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TilemapManager _tilemapManager;
     [SerializeField] private Scoreboard _scoreboard;
 
+    [SerializeField] private FinalScreen _finalScreen;
+    [SerializeField] private TextMeshProUGUI _levelText;
+    [SerializeField] [Range(1, 100)] private int _maxLevel;
+    private int _currentLevel = 1;
+
     private void Awake()
     {
         for (int i = 0; i < _totalPlayers; i++)
@@ -33,6 +40,13 @@ public class GameManager : MonoBehaviour
         }
 
         _scoreboard.Players = _players.Values.ToList();
+        _levelText.text = "Level " + _currentLevel;
+        
+    }
+
+    private void Start()
+    {
+        _finalScreen.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -77,9 +91,23 @@ public class GameManager : MonoBehaviour
 
         if (allFell)
         {
-            Debug.Log("Reset level");
-            StartCoroutine(_tilemapManager.ResetLevel());
+            ResetLevel();
         }
+    }
+
+    private void ResetLevel()
+    {
+        Debug.Log("Reset level");
+        _currentLevel++;
+        if (_currentLevel > _maxLevel)
+        {
+            Debug.Log("Game Over!");
+            _finalScreen.gameObject.SetActive(true);
+            _finalScreen.SetText(_players.Values.ToArray());
+            return;
+        }
+        _levelText.text = "Level " + _currentLevel;
+        StartCoroutine(_tilemapManager.ResetLevel());
     }
 
     public void ResetPlayers()
