@@ -8,10 +8,13 @@ using UnityEngine.AI;
 
 public class AIPlayer : BasePlayer
 {
-	private Vector3 _target;
+	[SerializeField] private float _searchRadius;
+	[SerializeField] private Vector3 _target;
 	private Camera _cam;
 	private NavMeshPath _path;
 	private NavMeshAgent _agent;
+	
+	private int GoldPieceMask => 1 << LayerMask.NameToLayer("GoldPiece");
 
 	// public float JumpHeight;
 	// public float JumpDuration;
@@ -35,6 +38,8 @@ public class AIPlayer : BasePlayer
 	protected override void Update()
 	{
 		base.Update();
+		
+		_target = GetNearestGoldPiece();
 
 		_agent.enabled = Grounded;
 		
@@ -130,5 +135,26 @@ public class AIPlayer : BasePlayer
 		{
 			Debug.DrawLine(_path.corners[i], _path.corners[i + 1], MeshRenderer.material.color);
 		}
+	}
+
+	private Vector3 GetNearestGoldPiece()
+	{
+		float closestDistance = float.MaxValue;
+		Vector3 closestPosition = transform.position;
+		
+		int maxSearch = 10;
+		Collider[] hits = new Collider[maxSearch];
+		int numFound = Physics.OverlapSphereNonAlloc(transform.position, _searchRadius, hits, GoldPieceMask);
+		for (int i = 0; i < numFound; i++)
+		{
+			var distance = Vector3.Distance(transform.position, hits[i].transform.position);
+			if (distance < closestDistance)
+			{
+				closestDistance = distance;
+				closestPosition = hits[i].transform.position;
+			}
+		}
+		
+		return closestPosition;
 	}
 }

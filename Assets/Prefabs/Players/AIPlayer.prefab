@@ -159,8 +159,9 @@ MonoBehaviour:
   Grounded: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
+  _target: {x: 0, y: 0, z: 0}
+  _searchRadius: 10
   _drawPath: 1
-  OnLink: 0
 --- !u!195 &1202807486505499631
 NavMeshAgent:
   m_ObjectHideFlags: 0

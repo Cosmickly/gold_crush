@@ -33,7 +33,7 @@ public class TilemapBuilder : MonoBehaviour
     [Header("Prefabs")] 
     [SerializeField] private GroundTile _rockTile;
     [SerializeField] private GroundTile _iceTile;
-    [SerializeField] private GoldPiece _goldPiecePrefab;
+    // [SerializeField] private GoldPiece _goldPiecePrefab;
     [SerializeField] private RockObstacle _rockObstaclePrefab;
     // [SerializeField] private List<GameObject> _layouts = new();
     // [SerializeField] private List<GameObject> _obstacleLayouts = new();

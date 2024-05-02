@@ -8,11 +8,12 @@ public abstract class BasePlayer : MonoBehaviour, IEntity
     protected Collider Collider;
     protected MeshRenderer MeshRenderer;
 
+    [Header("Parameters")]
     [SerializeField] protected float MoveSpeed;
     [SerializeField] protected float JumpForce;
+    [SerializeField] private float _smoothTime;
 
     protected Vector3 DesiredDirection;
-    [SerializeField] private float _smoothTime;
     private Vector3 _velocityRef = Vector3.zero;
     
 

@@ -6,6 +6,7 @@ using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
@@ -13,6 +14,7 @@ public class TilemapManager : MonoBehaviour
 {
     private TilemapBuilder _tilemapBuilder;
     private Tilemap _tilemap;
+    private HashSet<Vector3Int> _allTilePositions; 
 
     public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; } = new();
     private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
@@ -22,11 +24,8 @@ public class TilemapManager : MonoBehaviour
 
     private Dictionary<int, Vector3Int> _playerLocations = new();
     
-    public bool GoldEnabled
-    {
-        get => _goldEnabled;
-        private set => _goldEnabled = value;
-    }
+    [Header("Prefabs")] 
+    [SerializeField] private GoldPiece _goldPiecePrefab;
     
     [Header("Parameters")] 
     [SerializeField] private bool _goldEnabled;
@@ -42,6 +41,8 @@ public class TilemapManager : MonoBehaviour
     private void Start()
     {
         _tilemapBuilder.Build();
+        _allTilePositions = new HashSet<Vector3Int>(ActiveTiles.Keys);
+        InvokeRepeating(nameof(SpawnRandomCoin), 1f, 1f);
         InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
     }
 
@@ -119,6 +120,23 @@ public class TilemapManager : MonoBehaviour
             return;
         }
         CrackTile(RandomTile());
+    }
+    
+    /*
+     * COINS
+     */
+
+    private void SpawnRandomCoin()
+    {
+        SpawnCoin(CellToWorld(GetRandomFreeCell()));
+    }
+    
+    private void SpawnCoin(Vector3 pos)
+    {
+        if (_goldEnabled)
+        {
+            Instantiate(_goldPiecePrefab, pos + new Vector3Int(0, 1, 0), Quaternion.identity, transform);
+        }
     }
     
     /*
@@ -230,6 +248,12 @@ public class TilemapManager : MonoBehaviour
     public Vector3Int GetCell(Vector3 pos)
     {
         return _tilemap.WorldToCell(pos);
+    }
+
+    private Vector3Int GetRandomFreeCell()
+    {
+        var possibleTiles = _allTilePositions.Except(Obstacles.Keys).ToList();
+        return possibleTiles.ElementAt(Random.Range(0, possibleTiles.Count));
     }
     
     // public bool HasTile(Vector3Int pos)
