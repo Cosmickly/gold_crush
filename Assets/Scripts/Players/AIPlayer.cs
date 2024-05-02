@@ -9,6 +9,7 @@ namespace Players
 	{
 		[SerializeField] private float _searchRadius;
 		[SerializeField] private Vector3 _target;
+		[SerializeField] private float _distanceToTarget;
 		private Camera _cam;
 		private NavMeshPath _path;
 		private NavMeshAgent _agent;
@@ -39,8 +40,7 @@ namespace Players
 			base.Update();
 		
 			_target = GetNearestGoldPiece();
-			if (Rb.velocity.magnitude < 0.1f && _target != transform.position) SwingPickaxe();
-
+			
 			_agent.enabled = Grounded;
 		
 			if (Input.GetMouseButton(0) && _cam && _agent.enabled)
@@ -59,6 +59,7 @@ namespace Players
 				case > 0:
 					DesiredDirection = (_path.corners.Last() - transform.position).normalized; break;
 			}
+			DesiredDirection.y = 0;
 		
 			
 			NavMesh.CalculatePath(transform.position, _target, NavMesh.AllAreas, _path);
@@ -68,11 +69,17 @@ namespace Players
 		protected void FixedUpdate()
 		{
 			Move();
+			
+			Rotate();
 		
 			if(_agent.isOnOffMeshLink)
 			{
 				StartCoroutine(RigidBodyJump());
 			}
+
+			_distanceToTarget = Vector3.Distance(_target, transform.position);
+			
+			if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
 		}
 
 		private IEnumerator RigidBodyJump()

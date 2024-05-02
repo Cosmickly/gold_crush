@@ -58,10 +58,10 @@ namespace Players
         protected void FixedUpdate()
         {
             Move();
-            if(Grounded && _desiredJump) Jump();
+            if(_desiredJump) Jump();
             Rotate();
 
-            if (_desiredPickaxe && PickaxeTimer <= 0) SwingPickaxe();
+            if (_desiredPickaxe) SwingPickaxe();
         }
 
         protected void SpeedControl()

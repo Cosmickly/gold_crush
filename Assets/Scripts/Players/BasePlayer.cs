@@ -9,12 +9,15 @@ namespace Players
         protected Rigidbody Rb;
         protected Collider Collider;
         protected MeshRenderer MeshRenderer;
+        protected Animator Animator;
+        private int _pickaxeAnimationID;
+
 
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
         [SerializeField] private float _smoothTime;
-        [SerializeField] protected float PickaxeCooldown = 0.5f;
+        [SerializeField] protected float PickaxeCooldown = 1f;
         protected float PickaxeTimer;
 
         protected Vector3 DesiredDirection;
@@ -36,7 +39,9 @@ namespace Players
         {
             Rb = GetComponent<Rigidbody>();
             Collider = GetComponent<CapsuleCollider>();
-            MeshRenderer = GetComponent<MeshRenderer>();
+            MeshRenderer = GetComponentInChildren<MeshRenderer>();
+            Animator = GetComponent<Animator>();
+            _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
         }
 
         protected virtual void Update()
@@ -121,6 +126,7 @@ namespace Players
 
         protected virtual void SwingPickaxe()
         {
+            if (!Grounded || PickaxeTimer > 0) return;
             Debug.Log("Swing Pickaxe");
             PickaxeTimer = PickaxeCooldown;
             RaycastHit[] hits = new RaycastHit[10];
@@ -132,6 +138,7 @@ namespace Players
                     hittable.Hit();
                 }
             }
+            Animator.SetTrigger(_pickaxeAnimationID);
         }
     
         /*
@@ -140,7 +147,7 @@ namespace Players
     
         public delegate void OnUpdateUI();
         public OnUpdateUI onUpdateUI;
-    
+
         public void AddGold()
         {
             NumOfGold++;

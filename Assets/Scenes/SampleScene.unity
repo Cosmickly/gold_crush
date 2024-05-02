@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -312,8 +312,7 @@ MonoBehaviour:
   _obstacleFillRate: 10
   _layoutFillRate: 75
   _obstacleSmoothRate: 3
-  _rockTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
-  _iceTile: {fileID: 6033928661518195644, guid: 145982e1bf55fc842b1228e6269b5ab8, type: 3}
+  _groundTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
 --- !u!1 &359417994
 GameObject:
@@ -346,7 +345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
-  _numOfHumans: 0
+  _numOfHumans: 1
   _totalPlayers: 1
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
@@ -1144,7 +1143,7 @@ Transform:
   m_GameObject: {fileID: 1207541056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 2, z: 19}
+  m_LocalPosition: {x: 2, y: 2, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1221,7 +1220,7 @@ Transform:
   m_GameObject: {fileID: 1845309365}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9, y: 2, z: 9}
+  m_LocalPosition: {x: 22, y: 2, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1252,7 +1251,7 @@ Transform:
   m_GameObject: {fileID: 1912411891}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9, y: 2, z: 1}
+  m_LocalPosition: {x: 22, y: 2, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

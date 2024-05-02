@@ -28,8 +28,8 @@ namespace Tiles
         // [SerializeField] [Range(0, 9)] private int _neighbourThreshold;
     
         [Header("Prefabs")] 
-        [SerializeField] private GroundTile _rockTile;
-        [SerializeField] private GroundTile _iceTile;
+        [SerializeField] private GroundTile _groundTile;
+        // [SerializeField] private GroundTile _iceTile;
         // [SerializeField] private GoldPiece _goldPiecePrefab;
         [SerializeField] private RockObstacle _rockObstaclePrefab;
         // [SerializeField] private List<GameObject> _layouts = new();
@@ -81,9 +81,11 @@ namespace Tiles
                 for (int j = 0; j < _tilemapSize.y; j++)
                 {
                     var pos = new Vector3Int(i, 0, j);
-                    GroundTile tile;
-                    tile = Instantiate(groundTileMap[i][j] == 1 ? _iceTile : _rockTile, pos, Quaternion.identity, transform);
 
+                    GroundTile tile = Instantiate(_groundTile, pos, Quaternion.identity, transform);
+                    if (groundTileMap[i][j] == 1) tile.ToggleIce(true);
+                    // tile = Instantiate(groundTileMap[i][j] == 1 ? _iceTile : _rockTile, pos, Quaternion.identity, transform);
+                    
                     tile.Cell = _tilemapManager.GetCell(pos);
                     tile.TilemapManager = _tilemapManager;
                     _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
