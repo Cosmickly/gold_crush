@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Players;
 
-public interface ICollectable
+namespace Interfaces
 {
-    public void Collect(BasePlayer player);
+    public interface ICollectable
+    {
+        public void Collect(BasePlayer player);
+    }
 }

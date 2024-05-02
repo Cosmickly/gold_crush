@@ -346,7 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 2983752196467883518, guid: 66f6fac1f40168643aac68319d40cfa6, type: 3}
   _aiPlayer: {fileID: 2983752196467883518, guid: 87702f29518f71346bf24fe04a126568, type: 3}
-  _numOfHumans: 0
+  _numOfHumans: 1
   _totalPlayers: 1
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}

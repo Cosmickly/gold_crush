@@ -1,4 +1,7 @@
-public interface IEntity
+namespace Interfaces
 {
-    public void Fall();
+    public interface IEntity
+    {
+        public void Fall();
+    }
 }

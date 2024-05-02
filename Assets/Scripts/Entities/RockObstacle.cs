@@ -1,14 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
+using Interfaces;
+using Tiles;
 using UnityEngine;
 
-public class RockObstacle : MonoBehaviour, IEntity
+namespace Entities
 {
-    public TilemapManager TilemapManager { private get; set; }
-    public Vector3Int Cell { get; set; }
-
-    public void Fall()
+    public class RockObstacle : MonoBehaviour, IEntity
     {
-	    Destroy(gameObject);
+        public TilemapManager TilemapManager { private get; set; }
+        public Vector3Int Cell { get; set; }
+
+        public void Fall()
+        {
+            Destroy(gameObject);
+        }
     }
 }

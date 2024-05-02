@@ -1,56 +1,58 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Interfaces;
+using Players;
 using UnityEngine;
 
-public class Boundary : MonoBehaviour
+namespace Tiles
 {
-    public TilemapManager TilemapManager { private get; set; }
-    private BoxCollider[] _boundaryColliders;
-
-    private void Awake()
+    public class Boundary : MonoBehaviour
     {
-        _boundaryColliders = GetComponents<BoxCollider>();
-    }
+        public TilemapManager TilemapManager { private get; set; }
+        private BoxCollider[] _boundaryColliders;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!other.gameObject.TryGetComponent(out IEntity entity)) return;
-        entity.Fall();
-        if (other.gameObject.TryGetComponent(out BasePlayer player))
+        private void Awake()
         {
-            TilemapManager.PlayerFell(player); //TODO should message game manager -> tilemap manager & scoreboard
+            _boundaryColliders = GetComponents<BoxCollider>();
         }
-    }
 
-    public void BuildBoundary(Vector2Int tilemapSize)
-    {
-        if (_boundaryColliders.Length < 1) return;
-        
-        var deathBoundary = _boundaryColliders[0];
-        var size = new Vector3(tilemapSize.x, 1, tilemapSize.y);
-        deathBoundary.size = size;
-        deathBoundary.center = new Vector3(size.x / 2, -1f, size.z / 2);
-        
-        if (_boundaryColliders.Length < 5) return;
-        
-        var hSize = new Vector3(size.x, 10f, 1f);
-        var vSize = new Vector3(1f, 10f, size.z);
-        
-        // s
-        _boundaryColliders[1].size = hSize;
-        _boundaryColliders[1].center = new Vector3(size.x / 2, 0f, -0.5f);
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.gameObject.TryGetComponent(out IEntity entity)) return;
+            entity.Fall();
+            if (other.gameObject.TryGetComponent(out BasePlayer player))
+            {
+                TilemapManager.PlayerFell(player); //TODO should message game manager -> tilemap manager & scoreboard
+            }
+        }
 
-        // w
-        _boundaryColliders[2].size = vSize;
-        _boundaryColliders[2].center = new Vector3(-0.5f, 0f, size.z / 2);
+        public void BuildBoundary(Vector2Int tilemapSize)
+        {
+            if (_boundaryColliders.Length < 1) return;
         
-        // n
-        _boundaryColliders[3].size = hSize;
-        _boundaryColliders[3].center = new Vector3(size.x / 2, 0f, size.z + 0.5f);
+            var deathBoundary = _boundaryColliders[0];
+            var size = new Vector3(tilemapSize.x, 1, tilemapSize.y);
+            deathBoundary.size = size;
+            deathBoundary.center = new Vector3(size.x / 2, -1f, size.z / 2);
+        
+            if (_boundaryColliders.Length < 5) return;
+        
+            var hSize = new Vector3(size.x, 10f, 1f);
+            var vSize = new Vector3(1f, 10f, size.z);
+        
+            // s
+            _boundaryColliders[1].size = hSize;
+            _boundaryColliders[1].center = new Vector3(size.x / 2, 0f, -0.5f);
 
-        // e
-        _boundaryColliders[4].size = vSize;
-        _boundaryColliders[4].center = new Vector3(size.x + 0.5f, 0f, size.z / 2);
+            // w
+            _boundaryColliders[2].size = vSize;
+            _boundaryColliders[2].center = new Vector3(-0.5f, 0f, size.z / 2);
+        
+            // n
+            _boundaryColliders[3].size = hSize;
+            _boundaryColliders[3].center = new Vector3(size.x / 2, 0f, size.z + 0.5f);
+
+            // e
+            _boundaryColliders[4].size = vSize;
+            _boundaryColliders[4].center = new Vector3(size.x + 0.5f, 0f, size.z / 2);
+        }
     }
 }
