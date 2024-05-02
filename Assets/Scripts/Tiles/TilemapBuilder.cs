@@ -12,12 +12,10 @@ public class TilemapBuilder : MonoBehaviour
 {
     private Random _random = new();
     private TilemapManager _tilemapManager;
-    private Tilemap _tilemap;
     
     [SerializeField] private Vector2Int _tilemapSize;
     private NavMeshSurface _navMeshSurface;
 
-    private Dictionary<Vector3Int, RockObstacle> _obstacles = new();
     private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
     
     [SerializeField] private Boundary _boundary;
@@ -45,19 +43,8 @@ public class TilemapBuilder : MonoBehaviour
     private void Awake()
     {
         _tilemapManager = GetComponent<TilemapManager>();
-        _tilemap = GetComponent<Tilemap>();
         _navMeshSurface = GetComponent<NavMeshSurface>();
         _boundary.TilemapManager = _tilemapManager;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ClearObstacles();
-            _tilemapManager.ClearAllTiles();
-            Build();
-        }
     }
 
     public void Build()
@@ -71,11 +58,6 @@ public class TilemapBuilder : MonoBehaviour
         _boundary.BuildBoundary(_tilemapSize);
     }
     
-    private void ClearObstacles()
-    {
-        foreach (var obstacle in _obstacles) Destroy(obstacle.Value.gameObject);
-        _obstacles.Clear();
-    }
 
     private void CellularAutomataGround()
     {
@@ -91,9 +73,7 @@ public class TilemapBuilder : MonoBehaviour
                     groundTileMap[i][j] = 0;
                     continue;
                 }
-                
                 groundTileMap[i][j] = _random.Next(100) < _iceTileRate ? 1 : 0;
-
             }
         }
 
@@ -105,15 +85,9 @@ public class TilemapBuilder : MonoBehaviour
             {
                 var pos = new Vector3Int(i, 0, j);
                 GroundTile tile;
-                if (groundTileMap[i][j] == 1)
-                {
-                    tile = Instantiate(_iceTile, pos, Quaternion.identity, transform);
-                }
-                else
-                {
-                    tile = Instantiate(_rockTile, pos, Quaternion.identity, transform);
-                }
-                tile.Cell = _tilemap.WorldToCell(pos);
+                tile = Instantiate(groundTileMap[i][j] == 1 ? _iceTile : _rockTile, pos, Quaternion.identity, transform);
+
+                tile.Cell = _tilemapManager.GetCell(pos);
                 tile.TilemapManager = _tilemapManager;
                 _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
             }
@@ -122,9 +96,9 @@ public class TilemapBuilder : MonoBehaviour
     
     private void CellularAutomataObstacles()
     {
-        int [][] obstacleMap = new int[_tilemapSize.x][];
+        int[][] obstacleMap = new int[_tilemapSize.x][];
         for (int i = 0; i < _tilemapSize.x; i++) obstacleMap[i] = new int[_tilemapSize.y];
-        int [][] removeMap = new int[_tilemapSize.x][];
+        int[][] removeMap = new int[_tilemapSize.x][];
         for (int i = 0; i < _tilemapSize.x; i++) removeMap[i] = new int[_tilemapSize.y];
 
         for (int i = 0; i < _tilemapSize.x; i++)
@@ -156,9 +130,9 @@ public class TilemapBuilder : MonoBehaviour
                 {
                     var pos = new Vector3Int(i, 0, j) + _topLayerOffset;
                     var obstacle = Instantiate(_rockObstaclePrefab, pos, Quaternion.identity, transform);
-                    obstacle.Cell = _tilemap.WorldToCell(pos);
+                    obstacle.Cell = _tilemapManager.GetCell(pos);
                     obstacle.TilemapManager = _tilemapManager;
-                    _obstacles.Add(obstacle.Cell, obstacle);
+                    _tilemapManager.Obstacles.Add(obstacle.Cell, obstacle);
                 }
             }
         }

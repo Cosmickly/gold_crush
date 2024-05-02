@@ -14,17 +14,20 @@ public class TilemapManager : MonoBehaviour
     private TilemapBuilder _tilemapBuilder;
     private Tilemap _tilemap;
 
-    public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; private set; } = new();
+    public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; } = new();
     private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
-    // private Dictionary<OffMeshLink, Tuple<Vector3Int, Vector3Int>> OffMeshLinks { get; set; } = new();
-    private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> NavMeshLinks = new();
-    public Dictionary<int, Vector3Int> PlayerLocations { get; private set; } = new();
+    public Dictionary<Vector3Int, RockObstacle> Obstacles { get; } = new();
+    
+    private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> _navMeshLinks = new();
+
+    private Dictionary<int, Vector3Int> _playerLocations = new();
     
     public bool GoldEnabled
     {
         get => _goldEnabled;
         private set => _goldEnabled = value;
     }
+    
     [Header("Parameters")] 
     [SerializeField] private bool _goldEnabled;
     [SerializeField] private bool _tileCrackEnabled;
@@ -42,11 +45,42 @@ public class TilemapManager : MonoBehaviour
         InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
     }
 
-    public Vector3Int GetCell(Vector3 pos)
+    private void Update()
     {
-        return _tilemap.WorldToCell(pos);
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ClearAllTiles();
+            ClearObstacles();
+            _tilemapBuilder.Build();
+        }
     }
+    
+    /*
+     * TILES
+     */
 
+    private void ClearAllTiles()
+    {
+        foreach (var tile in ActiveTiles)
+        {
+            Destroy(tile.Value.gameObject);
+        }
+
+        foreach (var tile in _crackingTiles)
+        {
+            Destroy(tile.Value.gameObject);
+        }
+        _crackingTiles.Clear();
+        ActiveTiles.Clear();
+        ClearLinks(Vector3Int.zero);
+    }
+    
+    private void ClearObstacles()
+    {
+        foreach (var obstacle in Obstacles) Destroy(obstacle.Value.gameObject);
+        Obstacles.Clear();
+    }
+    
     private void CrackTile(Vector3Int pos)
     {
         if (_tileCrackEnabled && ActiveTiles.Remove(pos, out GroundTile tile))
@@ -87,32 +121,20 @@ public class TilemapManager : MonoBehaviour
         CrackTile(RandomTile());
     }
     
-	public void ClearAllTiles()
-    {
-        foreach (var tile in ActiveTiles)
-        {
-            Destroy(tile.Value.gameObject);
-        }
-
-		foreach (var tile in _crackingTiles)
-		{
-            Destroy(tile.Value.gameObject);
-        }
-        _crackingTiles.Clear();
-        ActiveTiles.Clear();
-		ClearLinks(Vector3Int.zero);
-    }
+    /*
+     * PLAYER LOCATIONS
+     */
 
     // TODO: find a better way to handle tile checks
     public void UpdatePlayerLocation(int id, Vector3Int pos)
     {
-        if (PlayerLocations.TryGetValue(id, out var cell))
+        if (_playerLocations.TryGetValue(id, out var cell))
         {
             ExitedTile(cell);
         }
         
         EnteredTile(pos);
-        PlayerLocations[id] = pos;
+        _playerLocations[id] = pos;
     }
 
     private void EnteredTile(Vector3Int pos)
@@ -131,19 +153,18 @@ public class TilemapManager : MonoBehaviour
 
     public void PlayerFell(BasePlayer player)
     {
-        ExitedTile(PlayerLocations[player.ID]);
+        ExitedTile(_playerLocations[player.ID]);
     }
-
-    // public bool HasTile(Vector3Int pos)
-    // {
-    //     return ActiveTiles.ContainsKey(pos);
-    // }
+    
+    /*
+     * NAVMESH LINKS
+     */
 
     private void ClearLinks(Vector3Int pos)
     {
         var removeList = new List<NavMeshLink>();
 
-        foreach (var (key, tiles) in NavMeshLinks)
+        foreach (var (key, tiles) in _navMeshLinks)
         {
             if (tiles.Item1 == pos || tiles.Item2 == pos)
             {
@@ -153,7 +174,7 @@ public class TilemapManager : MonoBehaviour
 
         foreach (var link in removeList)
         {
-            NavMeshLinks.Remove(link);
+            _navMeshLinks.Remove(link);
             Destroy(link);
         }
     }
@@ -194,11 +215,25 @@ public class TilemapManager : MonoBehaviour
         link.endPoint = CellToWorld(cellB) + offset;
         link.bidirectional = true;
         link.width = width;
-        NavMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(cellA, cellB));
+        _navMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(cellA, cellB));
     }
+    
+    /*
+     * HELPER
+     */
 
     public Vector3 CellToWorld(Vector3Int cell)
     {
         return new Vector3(cell.x + 0.5f, 0.5f, cell.y + 0.5f);
     }
+    
+    public Vector3Int GetCell(Vector3 pos)
+    {
+        return _tilemap.WorldToCell(pos);
+    }
+    
+    // public bool HasTile(Vector3Int pos)
+    // {
+    //     return ActiveTiles.ContainsKey(pos);
+    // }
 }
