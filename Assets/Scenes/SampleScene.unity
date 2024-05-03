@@ -480,8 +480,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 9079997550181142078, guid: c5006b011e94bb5d18aba705668de899, type: 3}
   _aiPlayer: {fileID: 4933396742051619548, guid: 28d837ebd5fb34b6daa7476b49ef21fc, type: 3}
-  _numOfHumans: 4
-  _totalPlayers: 4
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}
@@ -492,12 +490,14 @@ MonoBehaviour:
   - {fileID: 1207541057}
   - {fileID: 1845309366}
   - {fileID: 1912411892}
+  _numOfHumans: 1
+  _totalPlayers: 1
+  _maxLevel: 5
   _cameraController: {fileID: 963194229}
   _tilemapManager: {fileID: 93001212}
   _scoreboard: {fileID: 1171141198}
   _finalScreen: {fileID: 1260518499}
   _levelText: {fileID: 440082855}
-  _maxLevel: 5
   RandomSeed: 0
 --- !u!4 &359417996
 Transform:

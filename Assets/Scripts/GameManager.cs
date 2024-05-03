@@ -16,26 +16,26 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _aiPlayer;
-    [SerializeField] [Range(0, 4)] private int _numOfHumans; 
-    [SerializeField] [Range(0, 4)] private int _totalPlayers; 
-    
-    private Dictionary<int, BasePlayer> _players = new ();
-
     [SerializeField] private Material[] _playerColours;
     [SerializeField] private Transform[] _spawnPoints;
-
-    [SerializeField] private CameraController _cameraController;
-    [SerializeField] private TilemapManager _tilemapManager;
-    [SerializeField] private Scoreboard _scoreboard;
-
-    [SerializeField] private FinalScreen _finalScreen;
-    [SerializeField] private TextMeshProUGUI _levelText;
+    private Dictionary<int, BasePlayer> _players = new ();
+    
+    [Header("Parameters")]
+    [SerializeField] [Range(0, 4)] private int _numOfHumans; 
+    [SerializeField] [Range(0, 4)] private int _totalPlayers; 
     [SerializeField] [Range(1, 100)] private int _maxLevel;
     private int _currentLevel = 1;
 
+    [SerializeField] private CameraController _cameraController;
+    [SerializeField] private TilemapManager _tilemapManager;
+    
+    [Header("UI")]
+    [SerializeField] private Scoreboard _scoreboard;
+    [SerializeField] private FinalScreen _finalScreen;
+    [SerializeField] private TextMeshProUGUI _levelText;
+
     [Header("Random")] 
     [SerializeField] public int RandomSeed;
-    // public static Random Rand = new();
 
     private void Awake()
     {

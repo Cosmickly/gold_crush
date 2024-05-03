@@ -16,7 +16,7 @@ namespace Tiles
         private MeshRenderer _meshRenderer;
         private GameObject _meshObject;
         private NavMeshObstacle _navMeshObstacle;
-        // private NavMeshModifier _navMeshModifier;
+        private ParticleSystem _particle;
         
         public bool Cracking { get; set; }
         private float _crackTimer;
@@ -52,14 +52,18 @@ namespace Tiles
             _meshObject = _meshRenderer.gameObject;
             _initialColor = _meshRenderer.material.color;
             _navMeshObstacle = GetComponentInChildren<NavMeshObstacle>();
-            // _navMeshModifier = GetComponentInChildren<NavMeshModifier>();
+            _particle = GetComponent<ParticleSystem>();
+            var main = _particle.main;
+            main.startColor = _initialColor;
 
             var newY = transform.position.y + Random.Range(-_amplitude, _amplitude);
             _meshObject.transform.localPosition += new Vector3(0, newY, 0);
         }
-        
-        private void Start()
+
+        private void Update()
         {
+            if (!Cracking || _crackTimer >= _crackTime) return;
+            _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
         }
 
         private void FixedUpdate()
@@ -71,9 +75,8 @@ namespace Tiles
                 TilemapManager.RemoveTile(Cell);
             }
 
-            _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
             var crackRatio = _crackTimer / _crackTime;
-            _meshRenderer.material.color = Color.Lerp(_initialColor, Color.black, crackRatio);
+            _meshRenderer.material.color = Color.Lerp(_initialColor, _initialColor * new Color(0.2f,0.2f,0.2f), crackRatio);
             
             var newY = Mathf.Sin(Time.fixedTime * Mathf.PI * _frequency * crackRatio) * (_amplitude * crackRatio);
             _meshObject.transform.localPosition = new Vector3(0, newY, 0);
@@ -85,6 +88,7 @@ namespace Tiles
             _meshRenderer.enabled = false;
             _collider.enabled = false;
             _navMeshObstacle.enabled = true;
+            _particle.Play();
             // _navMeshModifier.overrideArea = true;
         }
 
@@ -96,16 +100,13 @@ namespace Tiles
             _crackTimer = 0f;
         }
 
-        private void OnDestroy()
-        {
-            _navMeshObstacle.enabled = false;
-        }
-
         public void ToggleIce(bool togglIce)
         {
             Ice = togglIce;
             _meshRenderer.material = Ice ? _iceMaterial : _defaultMaterial;
             _initialColor = _meshRenderer.material.color;
+            var main = _particle.main;
+            main.startColor = _initialColor;
         }
     }
 }

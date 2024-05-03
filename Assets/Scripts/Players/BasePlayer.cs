@@ -1,3 +1,4 @@
+using System;
 using Interfaces;
 using Tiles;
 using UnityEngine;
@@ -9,10 +10,14 @@ namespace Players
         protected Rigidbody Rb;
         protected Collider Collider;
         protected MeshRenderer MeshRenderer;
+        protected Color PlayerColour;
         protected GameObject MeshObject;
+        
+        [Header("Animation")]
         protected Animator Animator;
         private int _pickaxeAnimationID;
-
+        private int _fadeAnimationID;
+        
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
@@ -43,6 +48,7 @@ namespace Players
             MeshObject = MeshRenderer.gameObject;
             Animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
+            _fadeAnimationID = Animator.StringToHash("Fade");
         }
 
         protected virtual void Update()
@@ -52,7 +58,7 @@ namespace Players
             
             if (PickaxeTimer > 0) PickaxeTimer -= Time.deltaTime;
         }
-    
+
         /*
          * CHECKS
          */
@@ -161,6 +167,7 @@ namespace Players
         public void SetMaterial(Material material)
         {
             MeshRenderer.material = material;
+            PlayerColour = material.color;
         }
 
         public void Fall()
@@ -176,10 +183,11 @@ namespace Players
         public void TogglePlayerEnabled(bool enable)
         {
             Collider.enabled = enable;
-            MeshRenderer.enabled = enable;
-            MeshObject.SetActive(enable);
-            Rb.velocity = Vector3.one;
+            Animator.SetTrigger(_fadeAnimationID);
+            // MeshRenderer.enabled = enable;
+            // MeshObject.SetActive(enable);
             Rb.useGravity = enable;
+            Rb.velocity = Vector3.zero;
         }
     }
 }

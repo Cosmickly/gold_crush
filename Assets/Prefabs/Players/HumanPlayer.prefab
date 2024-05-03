@@ -84,6 +84,7 @@ MonoBehaviour:
   JumpForce: 3
   _smoothTime: 0.1
   PickaxeCooldown: 0.5
+  DesiredDirection: {x: 0, y: 0, z: 0}
   TileMask:
     serializedVersion: 2
     m_Bits: 128
@@ -91,6 +92,7 @@ MonoBehaviour:
   Grounded: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
+  FadeTime: 1
 --- !u!114 &1931657400224951325
 MonoBehaviour:
   m_ObjectHideFlags: 0
