@@ -6,8 +6,9 @@ namespace Entities
 {
     public class RockObstacle : MonoBehaviour, IEntity, IHittable
     {
-        public TilemapManager TilemapManager { private get; set; }
+        public TilemapManager TilemapManager { protected get; set; }
         public Vector3Int Cell { get; set; }
+        public int HitsToBreak;
 
         public void Fall()
         {
@@ -15,10 +16,12 @@ namespace Entities
                 Destroy(gameObject); 
         }
         
-        public void Hit()
+        public virtual void Hit()
         {
-            if (TilemapManager.RemoveObstacle(Cell))
+            if (HitsToBreak >= 0 && TilemapManager.RemoveObstacle(Cell))
                 Destroy(gameObject);
+
+            HitsToBreak--;
         }
     }
 }

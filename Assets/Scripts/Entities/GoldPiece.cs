@@ -34,7 +34,7 @@ namespace Entities
 
         public void Collect(BasePlayer player)
         {
-            if (TilemapManager.RemoveGoldPiece(this))
+            // if (TilemapManager.RemoveGoldPiece(this))
             {
                 player.AddGold();
                 Destroy(gameObject);

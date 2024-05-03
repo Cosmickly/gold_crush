@@ -27,7 +27,7 @@ namespace Tiles
         private Dictionary<int, Vector3Int> _playerLocations = new();
     
         [Header("Prefabs")] 
-        [SerializeField] private GoldPiece _goldPiecePrefab;
+        [SerializeField] public GoldPiece GoldPiecePrefab;
     
         [Header("Parameters")] 
         [SerializeField] private bool _goldEnabled;
@@ -181,6 +181,7 @@ namespace Tiles
             foreach (var obstacle in Obstacles) Destroy(obstacle.Value.gameObject);
             Obstacles.Clear();
         }
+        
     
         /*
          * GOLD PIECES
@@ -195,26 +196,26 @@ namespace Tiles
         {
             if (_goldEnabled)
             {
-                var goldPiece = Instantiate(_goldPiecePrefab, pos + new Vector3Int(0, 1, 0), Quaternion.identity, transform);
+                var goldPiece = Instantiate(GoldPiecePrefab, pos + new Vector3Int(0, 1, 0), Quaternion.identity, transform);
                 goldPiece.TilemapManager = this;
                 _goldPieces.Add(goldPiece);
             }
         }
 
-        public bool RemoveGoldPiece(GoldPiece goldPiece)
-        {
-            return _goldPieces.Remove(goldPiece);
-        }
-
-        private void ClearAllGoldPieces()
-        {
-            for (int i = 0; i < _goldPieces.Count; i++)
-            {
-                Destroy(_goldPieces[i]);
-            }
-            
-            _goldPieces.Clear();
-        }
+        // public bool RemoveGoldPiece(GoldPiece goldPiece)
+        // {
+        //     return _goldPieces.Remove(goldPiece);
+        // }
+        //
+        // private void ClearAllGoldPieces()
+        // {
+        //     for (int i = 0; i < _goldPieces.Count; i++)
+        //     {
+        //         Destroy(_goldPieces[i]);
+        //     }
+        //     
+        //     _goldPieces.Clear();
+        // }
     
         /*
          * PLAYER LOCATIONS

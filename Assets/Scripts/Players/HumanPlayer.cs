@@ -56,8 +56,9 @@ namespace Players
             _desiredPickaxe = _pickaxeAction.IsPressed();
         }
 
-        protected void FixedUpdate()
+        protected override void FixedUpdate()
         {
+            base.FixedUpdate();
             Move();
             if(_desiredJump) Jump();
             Rotate();

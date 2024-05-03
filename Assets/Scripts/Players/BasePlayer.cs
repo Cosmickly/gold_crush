@@ -16,7 +16,9 @@ namespace Players
         [Header("Animation")]
         protected Animator Animator;
         private int _pickaxeAnimationID;
-        private int _fadeAnimationID;
+        // private int _fadeAnimationID;
+        public float FadeTime;
+        private float _fadeTimer;
         
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
@@ -48,7 +50,7 @@ namespace Players
             MeshObject = MeshRenderer.gameObject;
             Animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
-            _fadeAnimationID = Animator.StringToHash("Fade");
+            // _fadeAnimationID = Animator.StringToHash("Fade");
         }
 
         protected virtual void Update()
@@ -57,6 +59,17 @@ namespace Players
             TileCheck();
             
             if (PickaxeTimer > 0) PickaxeTimer -= Time.deltaTime;
+            if (Fell && _fadeTimer < FadeTime) _fadeTimer += Time.deltaTime;
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (Fell && _fadeTimer < FadeTime)
+            {
+                var fadeRatio = _fadeTimer / FadeTime;
+                MeshRenderer.material.color = Color.Lerp(PlayerColour, PlayerColour * new Color(1f, 1f, 1f, 0.1f), fadeRatio);
+                Debug.Log("fading");
+            }
         }
 
         /*
@@ -183,11 +196,16 @@ namespace Players
         public void TogglePlayerEnabled(bool enable)
         {
             Collider.enabled = enable;
-            Animator.SetTrigger(_fadeAnimationID);
+            // Animator.SetTrigger(_fadeAnimationID);
             // MeshRenderer.enabled = enable;
             // MeshObject.SetActive(enable);
-            Rb.useGravity = enable;
-            Rb.velocity = Vector3.zero;
+            // Rb.useGravity = enable;
+            // Rb.velocity = Vector3.zero;
+            if (enable)
+            {
+                MeshRenderer.material.color = PlayerColour;
+                _fadeTimer = 0;
+            }
         }
     }
 }

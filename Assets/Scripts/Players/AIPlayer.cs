@@ -74,8 +74,9 @@ namespace Players
 			if (_drawPath) DrawPath();
 		}
 
-		protected void FixedUpdate()
+		protected override void FixedUpdate()
 		{
+			base.FixedUpdate();
 			Move();
 			
 			Rotate();

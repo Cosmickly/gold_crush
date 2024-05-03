@@ -32,7 +32,7 @@ namespace Tiles
             var deathBoundary = _boundaryColliders[0];
             var size = new Vector3(tilemapSize.x, 1, tilemapSize.y);
             deathBoundary.size = size;
-            deathBoundary.center = new Vector3(size.x / 2, -1f, size.z / 2);
+            deathBoundary.center = new Vector3(size.x / 2, -0.5f, size.z / 2);
         
             if (_boundaryColliders.Length < 5) return;
         

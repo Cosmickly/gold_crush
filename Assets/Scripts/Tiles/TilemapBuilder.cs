@@ -33,6 +33,7 @@ namespace Tiles
         [Header("Prefabs")] 
         [SerializeField] private GroundTile _groundTile;
         [SerializeField] private RockObstacle _rockObstaclePrefab;
+        [SerializeField] private GoldChunk _goldChunkPrefab;
         // [SerializeField] private GroundTile _iceTile;
         // [SerializeField] private GoldPiece _goldPiecePrefab;
         // [SerializeField] private List<GameObject> _layouts = new();
@@ -152,7 +153,16 @@ namespace Tiles
                     if (obstacleMap[i][j] == 1 && removeMap[i][j] == 0)
                     {
                         var pos = new Vector3Int(i, 0, j) + _topLayerOffset;
-                        var obstacle = Instantiate(_rockObstaclePrefab, pos, Quaternion.identity, transform);
+                        RockObstacle obstacle;
+                        if (i is > 10 and < 15 && j is > 10 and < 15)
+                        {
+                            obstacle = Instantiate(_goldChunkPrefab, pos, Quaternion.identity, transform);
+                            
+                        }
+                        else
+                        {
+                            obstacle = Instantiate(_rockObstaclePrefab, pos, Quaternion.identity, transform);
+                        }
                         obstacle.Cell = _tilemapManager.GetCell(pos);
                         obstacle.TilemapManager = _tilemapManager;
                         _tilemapManager.Obstacles.Add(obstacle.Cell, obstacle);
