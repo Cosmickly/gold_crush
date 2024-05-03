@@ -16,6 +16,8 @@ namespace Players
 	
 		private int GoldPieceMask => 1 << LayerMask.NameToLayer("GoldPiece");
 
+		private Vector3Int _centerPos;
+
 		// public float JumpHeight;
 		// public float JumpDuration;
 
@@ -32,6 +34,9 @@ namespace Players
 
 		private void Start()
 		{
+			var size = TilemapManager.TilemapSize;
+			_centerPos = new Vector3Int(size.x / 2, 0, size.y / 2);
+			
 			_target = transform.position;
 		}
 
@@ -78,6 +83,7 @@ namespace Players
 			}
 
 			_distanceToTarget = Vector3.Distance(_target, transform.position);
+			if (_distanceToTarget < 1.5f) _target = _centerPos;
 			
 			if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
 		}

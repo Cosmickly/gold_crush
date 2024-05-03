@@ -23,7 +23,7 @@ namespace Players
         private Vector3 _velocityRef = Vector3.zero;
     
 
-        public TilemapManager TilemapManager { private get; set; }
+        public TilemapManager TilemapManager { get; set; }
         [SerializeField] protected LayerMask TileMask;
         [SerializeField] protected bool AboveTile;
         [SerializeField] protected bool Grounded;

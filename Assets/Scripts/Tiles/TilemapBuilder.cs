@@ -10,7 +10,7 @@ namespace Tiles
         private Random _random = new();
         private TilemapManager _tilemapManager;
     
-        [SerializeField] private Vector2Int _tilemapSize;
+        [SerializeField] public Vector2Int TilemapSize;
         private NavMeshSurface _navMeshSurface;
 
         private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
@@ -51,18 +51,18 @@ namespace Tiles
             // FindEmptyTiles();
         
             _navMeshSurface.BuildNavMesh();
-            _boundary.BuildBoundary(_tilemapSize);
+            _boundary.BuildBoundary(TilemapSize);
         }
     
 
         private void CellularAutomataGround()
         {
-            int[][] groundTileMap = new int[_tilemapSize.x][];
-            for (int i = 0; i < _tilemapSize.x; i++) groundTileMap[i] = new int[_tilemapSize.y];
+            int[][] groundTileMap = new int[TilemapSize.x][];
+            for (int i = 0; i < TilemapSize.x; i++) groundTileMap[i] = new int[TilemapSize.y];
         
-            for (int i = 0; i < _tilemapSize.x; i++)
+            for (int i = 0; i < TilemapSize.x; i++)
             {
-                for (int j = 0; j < _tilemapSize.y; j++)
+                for (int j = 0; j < TilemapSize.y; j++)
                 {
                     if (i is < 5 or > 19 && j is < 5 or > 19)
                     {
@@ -75,9 +75,9 @@ namespace Tiles
 
             for (int i = 0; i < _iceSmoothRate; i++) groundTileMap = SmoothMap(groundTileMap);
 
-            for (int i = 0; i < _tilemapSize.x; i++)
+            for (int i = 0; i < TilemapSize.x; i++)
             {
-                for (int j = 0; j < _tilemapSize.y; j++)
+                for (int j = 0; j < TilemapSize.y; j++)
                 {
                     var pos = new Vector3Int(i, 0, j);
 
@@ -94,14 +94,14 @@ namespace Tiles
     
         private void CellularAutomataObstacles()
         {
-            int[][] obstacleMap = new int[_tilemapSize.x][];
-            for (int i = 0; i < _tilemapSize.x; i++) obstacleMap[i] = new int[_tilemapSize.y];
-            int[][] removeMap = new int[_tilemapSize.x][];
-            for (int i = 0; i < _tilemapSize.x; i++) removeMap[i] = new int[_tilemapSize.y];
+            int[][] obstacleMap = new int[TilemapSize.x][];
+            for (int i = 0; i < TilemapSize.x; i++) obstacleMap[i] = new int[TilemapSize.y];
+            int[][] removeMap = new int[TilemapSize.x][];
+            for (int i = 0; i < TilemapSize.x; i++) removeMap[i] = new int[TilemapSize.y];
 
-            for (int i = 0; i < _tilemapSize.x; i++)
+            for (int i = 0; i < TilemapSize.x; i++)
             {
-                for (int j = 0; j < _tilemapSize.y; j++)
+                for (int j = 0; j < TilemapSize.y; j++)
                 {
                     if (i is < 5 or > 19 && j is < 5 or > 19) continue;
 
@@ -120,9 +120,9 @@ namespace Tiles
         
             for (int i = 0; i < _obstacleSmoothRate; i++) obstacleMap = SmoothMap(obstacleMap, true);
 
-            for (int i = 0; i < _tilemapSize.x; i++)
+            for (int i = 0; i < TilemapSize.x; i++)
             {
-                for (int j = 0; j < _tilemapSize.y; j++)
+                for (int j = 0; j < TilemapSize.y; j++)
                 {
                     if (obstacleMap[i][j] == 1 && removeMap[i][j] == 0)
                     {
@@ -170,9 +170,9 @@ namespace Tiles
         private int[][] SmoothMap(int[][] map, bool useAdjacent = false)
         {
             int neighbourLimit = useAdjacent ? 2 : 4;
-            for (int i = 1; i < _tilemapSize.x-1; i++)
+            for (int i = 1; i < TilemapSize.x-1; i++)
             {
-                for (int j = 1; j < _tilemapSize.y-1; j++)
+                for (int j = 1; j < TilemapSize.y-1; j++)
                 {
                     int neighbourCount = useAdjacent ? GetAdjacentObstacleCount(i, j, map) : GetNeighbourCount(i, j, map);
                     if (neighbourCount > neighbourLimit) map[i][j] = 1;
@@ -185,9 +185,9 @@ namespace Tiles
         // Only needed if empty tiles exist at start
         private void FindEmptyTiles()
         {
-            for (int i = 0; i < _tilemapSize.x; i++)
+            for (int i = 0; i < TilemapSize.x; i++)
             {
-                for (int j = 0; j < _tilemapSize.y; j++)
+                for (int j = 0; j < TilemapSize.y; j++)
                 {
                     var pos = new Vector3Int(i, j, 0);
                     if (!_tilemapManager.ActiveTiles.ContainsKey(pos))

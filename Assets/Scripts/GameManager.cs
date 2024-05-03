@@ -101,9 +101,7 @@ public class GameManager : MonoBehaviour
         _currentLevel++;
         if (_currentLevel > _maxLevel)
         {
-            Debug.Log("Game Over!");
-            _finalScreen.gameObject.SetActive(true);
-            _finalScreen.SetText(_players.Values.ToArray());
+            GameOver();
             return;
         }
         _levelText.text = "Level " + _currentLevel;
@@ -119,5 +117,13 @@ public class GameManager : MonoBehaviour
             basePlayer.Fell = false;
             basePlayer.gameObject.SetActive(true);
         }
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("Game Over!");
+        _tilemapManager.enabled = false;
+        _finalScreen.gameObject.SetActive(true);
+        _finalScreen.SetText(_players.Values.ToArray());
     }
 }

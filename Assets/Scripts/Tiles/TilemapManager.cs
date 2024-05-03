@@ -33,10 +33,19 @@ namespace Tiles
         [SerializeField] private bool _goldEnabled;
         [SerializeField] private bool _tileCrackEnabled;
         [SerializeField] private float _randomTileRate;
+
+        public Vector2Int TilemapSize
+        {
+            get => _tilemapBuilder.TilemapSize;
+            private set => _tilemapBuilder.TilemapSize = value;
+        }
+
+        private bool _readInput = true;
     
         private void Awake()
         {
             _tilemapBuilder = GetComponent<TilemapBuilder>();
+            TilemapSize = _tilemapBuilder.TilemapSize;
             _tilemap = GetComponent<Tilemap>();
         }
 
@@ -50,18 +59,26 @@ namespace Tiles
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.R) && _readInput)
             {
                 ManualResetLevel();
             }
         }
-    
+
+        private void OnDisable()
+        {
+            _readInput = false;
+            CancelInvoke(nameof(SpawnRandomCoin));
+            CancelInvoke(nameof(CrackRandomTile));
+        }
+
         /*
          * TILES
          */
 
         public IEnumerator ResetLevel()
         {
+            _readInput = false;
             ClearAllTiles();
             CancelInvoke(nameof(SpawnRandomCoin));
             CancelInvoke(nameof(CrackRandomTile));
@@ -70,6 +87,7 @@ namespace Tiles
             _gameManager.ResetPlayers();
             InvokeRepeating(nameof(SpawnRandomCoin), 1f, 1f);
             InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
+            _readInput = true;
         }
 
         private void ManualResetLevel()
