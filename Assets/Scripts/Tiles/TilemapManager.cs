@@ -18,7 +18,7 @@ namespace Tiles
         private Tilemap _tilemap;
         private HashSet<Vector3Int> _allTilePositions; 
 
-        public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; } = new();
+        public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; set; } = new();
         private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
         public Dictionary<Vector3Int, RockObstacle> Obstacles { get; } = new();
         private List<GoldPiece> _goldPieces = new();
@@ -80,6 +80,7 @@ namespace Tiles
         {
             _readInput = false;
             ClearAllTiles();
+            ClearAllLinks();
             CancelInvoke(nameof(SpawnRandomCoin));
             CancelInvoke(nameof(CrackRandomTile));
             yield return new WaitForSeconds(2f);
@@ -94,20 +95,23 @@ namespace Tiles
         {
             ClearAllTiles();
             ClearObstacles();
+            ClearAllLinks();
             _tilemapBuilder.Build();
         }
 
         private void ClearAllTiles()
         {
-            foreach (var tile in ActiveTiles)
+            for (int i = 0; i < ActiveTiles.Count; i++)
             {
-                Destroy(tile.Value.gameObject);
+                var pair = ActiveTiles.ElementAt(i);
+                pair.Value.Break();
             }
-
-            foreach (var tile in _crackingTiles)
+            for (int i = 0; i < _crackingTiles.Count; i++)
             {
-                Destroy(tile.Value.gameObject);
+                var pair = _crackingTiles.ElementAt(i);
+                pair.Value.Break();
             }
+            
             _crackingTiles.Clear();
             ActiveTiles.Clear();
             ClearLinksToCell(Vector3Int.zero);
@@ -124,11 +128,21 @@ namespace Tiles
     
         public bool RemoveTile(Vector3Int pos)
         {
-            if (_crackingTiles.ContainsKey(pos))
+            if (_crackingTiles.TryGetValue(pos, out var crackTile))
             {
+                crackTile.Break();
                 ClearLinksToCell(pos);
                 GenerateNewLinks(pos);
                 _crackingTiles.Remove(pos);
+                return true;
+            }
+            
+            if (ActiveTiles.TryGetValue(pos, out var activeTile))
+            {
+                activeTile.Break();
+                ClearLinksToCell(pos);
+                GenerateNewLinks(pos);
+                ActiveTiles.Remove(pos);
                 return true;
             }
         
@@ -160,7 +174,6 @@ namespace Tiles
         public bool RemoveObstacle(Vector3Int pos)
         {
             return Obstacles.Remove(pos, out RockObstacle obstacle);
-
         }
         
         private void ClearObstacles()
@@ -261,6 +274,16 @@ namespace Tiles
             }
         }
 
+        private void ClearAllLinks()
+        {
+            foreach (var (link, tiles) in _navMeshLinks)
+            {
+                Destroy(link);
+            }
+            
+            _navMeshLinks.Clear();
+        }
+
         public void GenerateNewLinks(Vector3Int pos)
         {
             var n = pos + new Vector3Int(1, 1, 0);
@@ -297,6 +320,7 @@ namespace Tiles
             link.endPoint = CellToWorld(cellB) + offset;
             link.bidirectional = true;
             link.width = width;
+            // link.area = 2;
             _navMeshLinks.Add(link, new Tuple<Vector3Int, Vector3Int>(cellA, cellB));
         }
     

@@ -1,21 +1,22 @@
+using System;
+using System.Collections.Generic;
 using Entities;
 using Unity.AI.Navigation;
 using UnityEngine;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
 namespace Tiles
 {
     public class TilemapBuilder : MonoBehaviour
     {
-        private Random _random = new();
+        // private Random _random = new();
         private TilemapManager _tilemapManager;
+        private NavMeshSurface _navMeshSurface;
+        [SerializeField] private Boundary _boundary;
     
         [SerializeField] public Vector2Int TilemapSize;
-        private NavMeshSurface _navMeshSurface;
 
         private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
-    
-        [SerializeField] private Boundary _boundary;
     
         [SerializeField] [Range(0, 100)] private int _iceTileRate;
         [SerializeField] [Range(0, 10)] private int _iceSmoothRate;
@@ -26,34 +27,55 @@ namespace Tiles
         [SerializeField] [Range(0, 10)] private int _obstacleSmoothRate;
         // [SerializeField] [Range(0, 1)] private float _obstacleRemoveRate;
         // [SerializeField] [Range(0, 9)] private int _neighbourThreshold;
+        
+        
     
         [Header("Prefabs")] 
         [SerializeField] private GroundTile _groundTile;
+        [SerializeField] private RockObstacle _rockObstaclePrefab;
         // [SerializeField] private GroundTile _iceTile;
         // [SerializeField] private GoldPiece _goldPiecePrefab;
-        [SerializeField] private RockObstacle _rockObstaclePrefab;
         // [SerializeField] private List<GameObject> _layouts = new();
         // [SerializeField] private List<GameObject> _obstacleLayouts = new();
         // [SerializeField] private Vector2Int _layoutSize;
         // [SerializeField] private Vector2Int _numOfLayouts;
 
+        private Dictionary<Vector3Int, GroundTile> _allTiles = new();
+
         private void Awake()
         {
             _tilemapManager = GetComponent<TilemapManager>();
             _navMeshSurface = GetComponent<NavMeshSurface>();
+            
+            InstantiateTiles();
+            _navMeshSurface.BuildNavMesh();
         }
 
+        private void Start()
+        {
+            _boundary.BuildBoundary(TilemapSize);
+        }
+
+        private void InstantiateTiles()
+        {
+            for (int i = 0; i < TilemapSize.x; i++)
+            {
+                for (int j = 0; j < TilemapSize.y; j++)
+                {
+                    var pos = new Vector3Int(i, 0, j);
+                    GroundTile tile = Instantiate(_groundTile, pos, Quaternion.identity, transform);
+                    tile.Cell = _tilemapManager.GetCell(pos);
+                    tile.TilemapManager = _tilemapManager;
+                    _allTiles.Add(tile.Cell, tile);
+                }
+            }
+        }
+        
         public void Build()
         {
             CellularAutomataGround();
             CellularAutomataObstacles();
-        
-            // FindEmptyTiles();
-        
-            _navMeshSurface.BuildNavMesh();
-            _boundary.BuildBoundary(TilemapSize);
         }
-    
 
         private void CellularAutomataGround()
         {
@@ -69,7 +91,7 @@ namespace Tiles
                         groundTileMap[i][j] = 0;
                         continue;
                     }
-                    groundTileMap[i][j] = _random.Next(100) < _iceTileRate ? 1 : 0;
+                    groundTileMap[i][j] = Random.Range(0, 100) < _iceTileRate ? 1 : 0;
                 }
             }
 
@@ -80,16 +102,19 @@ namespace Tiles
                 for (int j = 0; j < TilemapSize.y; j++)
                 {
                     var pos = new Vector3Int(i, 0, j);
-
-                    GroundTile tile = Instantiate(_groundTile, pos, Quaternion.identity, transform);
-                    if (groundTileMap[i][j] == 1) tile.ToggleIce(true);
-                    // tile = Instantiate(groundTileMap[i][j] == 1 ? _iceTile : _rockTile, pos, Quaternion.identity, transform);
-                    
-                    tile.Cell = _tilemapManager.GetCell(pos);
-                    tile.TilemapManager = _tilemapManager;
-                    _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
+                    var cell = _tilemapManager.GetCell(pos);
+                    var tile = _allTiles[cell];
+                    tile.Rebuild();
+                    tile.ToggleIce(groundTileMap[i][j] == 1);
+                    // GroundTile tile = Instantiate(_groundTile, pos, Quaternion.identity, transform);
+                    // if (groundTileMap[i][j] == 1) tile.ToggleIce(true);
+                    // tile.Cell = _tilemapManager.GetCell(pos);
+                    // tile.TilemapManager = _tilemapManager;
+                    // _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
                 }
             }
+
+            _tilemapManager.ActiveTiles = new Dictionary<Vector3Int, GroundTile>(_allTiles);
         }
     
         private void CellularAutomataObstacles()
@@ -107,14 +132,14 @@ namespace Tiles
 
                     if (i is 0 or 5 or 10 or 14 or 19 or 24 || j is 0 or 5 or 10 or 14 or 19 or 24)
                     {
-                        obstacleMap[i][j] = _random.Next(100) < _layoutFillRate ? 1 : 0;
+                        obstacleMap[i][j] = Random.Range(0, 100) < _layoutFillRate ? 1 : 0;
                     }
                 
                     if (i is 1 or 4 or 9 or 15 or 20 or 23 || j is 1 or 4 or 9 or 15 or 20 or 23)
                     {
-                        removeMap[i][j] = _random.Next(100) < _layoutFillRate ? 1 : 0;
+                        removeMap[i][j] = Random.Range(0, 100) < _layoutFillRate ? 1 : 0;
                     }
-                    obstacleMap[i][j] = _random.Next(100) < _obstacleFillRate ? 1 : obstacleMap[i][j];
+                    obstacleMap[i][j] = Random.Range(0, 100) < _obstacleFillRate ? 1 : obstacleMap[i][j];
                 }
             }
         

@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -32,16 +33,24 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Range(1, 100)] private int _maxLevel;
     private int _currentLevel = 1;
 
+    [Header("Random")] 
+    [SerializeField] public int RandomSeed;
+    // public static Random Rand = new();
+
     private void Awake()
     {
         for (int i = 0; i < _totalPlayers; i++)
         {
-            _players.Add(i, i < _numOfHumans ? CreatePlayer(i) : CreateAIPlayer(i));
+            _players.Add(i, i < _numOfHumans ? CreateHumanPlayer(i) : CreateAIPlayer(i));
         }
 
         _scoreboard.Players = _players.Values.ToList();
         _levelText.text = "Level " + _currentLevel;
-        
+
+        if (RandomSeed != 0)
+        {
+            Random.InitState(RandomSeed);
+        }
     }
 
     private void Start()
@@ -54,7 +63,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    private BasePlayer CreatePlayer(int i)
+    private BasePlayer CreateHumanPlayer(int i)
     {
         var player = PlayerInput.Instantiate(_playerPrefab, pairWithDevice: Keyboard.current);
         player.user.ActivateControlScheme("Player" + i);
@@ -84,7 +93,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayerFell(BasePlayer player)
     {
-        player.gameObject.SetActive(false);
+        player.TogglePlayerEnabled(false);
         _tilemapManager.PlayerFell(player);
 
         bool allFell = _players.Values.All(p => p.Fell);
@@ -115,7 +124,7 @@ public class GameManager : MonoBehaviour
             BasePlayer basePlayer = player.Value;
             basePlayer.transform.position = _spawnPoints[player.Key].position;
             basePlayer.Fell = false;
-            basePlayer.gameObject.SetActive(true);
+            basePlayer.TogglePlayerEnabled(true);
         }
     }
 

@@ -9,6 +9,7 @@ namespace Players
         protected Rigidbody Rb;
         protected Collider Collider;
         protected MeshRenderer MeshRenderer;
+        protected GameObject MeshObject;
         protected Animator Animator;
         private int _pickaxeAnimationID;
 
@@ -19,7 +20,7 @@ namespace Players
         [SerializeField] protected float PickaxeCooldown = 1f;
         protected float PickaxeTimer;
 
-        protected Vector3 DesiredDirection;
+        [SerializeField] protected Vector3 DesiredDirection;
         private Vector3 _velocityRef = Vector3.zero;
     
 
@@ -39,6 +40,7 @@ namespace Players
             Rb = GetComponent<Rigidbody>();
             Collider = GetComponent<CapsuleCollider>();
             MeshRenderer = GetComponentInChildren<MeshRenderer>();
+            MeshObject = MeshRenderer.gameObject;
             Animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
         }
@@ -169,6 +171,15 @@ namespace Players
         protected Vector3 GetRotatedVector(Vector3 vector)
         {
             return Quaternion.Euler(0f, 45f, 0f) * vector;
+        }
+
+        public void TogglePlayerEnabled(bool enable)
+        {
+            Collider.enabled = enable;
+            MeshRenderer.enabled = enable;
+            MeshObject.SetActive(enable);
+            Rb.velocity = Vector3.one;
+            Rb.useGravity = enable;
         }
     }
 }

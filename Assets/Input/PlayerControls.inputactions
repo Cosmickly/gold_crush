@@ -154,7 +154,7 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "2D Vector",
+                    "name": "TFGH",
                     "id": "a23cb5d3-428a-47ec-875c-af9cd7c6eaba",
                     "path": "2DVector",
                     "interactions": "",
@@ -209,7 +209,7 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "2D Vector",
+                    "name": "IJKL",
                     "id": "7820580f-67c3-4c5b-b1e4-c6a52a5c6319",
                     "path": "2DVector",
                     "interactions": "",
@@ -313,7 +313,7 @@
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Player0",
+                    "groups": "Player0;Player1;Player2;Player3",
                     "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false

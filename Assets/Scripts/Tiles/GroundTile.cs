@@ -1,6 +1,9 @@
+using System;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Tiles
 {
@@ -13,7 +16,8 @@ namespace Tiles
         private MeshRenderer _meshRenderer;
         private GameObject _meshObject;
         private NavMeshObstacle _navMeshObstacle;
-    
+        // private NavMeshModifier _navMeshModifier;
+        
         public bool Cracking { get; set; }
         private float _crackTimer;
         [Header("Crack Parameters")]
@@ -48,6 +52,14 @@ namespace Tiles
             _meshObject = _meshRenderer.gameObject;
             _initialColor = _meshRenderer.material.color;
             _navMeshObstacle = GetComponentInChildren<NavMeshObstacle>();
+            // _navMeshModifier = GetComponentInChildren<NavMeshModifier>();
+
+            var newY = transform.position.y + Random.Range(-_amplitude, _amplitude);
+            _meshObject.transform.localPosition += new Vector3(0, newY, 0);
+        }
+        
+        private void Start()
+        {
         }
 
         private void FixedUpdate()
@@ -56,11 +68,7 @@ namespace Tiles
         
             if (_crackTimer >= _crackTime)
             {
-                if (TilemapManager.RemoveTile(Cell))
-                {
-                    Break();
-                    return;
-                }
+                TilemapManager.RemoveTile(Cell);
             }
 
             _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
@@ -71,12 +79,26 @@ namespace Tiles
             _meshObject.transform.localPosition = new Vector3(0, newY, 0);
         }
 
-        private void Break()
+        public void Break()
         {
             Cracking = false;
             _meshRenderer.enabled = false;
             _collider.enabled = false;
             _navMeshObstacle.enabled = true;
+            // _navMeshModifier.overrideArea = true;
+        }
+
+        public void Rebuild()
+        {
+            _meshRenderer.enabled = true;
+            _collider.enabled = true;
+            _navMeshObstacle.enabled = false;
+            _crackTimer = 0f;
+        }
+
+        private void OnDestroy()
+        {
+            _navMeshObstacle.enabled = false;
         }
 
         public void ToggleIce(bool togglIce)

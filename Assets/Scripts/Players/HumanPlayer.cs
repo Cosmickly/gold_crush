@@ -4,12 +4,12 @@ using UnityEngine.SceneManagement;
 
 namespace Players
 {
-    public class Player : BasePlayer
+    public class HumanPlayer : BasePlayer
     {
         private bool _desiredJump;
         private bool _desiredPickaxe;
 
-    
+
         [Header("Input")]
         private InputActionAsset _actionAsset;
         private InputAction _moveAction;
@@ -21,7 +21,7 @@ namespace Players
         {
             _actionAsset.Enable();
         }
-
+        
         private void OnDisable()
         {
             _actionAsset.Disable();
@@ -44,6 +44,7 @@ namespace Players
             base.Update();
             Input();
         }
+        
 
         private void Input()
         {

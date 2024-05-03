@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -47,6 +48,8 @@ namespace Players
 			_target = GetNearestGoldPiece();
 			
 			_agent.enabled = Grounded;
+			
+			if (!_agent.enabled) return; 
 		
 			if (Input.GetMouseButton(0) && _cam && _agent.enabled)
 			{
@@ -86,6 +89,11 @@ namespace Players
 			if (_distanceToTarget < 1.5f) _target = _centerPos;
 			
 			if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
+		}
+
+		private void OnDisable()
+		{
+			_agent.enabled = true;
 		}
 
 		private IEnumerator RigidBodyJump()
