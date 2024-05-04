@@ -2109,7 +2109,7 @@ MonoBehaviour:
   - {fileID: 1339196529}
   - {fileID: 159034701}
   _numOfHumans: 1
-  _totalPlayers: 1
+  _totalPlayers: 4
   _maxLevel: 5
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}

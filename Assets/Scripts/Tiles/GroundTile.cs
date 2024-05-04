@@ -55,8 +55,12 @@ namespace Tiles
             _particle = GetComponent<ParticleSystem>();
             var main = _particle.main;
             main.startColor = _initialColor;
+        }
 
-            var newY = transform.position.y + Random.Range(-_amplitude, _amplitude);
+        private void Start()
+        {
+            var newY = Random.Range(0.01f, 0.04f);
+            newY = (Cell.x + Cell.y) % 2 == 0f ? -newY : newY;
             _meshObject.transform.localPosition += new Vector3(0, newY, 0);
         }
 
@@ -64,6 +68,8 @@ namespace Tiles
         {
             if (!Cracking || _crackTimer >= _crackTime) return;
             _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
+            // var newY = transform.position.y + Random.Range(-_amplitude, _amplitude);
+            // _meshObject.transform.localPosition += new Vector3(0, newY, 0);
         }
 
         private void FixedUpdate()

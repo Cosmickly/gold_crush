@@ -16,9 +16,13 @@ namespace Entities
         private Transform _meshObject;
         private Rigidbody _rigidbody;
 
-        private void Start()
+        private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
+        }
+
+        private void Start()
+        {
             _meshObject = GetComponentInChildren<MeshRenderer>().transform;
         }
 
