@@ -17,8 +17,8 @@ namespace Players
         protected Animator Animator;
         private int _pickaxeAnimationID;
         // private int _fadeAnimationID;
-        public float FadeTime;
-        private float _fadeTimer;
+        // public float FadeTime;
+        // private float _fadeTimer;
         
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
@@ -59,17 +59,17 @@ namespace Players
             TileCheck();
             
             if (PickaxeTimer > 0) PickaxeTimer -= Time.deltaTime;
-            if (Fell && _fadeTimer < FadeTime) _fadeTimer += Time.deltaTime;
+            // if (Fell && _fadeTimer < FadeTime) _fadeTimer += Time.deltaTime;
         }
 
         protected virtual void FixedUpdate()
         {
-            if (Fell && _fadeTimer < FadeTime)
-            {
-                var fadeRatio = _fadeTimer / FadeTime;
-                MeshRenderer.material.color = Color.Lerp(PlayerColour, PlayerColour * new Color(1f, 1f, 1f, 0.1f), fadeRatio);
-                Debug.Log("fading");
-            }
+            // if (Fell && _fadeTimer < FadeTime)
+            // {
+            //     var fadeRatio = _fadeTimer / FadeTime;
+            //     MeshRenderer.material.color = Color.Lerp(PlayerColour, PlayerColour * new Color(1f, 1f, 1f, 0.1f), fadeRatio);
+            //     Debug.Log("fading");
+            // }
         }
 
         /*
@@ -196,15 +196,14 @@ namespace Players
         public void TogglePlayerEnabled(bool enable)
         {
             Collider.enabled = enable;
-            // Animator.SetTrigger(_fadeAnimationID);
-            // MeshRenderer.enabled = enable;
             // MeshObject.SetActive(enable);
             // Rb.useGravity = enable;
-            // Rb.velocity = Vector3.zero;
+            // Animator.SetTrigger(_fadeAnimationID);
             if (enable)
             {
-                MeshRenderer.material.color = PlayerColour;
-                _fadeTimer = 0;
+               Rb.velocity = Vector3.zero;
+                // MeshRenderer.material.color = PlayerColour;
+                // _fadeTimer = 0;
             }
         }
     }

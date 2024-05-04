@@ -13,18 +13,20 @@ namespace Entities
         [SerializeField] private float _amplitude;
         [SerializeField] private float _frequency;
 
-        private Transform _goldObject;
+        private Transform _meshObject;
+        private Rigidbody _rigidbody;
 
         private void Start()
         {
-            _goldObject = GetComponentInChildren<MeshRenderer>().transform;
+            _rigidbody = GetComponent<Rigidbody>();
+            _meshObject = GetComponentInChildren<MeshRenderer>().transform;
         }
 
         private void Update()
         {
-            var pos = _goldObject.localPosition;
+            var pos = _meshObject.localPosition;
             var newY = _centerPos + Mathf.Sin(Time.fixedTime * Mathf.PI * _frequency) * _amplitude;
-            _goldObject.localPosition = new Vector3(pos.x, newY, pos.z);
+            _meshObject.localPosition = new Vector3(pos.x, newY, pos.z);
         }
 
         public void Fall()
@@ -47,6 +49,11 @@ namespace Entities
             {
                 Collect(player);
             }
+        }
+
+        public void Push(Vector3 direction)
+        {
+            _rigidbody.AddForce(direction, ForceMode.Impulse);
         }
     }
 }

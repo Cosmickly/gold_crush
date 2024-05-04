@@ -10,23 +10,31 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _target;
     [SerializeField] private float _smoothTime;
     [SerializeField] private float _maxSpeed;
-    [SerializeField] private Vector3 _velocity;
-    
-    // public TextMeshProUGUI TMP;
+    private Vector3 _velocity;
+
+    private Vector3 _initialPos;
+
+    private void Awake()
+    {
+        _initialPos = transform.position;
+    }
     
     private void FixedUpdate()
     {
         if(!_target) return;
         var currentPos = transform.position;
-        if (!Physics.Raycast(currentPos, transform.forward, out var hitInfo, 100.0f)) return;
+        if (!Physics.Raycast(currentPos, transform.forward, out var hitInfo, 500.0f))
+        {
+            transform.position = Vector3.SmoothDamp(currentPos, _initialPos, 
+                ref _velocity, _smoothTime, _maxSpeed);
+            return;
+        }
 
         var diff = _target.transform.position - hitInfo.point;
 
         transform.position = Vector3.SmoothDamp(currentPos, 
             new Vector3(currentPos.x + diff.x, currentPos.y, currentPos.z + diff.z),
             ref _velocity, _smoothTime, _maxSpeed);
-        
-        // TMP.text = "SD vel " + _velocity;
     }
 
     public void SetTarget(Transform followTarget)
