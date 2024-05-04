@@ -219,9 +219,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
-  _goldEnabled: 0
+  _goldSpawnRadius: {x: 0, y: 0}
+  _goldEnabled: 1
+  _goldSpawnTime: 1
   _tileCrackEnabled: 1
-  _randomTileRate: 1
+  _tileCrackTime: 1
+  _maxIntensity: 40
+  _currentIntensity: 0
 --- !u!114 &40266296
 MonoBehaviour:
   m_ObjectHideFlags: 0

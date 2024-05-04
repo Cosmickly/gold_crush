@@ -55,6 +55,8 @@ namespace Tiles
             _particle = GetComponent<ParticleSystem>();
             var main = _particle.main;
             main.startColor = _initialColor;
+            _crackTimer = _crackTime;
+
         }
 
         private void Start()
@@ -66,22 +68,20 @@ namespace Tiles
 
         private void Update()
         {
-            if (!Cracking || _crackTimer >= _crackTime) return;
-            _crackTimer += PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
-            // var newY = transform.position.y + Random.Range(-_amplitude, _amplitude);
-            // _meshObject.transform.localPosition += new Vector3(0, newY, 0);
+            if (!Cracking || _crackTimer <= 0) return;
+            _crackTimer -= PlayerOnMe ? Time.deltaTime * _crackMultiplier : Time.deltaTime;
         }
 
         private void FixedUpdate()
         {
             if (!Cracking) return;
         
-            if (_crackTimer >= _crackTime)
+            if (_crackTimer <= 0)
             {
                 TilemapManager.RemoveTile(Cell);
             }
 
-            var crackRatio = _crackTimer / _crackTime;
+            var crackRatio = 1 - _crackTimer / _crackTime;
             _meshRenderer.material.color = Color.Lerp(_initialColor, _initialColor * new Color(0.2f,0.2f,0.2f), crackRatio);
             
             var newY = Mathf.Sin(Time.fixedTime * Mathf.PI * _frequency * crackRatio) * (_amplitude * crackRatio);
@@ -103,7 +103,8 @@ namespace Tiles
             _meshRenderer.enabled = true;
             _collider.enabled = true;
             _navMeshObstacle.enabled = false;
-            _crackTimer = 0f;
+            _crackTimer = _crackTime;
+            Cracking = false;
         }
 
         public void ToggleIce(bool togglIce)

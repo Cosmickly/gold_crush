@@ -84,6 +84,7 @@ MonoBehaviour:
   JumpForce: 3.5
   _smoothTime: 0.1
   PickaxeCooldown: 0.5
+  DesiredDirection: {x: 0, y: 0, z: 0}
   TileMask:
     serializedVersion: 2
     m_Bits: 128
@@ -102,7 +103,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4933396742051619548}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.1
   m_Speed: 0

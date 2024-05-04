@@ -100,13 +100,12 @@ public class GameManager : MonoBehaviour
 
         if (allFell)
         {
-            ResetLevel();
+            NextLevel();
         }
     }
 
-    private void ResetLevel()
+    private void NextLevel()
     {
-        Debug.Log("Reset level");
         _currentLevel++;
         if (_currentLevel > _maxLevel)
         {

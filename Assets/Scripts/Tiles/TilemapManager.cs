@@ -16,32 +16,45 @@ namespace Tiles
         [SerializeField] private GameManager _gameManager;
         private TilemapBuilder _tilemapBuilder;
         private Tilemap _tilemap;
-        private HashSet<Vector3Int> _allTilePositions; 
+        private HashSet<Vector3Int> _allCellPositions;
 
         public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; set; } = new();
         private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
         public Dictionary<Vector3Int, RockObstacle> Obstacles { get; } = new();
-        private List<GoldPiece> _goldPieces = new();
+        // private List<GoldPiece> _goldPieces = new();
         private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> _navMeshLinks = new();
 
         private Dictionary<int, Vector3Int> _playerLocations = new();
     
         [Header("Prefabs")] 
         [SerializeField] public GoldPiece GoldPiecePrefab;
+        [SerializeField] private Vector2Int _goldSpawnRadius;
     
         [Header("Parameters")] 
         [SerializeField] private bool _goldEnabled;
+        [SerializeField] private float _goldSpawnTime;
+        private float _goldSpawnTimer;
+        
         [SerializeField] private bool _tileCrackEnabled;
-        [SerializeField] private float _randomTileRate;
+        [SerializeField] private float _tileCrackTime;
+        private float _tileCrackTimer;
+        
+        [SerializeField] private int _maxIntensity;
+        [SerializeField] private float _currentIntensity;
 
+        private bool _active = true;
+
+        private Vector2Int _centerPos;
         public Vector2Int TilemapSize
         {
             get => _tilemapBuilder.TilemapSize;
-            private set => _tilemapBuilder.TilemapSize = value;
+            private set
+            {
+                _tilemapBuilder.TilemapSize = value;
+                _centerPos = new Vector2Int(TilemapSize.x / 2, TilemapSize.y / 2);
+            }
         }
-
-        private bool _readInput = true;
-    
+        
         private void Awake()
         {
             _tilemapBuilder = GetComponent<TilemapBuilder>();
@@ -51,54 +64,78 @@ namespace Tiles
 
         private void Start()
         {
-            _tilemapBuilder.Build();
-            _allTilePositions = new HashSet<Vector3Int>(ActiveTiles.Keys);
-            InvokeRepeating(nameof(SpawnRandomCoin), 1f, 1f);
-            InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
+            StartLevel();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R) && _readInput)
+            if (!_active) return;
+            
+            if (_currentIntensity < _maxIntensity) _currentIntensity += Time.deltaTime;
+            var intensityRatio = _currentIntensity / _maxIntensity;
+
+            var radiusMultiplier = intensityRatio + 0.2;
+            _goldSpawnRadius = new Vector2Int((int)(radiusMultiplier * TilemapSize.x),(int)(radiusMultiplier *
+                TilemapSize.y));
+
+            if (_goldEnabled)
             {
-                ManualResetLevel();
+                _goldSpawnTimer -= Time.deltaTime;
+                if (_goldSpawnTimer <= 0)
+                {
+                    SpawnRandomCoin();
+                    _goldSpawnTimer = _goldSpawnTime;
+                }
             }
+
+            if (_tileCrackEnabled)
+            {
+                _tileCrackTimer -= Time.deltaTime;
+                if (_tileCrackTimer <= 0)
+                {
+                    CrackRandomTile();
+                    _tileCrackTimer = _tileCrackTime;
+                }
+            }
+            
+            if (Input.GetKeyDown(KeyCode.R) && _active) RebuildTilesOnly();
         }
 
-        private void OnDisable()
+        /*
+         * LEVEL
+         */
+
+        private void StartLevel()
         {
-            _readInput = false;
-            CancelInvoke(nameof(SpawnRandomCoin));
-            CancelInvoke(nameof(CrackRandomTile));
+            _currentIntensity = 0;
+            _tilemapBuilder.Build();
+            _allCellPositions = new HashSet<Vector3Int>(ActiveTiles.Keys);
+            _active = true;
+        }
+
+        public IEnumerator ResetLevel()
+        {
+            ClearAllTiles();
+            ClearAllLinks();
+            _active = false;
+            yield return new WaitForSeconds(2f);
+            _gameManager.ResetPlayers();
+            StartLevel();
+        }
+
+        private void RebuildTilesOnly()
+        {
+            ClearObstacles();
+            ClearAllTiles();
+            ClearAllLinks();
+            _tilemapBuilder.Build();
+            _allCellPositions = new HashSet<Vector3Int>(ActiveTiles.Keys);
         }
 
         /*
          * TILES
          */
-
-        public IEnumerator ResetLevel()
-        {
-            _readInput = false;
-            ClearAllTiles();
-            ClearAllLinks();
-            CancelInvoke(nameof(SpawnRandomCoin));
-            CancelInvoke(nameof(CrackRandomTile));
-            yield return new WaitForSeconds(2f);
-            _tilemapBuilder.Build();
-            _gameManager.ResetPlayers();
-            InvokeRepeating(nameof(SpawnRandomCoin), 1f, 1f);
-            InvokeRepeating(nameof(CrackRandomTile), 0f, _randomTileRate);
-            _readInput = true;
-        }
-
-        private void ManualResetLevel()
-        {
-            ClearAllTiles();
-            ClearObstacles();
-            ClearAllLinks();
-            _tilemapBuilder.Build();
-        }
-
+        
         private void ClearAllTiles()
         {
             for (int i = 0; i < ActiveTiles.Count; i++)
@@ -198,7 +235,7 @@ namespace Tiles
             {
                 var goldPiece = Instantiate(GoldPiecePrefab, pos + new Vector3Int(0, 1, 0), Quaternion.identity, transform);
                 goldPiece.TilemapManager = this;
-                _goldPieces.Add(goldPiece);
+                // _goldPieces.Add(goldPiece);
             }
         }
 
@@ -341,8 +378,13 @@ namespace Tiles
 
         private Vector3Int GetRandomFreeCell()
         {
-            var possibleTiles = _allTilePositions.Except(Obstacles.Keys).ToList();
-            return possibleTiles.ElementAt(Random.Range(0, possibleTiles.Count));
+            var possibleCells = _allCellPositions.Except(Obstacles.Keys).ToList();
+            possibleCells = possibleCells.Where(
+                cell => cell.x >= _centerPos.x - _goldSpawnRadius.x / 2 
+                        && cell.x <= _centerPos.x + _goldSpawnRadius.x / 2 
+                        && cell.y >= _centerPos.y - _goldSpawnRadius.y / 2 
+                        && cell.y <= _centerPos.y + _goldSpawnRadius.y / 2 ).ToList();
+            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count));
         }
     
         // public bool HasTile(Vector3Int pos)
