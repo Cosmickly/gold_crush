@@ -220,10 +220,12 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldSpawnRadius: {x: 0, y: 0}
-  _goldEnabled: 1
-  _goldSpawnTime: 1
+  _goldEnabled: 0
+  _goldSpawnTimeMax: 1
+  _goldSpawnTimeMin: 0.25
   _tileCrackEnabled: 1
-  _tileCrackTime: 1
+  _tileCrackTimeMax: 1
+  _tileCrackTimeMin: 0.25
   _maxIntensity: 40
   _currentIntensity: 0
 --- !u!114 &40266296
@@ -269,13 +271,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91bff0f035f64a54094fd00bc2a15994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameManager: {fileID: 1919680840}
   _boundary: {fileID: 824523846}
   TilemapSize: {x: 25, y: 25}
-  _iceTileRate: 50
-  _iceSmoothRate: 3
-  _obstacleFillRate: 10
+  _iceTileRateMax: 0.4
+  _obstacleFillRate: 15
   _layoutFillRate: 75
   _obstacleSmoothRate: 3
+  _goldChunkRateMax: 40
   _groundTile: {fileID: 6033928661518195644, guid: b23980f3c4e77694fafc99066c1d2972, type: 3}
   _rockObstaclePrefab: {fileID: 1007761954129956207, guid: 8af9cfcdf050112409189bc88de9da84, type: 3}
   _goldChunkPrefab: {fileID: 6816266354422320353, guid: 66078d5e32b7fa749bfe17eb9779aca1, type: 3}
@@ -2113,7 +2116,7 @@ MonoBehaviour:
   - {fileID: 1339196529}
   - {fileID: 159034701}
   _numOfHumans: 1
-  _totalPlayers: 4
+  _totalPlayers: 1
   _maxLevel: 5
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}

@@ -9,7 +9,7 @@ namespace Tiles
 {
     public class TilemapBuilder : MonoBehaviour
     {
-        // private Random _random = new();
+        [SerializeField] private GameManager _gameManager;
         private TilemapManager _tilemapManager;
         private NavMeshSurface _navMeshSurface;
         [SerializeField] private Boundary _boundary;
@@ -18,17 +18,17 @@ namespace Tiles
 
         private readonly Vector3Int _topLayerOffset = new(0, 1, 0);
     
-        [SerializeField] [Range(0, 100)] private int _iceTileRate;
-        [SerializeField] [Range(0, 10)] private int _iceSmoothRate;
+        [SerializeField] [Range(0, 1)] private float _iceTileRateMax;
+        private const float Scale = 0.1f;
+        // [SerializeField] [Range(0, 10)] private int _iceSmoothRate;
     
         [Header("Obstacle Parameters")]
         [SerializeField] [Range(0, 100)] private int _obstacleFillRate;
         [SerializeField] [Range(0, 100)] private int _layoutFillRate;
         [SerializeField] [Range(0, 10)] private int _obstacleSmoothRate;
+        [SerializeField] [Range(0, 100)] private int _goldChunkRateMax;
         // [SerializeField] [Range(0, 1)] private float _obstacleRemoveRate;
         // [SerializeField] [Range(0, 9)] private int _neighbourThreshold;
-        
-        
     
         [Header("Prefabs")] 
         [SerializeField] private GroundTile _groundTile;
@@ -42,7 +42,10 @@ namespace Tiles
         // [SerializeField] private Vector2Int _numOfLayouts;
 
         private Dictionary<Vector3Int, GroundTile> _allTiles = new();
+        private int[][] _obstacleMap;
 
+        private float IntensityRatio => (float) _gameManager.CurrentLevel / _gameManager.MaxLevel;
+        
         private void Awake()
         {
             _tilemapManager = GetComponent<TilemapManager>();
@@ -76,12 +79,16 @@ namespace Tiles
         {
             CellularAutomataGround();
             CellularAutomataObstacles();
+            InstantiateObstacles();
         }
 
         private void CellularAutomataGround()
         {
             int[][] groundTileMap = new int[TilemapSize.x][];
             for (int i = 0; i < TilemapSize.x; i++) groundTileMap[i] = new int[TilemapSize.y];
+            var offsetX = Random.Range(0,100);
+            var offsetY = Random.Range(0,100);
+            
         
             for (int i = 0; i < TilemapSize.x; i++)
             {
@@ -92,12 +99,12 @@ namespace Tiles
                         groundTileMap[i][j] = 0;
                         continue;
                     }
-                    groundTileMap[i][j] = Random.Range(0, 100) < _iceTileRate ? 1 : 0;
+
+                    var perlin = Mathf.PerlinNoise(Scale * i + offsetX, Scale * j + offsetY);
+                    groundTileMap[i][j] = perlin < IntensityRatio * _iceTileRateMax ? 1 : 0;
                 }
             }
-
-            for (int i = 0; i < _iceSmoothRate; i++) groundTileMap = SmoothMap(groundTileMap);
-
+            
             for (int i = 0; i < TilemapSize.x; i++)
             {
                 for (int j = 0; j < TilemapSize.y; j++)
@@ -120,8 +127,8 @@ namespace Tiles
     
         private void CellularAutomataObstacles()
         {
-            int[][] obstacleMap = new int[TilemapSize.x][];
-            for (int i = 0; i < TilemapSize.x; i++) obstacleMap[i] = new int[TilemapSize.y];
+            _obstacleMap = new int[TilemapSize.x][];
+            for (int i = 0; i < TilemapSize.x; i++) _obstacleMap[i] = new int[TilemapSize.y];
             int[][] removeMap = new int[TilemapSize.x][];
             for (int i = 0; i < TilemapSize.x; i++) removeMap[i] = new int[TilemapSize.y];
 
@@ -133,40 +140,44 @@ namespace Tiles
 
                     if (i is 0 or 5 or 10 or 14 or 19 or 24 || j is 0 or 5 or 10 or 14 or 19 or 24)
                     {
-                        obstacleMap[i][j] = Random.Range(0, 100) < _layoutFillRate ? 1 : 0;
+                        _obstacleMap[i][j] = Random.Range(0, 100) < _layoutFillRate ? 1 : 0;
                     }
                 
-                    if (i is 1 or 4 or 9 or 15 or 20 or 23 || j is 1 or 4 or 9 or 15 or 20 or 23)
-                    {
-                        removeMap[i][j] = Random.Range(0, 100) < _layoutFillRate ? 1 : 0;
-                    }
-                    obstacleMap[i][j] = Random.Range(0, 100) < _obstacleFillRate ? 1 : obstacleMap[i][j];
+                    _obstacleMap[i][j] = Random.Range(0, 100) < _obstacleFillRate ? 1 : _obstacleMap[i][j];
                 }
             }
         
-            for (int i = 0; i < _obstacleSmoothRate; i++) obstacleMap = SmoothMap(obstacleMap, true);
+            for (int i = 0; i < _obstacleSmoothRate; i++) _obstacleMap = SmoothMap(_obstacleMap, true);
+        }
 
+        private void InstantiateObstacles()
+        {
             for (int i = 0; i < TilemapSize.x; i++)
             {
                 for (int j = 0; j < TilemapSize.y; j++)
                 {
-                    if (obstacleMap[i][j] == 1 && removeMap[i][j] == 0)
+                    if (i is 1 or 4 or 9 or 15 or 20 or 23 || j is 1 or 4 or 9 or 15 or 20 or 23)
                     {
-                        var pos = new Vector3Int(i, 0, j) + _topLayerOffset;
-                        RockObstacle obstacle;
-                        if (i is > 10 and < 15 && j is > 10 and < 15)
-                        {
-                            obstacle = Instantiate(_goldChunkPrefab, pos, Quaternion.identity, transform);
-                            
-                        }
-                        else
-                        {
-                            obstacle = Instantiate(_rockObstaclePrefab, pos, Quaternion.identity, transform);
-                        }
-                        obstacle.Cell = _tilemapManager.GetCell(pos);
-                        obstacle.TilemapManager = _tilemapManager;
-                        _tilemapManager.Obstacles.Add(obstacle.Cell, obstacle);
+                        if (Random.Range(0, 100) < _layoutFillRate) continue;
                     }
+
+                    if (_obstacleMap[i][j] != 1) continue;
+                    
+                    var pos = new Vector3Int(i, 0, j) + _topLayerOffset;
+                    RockObstacle obstacle;
+                    if (i is > 5 and < 20 && j is > 5 and < 20 
+                                          && Random.Range(0, 100) < IntensityRatio * _goldChunkRateMax)
+                    {
+                        obstacle = Instantiate(_goldChunkPrefab, pos, Quaternion.identity, transform);
+                            
+                    }
+                    else
+                    {
+                        obstacle = Instantiate(_rockObstaclePrefab, pos, Quaternion.identity, transform);
+                    }
+                    obstacle.Cell = _tilemapManager.GetCell(pos);
+                    obstacle.TilemapManager = _tilemapManager;
+                    _tilemapManager.Obstacles.Add(obstacle.Cell, obstacle);
                 }
             }
         }

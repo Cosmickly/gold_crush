@@ -28,15 +28,19 @@ namespace Tiles
     
         [Header("Prefabs")] 
         [SerializeField] public GoldPiece GoldPiecePrefab;
-        [SerializeField] private Vector2Int _goldSpawnRadius;
+        [SerializeField] private Vector2 _goldSpawnRadius;
     
         [Header("Parameters")] 
         [SerializeField] private bool _goldEnabled;
-        [SerializeField] private float _goldSpawnTime;
+        [SerializeField] private float _goldSpawnTimeMax;
+        [SerializeField] private float _goldSpawnTimeMin;
+        private float _goldSpawnTime;
         private float _goldSpawnTimer;
         
         [SerializeField] private bool _tileCrackEnabled;
-        [SerializeField] private float _tileCrackTime;
+        [SerializeField] private float _tileCrackTimeMax;
+        [SerializeField] private float _tileCrackTimeMin;
+        private float _tileCrackTime;
         private float _tileCrackTimer;
         
         [SerializeField] private int _maxIntensity;
@@ -73,13 +77,12 @@ namespace Tiles
             
             if (_currentIntensity < _maxIntensity) _currentIntensity += Time.deltaTime;
             var intensityRatio = _currentIntensity / _maxIntensity;
-
-            var radiusMultiplier = intensityRatio + 0.2;
-            _goldSpawnRadius = new Vector2Int((int)(radiusMultiplier * TilemapSize.x),(int)(radiusMultiplier *
-                TilemapSize.y));
+            
+            _goldSpawnRadius = Vector2.Lerp(new Vector2(5, 5), TilemapSize, intensityRatio);
 
             if (_goldEnabled)
             {
+                _goldSpawnTime = Mathf.Lerp(_goldSpawnTimeMax, _goldSpawnTimeMin, intensityRatio);
                 _goldSpawnTimer -= Time.deltaTime;
                 if (_goldSpawnTimer <= 0)
                 {
@@ -90,6 +93,7 @@ namespace Tiles
 
             if (_tileCrackEnabled)
             {
+                _tileCrackTime = Mathf.Lerp(_goldSpawnTimeMax, _goldSpawnTimeMin, intensityRatio);
                 _tileCrackTimer -= Time.deltaTime;
                 if (_tileCrackTimer <= 0)
                 {
@@ -366,7 +370,7 @@ namespace Tiles
          * HELPER
          */
 
-        public Vector3 CellToWorld(Vector3Int cell)
+        private Vector3 CellToWorld(Vector3Int cell)
         {
             return new Vector3(cell.x + 0.5f, 0.5f, cell.y + 0.5f);
         }

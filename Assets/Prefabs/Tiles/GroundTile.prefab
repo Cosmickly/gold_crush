@@ -209,7 +209,7 @@ MonoBehaviour:
   _defaultMaterial: {fileID: 2100000, guid: bcde93b78cda70447809f52e0e7daddc, type: 2}
   _iceMaterial: {fileID: 2100000, guid: f3fd852e3640682429b90f2f4f86f106, type: 2}
   _defaultSlipperiness: 0.1
-  _iceSlipperiness: 3
+  _iceSlipperiness: 2
   _playerOnMe: 0
 --- !u!198 &2334243911471581843
 ParticleSystem:

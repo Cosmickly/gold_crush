@@ -22,9 +22,12 @@ public class GameManager : MonoBehaviour
     
     [Header("Parameters")]
     [SerializeField] [Range(0, 4)] private int _numOfHumans; 
-    [SerializeField] [Range(0, 4)] private int _totalPlayers; 
+    [SerializeField] [Range(0, 4)] private int _totalPlayers;
+    
+    public int MaxLevel => _maxLevel;
+
     [SerializeField] [Range(1, 100)] private int _maxLevel;
-    private int _currentLevel = 1;
+    public int CurrentLevel { get; private set; } = 1;
 
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private TilemapManager _tilemapManager;
@@ -37,6 +40,7 @@ public class GameManager : MonoBehaviour
     [Header("Random")] 
     [SerializeField] public int RandomSeed;
 
+
     private void Awake()
     {
         for (int i = 0; i < _totalPlayers; i++)
@@ -45,7 +49,7 @@ public class GameManager : MonoBehaviour
         }
 
         _scoreboard.Players = _players.Values.ToList();
-        _levelText.text = "Level " + _currentLevel;
+        _levelText.text = "Level " + CurrentLevel;
 
         if (RandomSeed != 0)
         {
@@ -106,13 +110,13 @@ public class GameManager : MonoBehaviour
 
     private void NextLevel()
     {
-        _currentLevel++;
-        if (_currentLevel > _maxLevel)
+        CurrentLevel++;
+        if (CurrentLevel > MaxLevel)
         {
             GameOver();
             return;
         }
-        _levelText.text = "Level " + _currentLevel;
+        _levelText.text = "Level " + CurrentLevel;
         StartCoroutine(_tilemapManager.ResetLevel());
     }
 
