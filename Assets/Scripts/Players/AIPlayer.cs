@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -56,9 +57,10 @@ namespace Players
 				if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
 				{
 					_target = hit.point;
-					_agent.destination = hit.point;
 				}
 			}
+
+			_agent.destination = _target;
 		
 			switch (_path.corners.Length)
 			{
@@ -74,12 +76,11 @@ namespace Players
 			if (_drawPath) DrawPath();
 		}
 
-		protected override void FixedUpdate()
+		protected void FixedUpdate()
 		{
-			base.FixedUpdate();
+			if (!Grounded) return;
 			Move();
-			
-			Rotate();
+			Rotate(DesiredDirection);
 		
 			if(_agent.isOnOffMeshLink)
 			{
@@ -89,7 +90,15 @@ namespace Players
 			_distanceToTarget = Vector3.Distance(_target, transform.position);
 			if (_distanceToTarget < 1.5f) _target = _centerPos;
 			
-			if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
+			// if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
+		}
+
+		private void OnCollisionStay(Collision other)
+		{
+			if (other.gameObject.TryGetComponent(out IHittable hittable))
+			{
+				SwingPickaxe();
+			}
 		}
 
 		private void OnDisable()
@@ -103,6 +112,7 @@ namespace Players
 			var data = _agent.currentOffMeshLinkData;
 			var endPos = data.endPos;
 			var direction = (new Vector3(endPos.x, pos.y, endPos.z) - pos).normalized;
+			Rotate(direction);
 	
 			_agent.enabled = false;
 			Rb.velocity = MoveSpeed * direction;

@@ -220,7 +220,7 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldSpawnRadius: {x: 0, y: 0}
-  _goldEnabled: 0
+  _goldEnabled: 1
   _goldSpawnTimeMax: 1
   _goldSpawnTimeMin: 0.25
   _tileCrackEnabled: 1
@@ -2115,9 +2115,9 @@ MonoBehaviour:
   - {fileID: 2127851623}
   - {fileID: 1339196529}
   - {fileID: 159034701}
-  _numOfHumans: 1
+  _numOfHumans: 0
   _totalPlayers: 1
-  _maxLevel: 5
+  _maxLevel: 100
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}
   _scoreboard: {fileID: 1315929202}

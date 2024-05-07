@@ -62,16 +62,6 @@ namespace Players
             // if (Fell && _fadeTimer < FadeTime) _fadeTimer += Time.deltaTime;
         }
 
-        protected virtual void FixedUpdate()
-        {
-            // if (Fell && _fadeTimer < FadeTime)
-            // {
-            //     var fadeRatio = _fadeTimer / FadeTime;
-            //     MeshRenderer.material.color = Color.Lerp(PlayerColour, PlayerColour * new Color(1f, 1f, 1f, 0.1f), fadeRatio);
-            //     Debug.Log("fading");
-            // }
-        }
-
         /*
          * CHECKS
          */
@@ -133,11 +123,11 @@ namespace Players
         
             Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
-    
-        protected virtual void Rotate()
+
+        protected virtual void Rotate(Vector3 forward)
         {
-            if (DesiredDirection == Vector3.zero) return;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(DesiredDirection, Vector3.up), 1f);
+            if (forward == Vector3.zero) return;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), 1f);
         }
     
         /*
