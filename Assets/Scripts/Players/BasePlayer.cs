@@ -77,13 +77,6 @@ namespace Players
             }
         }
 
-        // private void OnDrawGizmosSelected()
-        // {
-        //     Gizmos.color = Color.green;
-        //     var pos = transform.position;
-        //     pos.y -= 5f;
-        //     Gizmos.DrawWireCube(pos, new Vector3(0.4f, 10f, 0.4f));
-        // }
 
         protected virtual void TileCheck()
         {
@@ -139,15 +132,28 @@ namespace Players
             if (!Grounded || PickaxeTimer > 0) return;
             PickaxeTimer = PickaxeCooldown;
             RaycastHit[] hits = new RaycastHit[10];
-            int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f), transform.forward, hits, transform.rotation, 1f);
+            int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f),
+                transform.forward, hits, transform.rotation, 1f);
             for (int i=0; i<numFound; i++)
             {
                 if (hits[i].transform.TryGetComponent(out IHittable hittable))
                 {
+                    Debug.Log("HIT");
                     hittable.Hit();
                 }
             }
             Animator.SetTrigger(_pickaxeAnimationID);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.green;
+            var center = transform.position;
+            center += transform.forward;
+
+            Matrix4x4 rotationMatrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
+            Gizmos.matrix = rotationMatrix;
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(0.5f, 0.5f, 0.5f));
         }
     
         /*

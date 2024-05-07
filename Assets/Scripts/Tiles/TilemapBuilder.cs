@@ -33,7 +33,7 @@ namespace Tiles
         [Header("Prefabs")] 
         [SerializeField] private GroundTile _groundTile;
         [SerializeField] private RockObstacle _rockObstaclePrefab;
-        [SerializeField] private GoldChunk _goldChunkPrefab;
+        [SerializeField] private GoldOre _goldOrePrefab;
         // [SerializeField] private GroundTile _iceTile;
         // [SerializeField] private GoldPiece _goldPiecePrefab;
         // [SerializeField] private List<GameObject> _layouts = new();
@@ -168,7 +168,7 @@ namespace Tiles
                     if (i is > 5 and < 20 && j is > 5 and < 20 
                                           && Random.Range(0, 100) < IntensityRatio * _goldChunkRateMax)
                     {
-                        obstacle = Instantiate(_goldChunkPrefab, pos, Quaternion.identity, transform);
+                        obstacle = Instantiate(_goldOrePrefab, pos, Quaternion.identity, transform);
                             
                     }
                     else

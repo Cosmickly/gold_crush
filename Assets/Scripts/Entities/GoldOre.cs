@@ -2,17 +2,12 @@ using UnityEngine;
 
 namespace Entities
 {
-    public class GoldChunk : RockObstacle
+    public class GoldOre : RockObstacle
     {
         public override void Hit()
         {
             SpawnGoldPieces();
-            HitsToBreak--;
-            
-            if (HitsToBreak >= 0 && TilemapManager.RemoveObstacle(Cell))
-            {
-                Destroy(gameObject);
-            }
+            base.Hit();
         }
 
         private void SpawnGoldPieces()

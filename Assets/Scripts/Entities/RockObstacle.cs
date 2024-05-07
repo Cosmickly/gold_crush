@@ -1,3 +1,4 @@
+using System;
 using Interfaces;
 using Tiles;
 using UnityEngine;
@@ -6,22 +7,33 @@ namespace Entities
 {
     public class RockObstacle : MonoBehaviour, IEntity, IHittable
     {
+        private ParticleSystem _particleSystem;
         public TilemapManager TilemapManager { protected get; set; }
         public Vector3Int Cell { get; set; }
         public int HitsToBreak;
 
+        private void Awake()
+        {
+            _particleSystem = GetComponent<ParticleSystem>();
+        }
+
         public void Fall()
         {
-            if (TilemapManager.RemoveObstacle(Cell)) 
-                Destroy(gameObject); 
+            BreakObstacle();
         }
-        
+
         public virtual void Hit()
         {
-            if (HitsToBreak >= 0 && TilemapManager.RemoveObstacle(Cell))
-                Destroy(gameObject);
-
+            _particleSystem.Play();
             HitsToBreak--;
+            if (HitsToBreak >= 0)
+                BreakObstacle();
+        }
+
+        private void BreakObstacle()
+        {
+            if (TilemapManager.RemoveObstacle(Cell))
+                gameObject.SetActive(false);
         }
     }
 }
