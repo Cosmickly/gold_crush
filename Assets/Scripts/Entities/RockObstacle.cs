@@ -31,10 +31,22 @@ namespace Entities
 
         public virtual void Hit()
         {
-            _particleSystem.Play();
             HitsToBreak--;
+            PlayParticles();
             if (HitsToBreak <= 0)
                 BreakObstacle();
+        }
+
+        private void PlayParticles()
+        {
+            if (HitsToBreak <= 0)
+            {
+                var module = _particleSystem.emission;
+                module.burstCount = 6;
+                var main = _particleSystem.main;
+                main.startSize = 0.4f;
+            }
+            _particleSystem.Play();
         }
 
         private void BreakObstacle()
@@ -44,6 +56,8 @@ namespace Entities
                 // gameObject.SetActive(false);
                 _collider.enabled = false;
                 _meshRenderer.enabled = false;
+                // _emissionModule.burstCount = _initialBurstCount;
+                // _mainModule.startSize = _initialParticleSize;
             }
         }
     }
