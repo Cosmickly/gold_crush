@@ -62,8 +62,16 @@ namespace Players
             if(_desiredJump) Jump();
             Rotate(DesiredDirection);
 
-            if (_desiredPickaxe) SwingPickaxe();
+            if (_desiredPickaxe)
+            {
+                if (!Fell)
+                    SwingPickaxe();
+                else
+                    ThrowBomb();
+            }
         }
+
+
 
         protected void SpeedControl()
         {

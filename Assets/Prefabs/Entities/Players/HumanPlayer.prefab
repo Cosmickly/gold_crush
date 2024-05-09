@@ -80,7 +80,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae749d5e0b93c564b97855b3ca5b6856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeTime: 0.5
   MoveSpeed: 3
   JumpForce: 3
   _smoothTime: 0.1
@@ -93,6 +92,7 @@ MonoBehaviour:
   Grounded: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
+  _bombPrefab: {fileID: 1482070067295822981, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
 --- !u!114 &1931657400224951325
 MonoBehaviour:
   m_ObjectHideFlags: 0

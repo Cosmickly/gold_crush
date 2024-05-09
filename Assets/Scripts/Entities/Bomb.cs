@@ -7,12 +7,18 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour, IEntity
 {
+    private Rigidbody _rigidbody;
     [SerializeField] private float _radius;
     [SerializeField] private float _bombTime;
     private float _bombTimer;
     private bool _armed;
     
     private int TileMask => 1 << LayerMask.NameToLayer("Tile");
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
 
     private void Start()
     {
@@ -52,10 +58,15 @@ public class Bomb : MonoBehaviour, IEntity
         {
             if (hits[i].TryGetComponent(out GroundTile tile))
             {
-                tile.Break();
+                tile.InstantBreak();
             }
         }
         
         Destroy(gameObject);
+    }
+    
+    public void Push(Vector3 direction)
+    {
+        _rigidbody.AddForce(direction, ForceMode.Impulse);
     }
 }

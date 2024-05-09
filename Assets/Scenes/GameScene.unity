@@ -220,10 +220,10 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldSpawnRadius: {x: 0, y: 0}
-  _goldEnabled: 0
+  _goldEnabled: 1
   _goldSpawnTimeMax: 1
   _goldSpawnTimeMin: 0.25
-  _tileCrackEnabled: 0
+  _tileCrackEnabled: 1
   _tileCrackTimeMax: 1
   _tileCrackTimeMin: 0.25
   _maxIntensity: 40
@@ -1441,63 +1441,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1001 &1009503640
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2670396470403359435, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_Name
-      value: Bomb
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6090299953526209318, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
 --- !u!1001 &1074706284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2173,7 +2116,7 @@ MonoBehaviour:
   - {fileID: 1339196529}
   - {fileID: 159034701}
   _numOfHumans: 1
-  _totalPlayers: 1
+  _totalPlayers: 2
   _maxLevel: 90
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}
@@ -2241,4 +2184,3 @@ SceneRoots:
   - {fileID: 986148286}
   - {fileID: 1919680841}
   - {fileID: 1752855012}
-  - {fileID: 1009503640}

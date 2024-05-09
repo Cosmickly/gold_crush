@@ -2,6 +2,7 @@ using System;
 using Interfaces;
 using Tiles;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Players
 {
@@ -16,9 +17,6 @@ namespace Players
         [Header("Animation")]
         protected Animator Animator;
         private int _pickaxeAnimationID;
-        // private int _fadeAnimationID;
-        // public float FadeTime;
-        // private float _fadeTimer;
         
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
@@ -38,9 +36,13 @@ namespace Players
         [SerializeField] private Vector3Int _currentCell;
         [SerializeField] public bool Fell;
         
+        [SerializeField] private Bomb _bombPrefab;
+        
         public int ID { get; set; }
 
         public int NumOfGold { get; private set; }
+
+        private bool bombActive;
 
         protected virtual void Awake()
         {
@@ -50,7 +52,6 @@ namespace Players
             MeshObject = MeshRenderer.gameObject;
             Animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
-            // _fadeAnimationID = Animator.StringToHash("Fade");
         }
 
         protected virtual void Update()
@@ -59,7 +60,6 @@ namespace Players
             TileCheck();
             
             if (PickaxeTimer > 0) PickaxeTimer -= Time.deltaTime;
-            // if (Fell && _fadeTimer < FadeTime) _fadeTimer += Time.deltaTime;
         }
 
         /*
@@ -155,6 +155,16 @@ namespace Players
             Gizmos.matrix = rotationMatrix;
             Gizmos.DrawWireCube(Vector3.zero, new Vector3(0.5f, 0.5f, 0.5f));
         }
+        
+        protected void ThrowBomb()
+        {
+            if (!bombActive) return;
+            var randomX = Random.Range(-1f, 1f);
+            var randomZ = Random.Range(-1f, 1f);
+            var bomb = Instantiate(_bombPrefab, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
+            bomb.Push(new Vector3(randomX, 10f, randomZ));
+            bombActive = false;
+        }
     
         /*
          * EVENTS
@@ -182,6 +192,7 @@ namespace Players
         public void Fall()
         {
             Fell = true;
+            bombActive = true;
         }
 
         protected Vector3 GetRotatedVector(Vector3 vector)
@@ -192,14 +203,11 @@ namespace Players
         public void TogglePlayerEnabled(bool enable)
         {
             Collider.enabled = enable;
-            // MeshObject.SetActive(enable);
-            // Rb.useGravity = enable;
-            // Animator.SetTrigger(_fadeAnimationID);
+            Rb.useGravity = enable;   
+            Rb.velocity = Vector3.zero;
             if (enable)
             {
-               Rb.velocity = Vector3.zero;
-                // MeshRenderer.material.color = PlayerColour;
-                // _fadeTimer = 0;
+               bombActive = false;
             }
         }
     }
