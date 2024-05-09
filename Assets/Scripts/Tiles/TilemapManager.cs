@@ -171,7 +171,6 @@ namespace Tiles
         {
             if (_crackingTiles.TryGetValue(pos, out var crackTile))
             {
-                crackTile.Break();
                 ClearLinksToCell(pos);
                 GenerateNewLinks(pos);
                 _crackingTiles.Remove(pos);
@@ -180,7 +179,6 @@ namespace Tiles
             
             if (ActiveTiles.TryGetValue(pos, out var activeTile))
             {
-                activeTile.Break();
                 ClearLinksToCell(pos);
                 GenerateNewLinks(pos);
                 ActiveTiles.Remove(pos);

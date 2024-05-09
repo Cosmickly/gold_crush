@@ -78,7 +78,7 @@ namespace Tiles
         
             if (_crackTimer <= 0)
             {
-                TilemapManager.RemoveTile(Cell);
+                Break();
             }
 
             var crackRatio = 1 - _crackTimer / _crackTime;
@@ -90,6 +90,7 @@ namespace Tiles
 
         public void Break()
         {
+            if (!TilemapManager.RemoveTile(Cell)) return;
             Cracking = false;
             _meshRenderer.enabled = false;
             _collider.enabled = false;
