@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -220,7 +220,7 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldSpawnRadius: {x: 0, y: 0}
-  _goldEnabled: 0
+  _goldEnabled: 1
   _goldSpawnTimeMax: 1
   _goldSpawnTimeMin: 0.25
   _tileCrackEnabled: 0
@@ -2115,9 +2115,9 @@ MonoBehaviour:
   - {fileID: 2127851623}
   - {fileID: 1339196529}
   - {fileID: 159034701}
-  _numOfHumans: 1
+  _numOfHumans: 0
   _totalPlayers: 1
-  _maxLevel: 100
+  _maxLevel: 5
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}
   _scoreboard: {fileID: 1315929202}

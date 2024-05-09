@@ -10,7 +10,9 @@ namespace Players
 	public class AIPlayer : BasePlayer
 	{
 		[SerializeField] private float _searchRadius;
-		[SerializeField] private Vector3 _target;
+
+		[SerializeField] private Transform _target;
+			
 		[SerializeField] private float _distanceToTarget;
 		private Camera _cam;
 		private NavMeshPath _path;
@@ -19,6 +21,8 @@ namespace Players
 		private int GoldPieceMask => 1 << LayerMask.NameToLayer("GoldPiece");
 
 		private Vector3Int _centerPos;
+
+		private bool _active = true;
 
 		// public float JumpHeight;
 		// public float JumpDuration;
@@ -38,8 +42,8 @@ namespace Players
 		{
 			var size = TilemapManager.TilemapSize;
 			_centerPos = new Vector3Int(size.x / 2, 0, size.y / 2);
-			
-			_target = transform.position;
+			_target = transform;
+			StartCoroutine(AiPause(1f));
 		}
 
 		protected override void Update()
@@ -47,6 +51,13 @@ namespace Players
 			base.Update();
 		
 			_target = GetNearestGoldPiece();
+
+			// if (nearestGoldPiece != _target)
+			// {
+			// 	Debug.Log("changed target");
+			// 	StartCoroutine(BriefAiPause());
+			// 	_target = nearestGoldPiece;
+			// }
 			
 			_agent.enabled = Grounded;
 			
@@ -56,11 +67,11 @@ namespace Players
 			{
 				if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
 				{
-					_target = hit.point;
+					_target = hit.transform;
 				}
 			}
 
-			_agent.destination = _target;
+			_agent.destination = _target.position;
 		
 			switch (_path.corners.Length)
 			{
@@ -72,13 +83,16 @@ namespace Players
 			DesiredDirection.y = 0;
 		
 			
-			NavMesh.CalculatePath(transform.position, _target, NavMesh.AllAreas, _path);
+			NavMesh.CalculatePath(transform.position, _target.position, NavMesh.AllAreas, _path);
 			if (_drawPath) DrawPath();
 		}
 
 		protected void FixedUpdate()
 		{
 			if (!Grounded) return;
+
+			if (!_active) DesiredDirection = Vector3.zero;
+			
 			Move();
 			Rotate(DesiredDirection);
 		
@@ -87,9 +101,9 @@ namespace Players
 				StartCoroutine(RigidBodyJump());
 			}
 
-			_distanceToTarget = Vector3.Distance(_target, transform.position);
-			if (_distanceToTarget < 1.5f) _target = _centerPos;
-			
+			_distanceToTarget = Vector3.Distance(_target.position, transform.position);
+			// if (_distanceToTarget < 1.5f) _target = _centerPos;
+			if (_distanceToTarget < 1.5f) _target = TilemapManager.GetTile(_centerPos).transform;
 			// if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
 		}
 
@@ -168,10 +182,10 @@ namespace Players
 			}
 		}
 
-		private Vector3 GetNearestGoldPiece()
+		private Transform GetNearestGoldPiece()
 		{
 			float closestDistance = float.MaxValue;
-			Vector3 closestPosition = _target;
+			Transform nextTarget = _target;
 		
 			int maxSearch = 10;
 			Collider[] hits = new Collider[maxSearch];
@@ -182,11 +196,26 @@ namespace Players
 				if (distance < closestDistance)
 				{
 					closestDistance = distance;
-					closestPosition = hits[i].transform.position;
+					nextTarget = hits[i].transform;
 				}
 			}
 		
-			return closestPosition;
+			return nextTarget;
+		}
+
+		public override void AddGold()
+		{
+			base.AddGold();
+			StartCoroutine(AiPause(0.25f));
+		}
+
+
+		private IEnumerator AiPause(float pauseTime)
+		{
+			Debug.Log("Pauseing");
+			_active = false;
+			yield return new WaitForSeconds(pauseTime);
+			_active = true;
 		}
 	}
 }

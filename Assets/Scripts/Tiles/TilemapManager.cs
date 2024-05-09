@@ -380,6 +380,14 @@ namespace Tiles
             return _tilemap.WorldToCell(pos);
         }
 
+        public GroundTile GetTile(Vector3 pos)
+        {
+            var cell = _tilemap.WorldToCell(pos);
+            if (ActiveTiles.TryGetValue(cell, out var activeTile))
+                return activeTile;
+            return _crackingTiles.GetValueOrDefault(cell);
+        }
+
         private Vector3Int GetRandomFreeCell()
         {
             var possibleCells = _allCellPositions.Except(Obstacles.Keys).ToList();

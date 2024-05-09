@@ -163,7 +163,7 @@ namespace Players
         public delegate void OnUpdateUI();
         public OnUpdateUI onUpdateUI;
 
-        public void AddGold()
+        public virtual void AddGold()
         {
             NumOfGold++;
             onUpdateUI.Invoke();
