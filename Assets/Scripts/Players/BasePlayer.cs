@@ -133,7 +133,7 @@ namespace Players
             PickaxeTimer = PickaxeCooldown;
             RaycastHit[] hits = new RaycastHit[10];
             int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f),
-                transform.forward, hits, transform.rotation, 1f);
+                transform.forward, hits, transform.rotation, 0.5f);
             for (int i=0; i<numFound; i++)
             {
                 if (hits[i].transform.TryGetComponent(out IHittable hittable))
@@ -149,7 +149,7 @@ namespace Players
         {
             Gizmos.color = Color.green;
             var center = transform.position;
-            center += transform.forward;
+            center += (transform.forward * 0.5f);
 
             Matrix4x4 rotationMatrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
             Gizmos.matrix = rotationMatrix;
