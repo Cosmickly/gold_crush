@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private TilemapManager _tilemapManager;
+    private AudioSource _audioSource;
     
     [Header("UI")]
     [SerializeField] private Scoreboard _scoreboard;
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        _audioSource = GetComponent<AudioSource>();
         MaxLevel = PlayerPrefs.GetInt("LevelCount", 1);
         NumOfHumans = PlayerPrefs.GetInt("HumanCount", 1);
         NumOfAis = PlayerPrefs.GetInt("AIcount", 0);
@@ -85,11 +87,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _finalScreen.gameObject.SetActive(false);
+        _audioSource.Play();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) ReloadGameScene();
+        // if (Input.GetKeyDown(KeyCode.Escape)) ReloadGameScene();
     }
 
     public void ReloadGameScene()

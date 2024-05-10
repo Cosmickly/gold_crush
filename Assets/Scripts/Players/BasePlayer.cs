@@ -13,6 +13,9 @@ namespace Players
         protected Rigidbody Rb;
         private Collider _collider;
         public Transform ModelHolder;
+        private AudioSource _audioSource;
+        public AudioClip CollectSound;
+        public AudioClip FallSound;
         
         [Header("Animation")]
         private Animator _animator;
@@ -56,6 +59,7 @@ namespace Players
             _animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
             _desiredDirectionAnimationID = Animator.StringToHash("DesiredDirection");
+            _audioSource = GetComponent<AudioSource>();
         }
         
         protected virtual void Update()
@@ -186,6 +190,7 @@ namespace Players
         {
             NumOfGold++;
             onUpdateUI.Invoke();
+            _audioSource.PlayOneShot(CollectSound);
         }
     
         /*
@@ -202,6 +207,7 @@ namespace Players
         {
             Fell = true;
             _numOfBombs = _maxNumOfBombs;
+            _audioSource.PlayOneShot(FallSound);
         }
 
         protected Vector3 GetRotatedVector(Vector3 vector)

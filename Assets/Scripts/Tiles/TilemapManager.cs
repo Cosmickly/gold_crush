@@ -101,7 +101,7 @@ namespace Tiles
                 }
             }
             
-            if (Input.GetKeyDown(KeyCode.R) && Active) RebuildTilesOnly();
+            // if (Input.GetKeyDown(KeyCode.R) && Active) RebuildTilesOnly();
         }
 
         /*
@@ -143,11 +143,13 @@ namespace Tiles
             for (int i = 0; i < AllTiles.Count; i++)
             {
                 var pair = AllTiles.ElementAt(i);
+                pair.Value._audioSource.enabled = false;
                 pair.Value.Break();
             }
             for (int i = 0; i < _crackingTiles.Count; i++)
             {
                 var pair = _crackingTiles.ElementAt(i);
+                pair.Value._audioSource.enabled = false;
                 pair.Value.Break();
             }
             

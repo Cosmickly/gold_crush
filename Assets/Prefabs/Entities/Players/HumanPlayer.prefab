@@ -80,6 +80,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae749d5e0b93c564b97855b3ca5b6856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ModelHolder: {fileID: 0}
+  CollectSound: {fileID: 8300000, guid: 1d160dde0231650aaaf62bf8bab6ad7c, type: 3}
+  FallSound: {fileID: 8300000, guid: 2fdd0ffe403e281a8be181b665b82ba6, type: 3}
   MoveSpeed: 3
   JumpForce: 3
   _smoothTime: 0.1
@@ -87,7 +90,7 @@ MonoBehaviour:
   DesiredDirection: {x: 0, y: 0, z: 0}
   AboveTile: 0
   Grounded: 0
-  _currentCell: {x: 0, y: 0, z: 0}
+  CurrentCell: {x: 0, y: 0, z: 0}
   Fell: 0
   _bombPrefab: {fileID: 1482070067295822981, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
   _maxNumOfBombs: 10

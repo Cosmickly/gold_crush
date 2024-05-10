@@ -10,6 +10,9 @@ namespace Entities
         private ParticleSystem _particleSystem;
         private Collider _collider;
         private GameObject _meshObject;
+        private AudioSource _audioSource;
+        public AudioClip BreakSound;
+        public AudioClip HitSound;
 
         public TilemapManager TilemapManager { protected get; set; }
         public Vector3Int Cell { get; set; }
@@ -20,6 +23,7 @@ namespace Entities
             _particleSystem = GetComponent<ParticleSystem>();
             _collider = GetComponent<Collider>();
             _meshObject = transform.GetChild(0).gameObject;
+            _audioSource = GetComponent<AudioSource>();
         }
 
         public void Fall()
@@ -31,6 +35,7 @@ namespace Entities
         {
             HitsToBreak--;
             PlayParticles();
+            _audioSource.PlayOneShot(HitSound);
             if (HitsToBreak <= 0)
                 BreakObstacle();
         }
@@ -53,6 +58,7 @@ namespace Entities
             {
                 _collider.enabled = false;
                 _meshObject.SetActive(false);
+                _audioSource.PlayOneShot(BreakSound);
             }
         }
     }

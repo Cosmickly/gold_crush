@@ -17,6 +17,7 @@ namespace Tiles
         private GameObject _meshObject;
         private NavMeshObstacle _navMeshObstacle;
         private ParticleSystem _particle;
+        public AudioSource _audioSource;
         
         public bool Cracking { get; set; }
         private float _crackTimer;
@@ -53,6 +54,7 @@ namespace Tiles
             _initialColor = _meshRenderer.material.color;
             _navMeshObstacle = GetComponentInChildren<NavMeshObstacle>();
             _particle = GetComponent<ParticleSystem>();
+            _audioSource = GetComponent<AudioSource>();
             var main = _particle.main;
             main.startColor = _initialColor;
             _crackTimer = _crackTime;
@@ -96,6 +98,7 @@ namespace Tiles
             _collider.enabled = false;
             _navMeshObstacle.enabled = true;
             _particle.Play();
+            _audioSource.Play();
             // _navMeshModifier.overrideArea = true;
         }
 
@@ -112,6 +115,7 @@ namespace Tiles
             _navMeshObstacle.enabled = false;
             _crackTimer = _crackTime;
             Cracking = false;
+            _audioSource.enabled = true;
         }
 
         public void ToggleIce(bool togglIce)
