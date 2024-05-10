@@ -68,7 +68,17 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (Input.GetKeyDown(KeyCode.Escape)) ReloadGameScene();
+    }
+
+    public void ReloadGameScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void LoadMenuScene()
+    {
+        SceneManager.LoadScene(sceneBuildIndex: 0);
     }
 
     private BasePlayer CreateHumanPlayer(int i)
