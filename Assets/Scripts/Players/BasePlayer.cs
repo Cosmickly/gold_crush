@@ -34,7 +34,7 @@ namespace Players
         protected int TileMask => 1 << LayerMask.NameToLayer("Tile");
         [SerializeField] protected bool AboveTile;
         [SerializeField] protected bool Grounded;
-        [SerializeField] private Vector3Int _currentCell;
+        [SerializeField] public Vector3Int CurrentCell;
         [SerializeField] public bool Fell;
 
         [SerializeField] private Bomb _bombPrefab;
@@ -57,7 +57,7 @@ namespace Players
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
             _desiredDirectionAnimationID = Animator.StringToHash("DesiredDirection");
         }
-
+        
         protected virtual void Update()
         {
             GroundCheck();
@@ -94,16 +94,17 @@ namespace Players
         
             var cell = TilemapManager.GetCell(hit.transform.position);
         
-            if (_currentCell == cell) return;
+            if (CurrentCell == cell) return;
         
-            _currentCell = cell;
-            TilemapManager.UpdatePlayerLocation(ID, _currentCell);
+            CurrentCell = cell;
+            TilemapManager.UpdatePlayerLocation(ID, CurrentCell);
         }
 
         private IEnumerator UpdateOnLand()
         {
             yield return new WaitUntil(() => Grounded);
-            TilemapManager.UpdatePlayerLocation(ID, _currentCell);
+            yield return new WaitForSeconds(2f);
+            TilemapManager.CrackTile(CurrentCell);
         }
     
         /*

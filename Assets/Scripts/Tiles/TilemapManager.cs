@@ -155,7 +155,7 @@ namespace Tiles
             ClearLinksToCell(Vector3Int.zero);
         }
     
-        private void CrackTile(Vector3Int cell)
+        public void CrackTile(Vector3Int cell)
         {
             var availableCells = AllTiles.Keys.Except(_crackingTiles.Keys).ToList();
             if (_tileCrackEnabled && availableCells.Contains(cell))

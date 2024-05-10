@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
         {
             Random.InitState(RandomSeed);
         }
+        
+        ResetPlayers();
     }
 
     private void Start()
@@ -125,9 +127,6 @@ public class GameManager : MonoBehaviour
         var model = Instantiate(_playerModels[id], playerObject.transform.position, Quaternion.identity, player.ModelHolder);
         model.transform.localScale = new Vector3(2f, 2f, 2f);
         model.transform.localPosition = new Vector3(0, -1, 0);
-        // player.SetMaterial(_playerColours[id]);
-        player.transform.position = _spawnPoints[id].position;
-        
         return player;
     }
 
@@ -161,7 +160,9 @@ public class GameManager : MonoBehaviour
         foreach (var player in _players)
         {
             BasePlayer basePlayer = player.Value;
-            basePlayer.transform.position = _spawnPoints[player.Key].position;
+            var spawn = _spawnPoints[player.Key].position;
+            basePlayer.transform.position = spawn;
+            basePlayer.CurrentCell = _tilemapManager.GetCell(new Vector3(spawn.x, 0, spawn.z));
             basePlayer.Fell = false;
             basePlayer.TogglePlayerEnabled(true);
         }
