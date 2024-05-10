@@ -16,12 +16,11 @@ namespace Tiles
         [SerializeField] private GameManager _gameManager;
         private TilemapBuilder _tilemapBuilder;
         private Tilemap _tilemap;
-        private HashSet<Vector3Int> _allCellPositions;
 
-        public Dictionary<Vector3Int, GroundTile> ActiveTiles { get; set; } = new();
+        public Dictionary<Vector3Int, GroundTile> AllTiles { get; set; } = new();
         private Dictionary<Vector3Int, GroundTile> _crackingTiles = new();
         public Dictionary<Vector3Int, RockObstacle> Obstacles { get; } = new();
-        // private List<GoldPiece> _goldPieces = new();
+
         private Dictionary<NavMeshLink, Tuple<Vector3Int, Vector3Int>> _navMeshLinks = new();
 
         private Dictionary<int, Vector3Int> _playerLocations = new();
@@ -46,7 +45,7 @@ namespace Tiles
         [SerializeField] private int _maxIntensity;
         [SerializeField] private float _currentIntensity;
 
-        private bool _active = true;
+        public bool Active { get; private set; } = true;
 
         private Vector2Int _centerPos;
         public Vector2Int TilemapSize
@@ -73,7 +72,7 @@ namespace Tiles
 
         private void Update()
         {
-            if (!_active) return;
+            if (!Active) return;
             
             if (_currentIntensity < _maxIntensity) _currentIntensity += Time.deltaTime;
             var intensityRatio = _currentIntensity / _maxIntensity;
@@ -102,7 +101,7 @@ namespace Tiles
                 }
             }
             
-            if (Input.GetKeyDown(KeyCode.R) && _active) RebuildTilesOnly();
+            if (Input.GetKeyDown(KeyCode.R) && Active) RebuildTilesOnly();
         }
 
         /*
@@ -113,18 +112,17 @@ namespace Tiles
         {
             _currentIntensity = 0;
             _tilemapBuilder.Build();
-            _allCellPositions = new HashSet<Vector3Int>(ActiveTiles.Keys);
-            _active = true;
+            Active = true;
         }
 
         public IEnumerator ResetLevel()
         {
             ClearAllTiles();
             ClearAllLinks();
-            _active = false;
+            Active = false;
             yield return new WaitForSeconds(2f);
-            _gameManager.ResetPlayers();
             StartLevel();
+            _gameManager.ResetPlayers();
         }
 
         private void RebuildTilesOnly()
@@ -133,7 +131,7 @@ namespace Tiles
             ClearAllTiles();
             ClearAllLinks();
             _tilemapBuilder.Build();
-            _allCellPositions = new HashSet<Vector3Int>(ActiveTiles.Keys);
+            // _allCellPositions = new HashSet<Vector3Int>(AllTiles.Keys);
         }
 
         /*
@@ -142,9 +140,9 @@ namespace Tiles
         
         private void ClearAllTiles()
         {
-            for (int i = 0; i < ActiveTiles.Count; i++)
+            for (int i = 0; i < AllTiles.Count; i++)
             {
-                var pair = ActiveTiles.ElementAt(i);
+                var pair = AllTiles.ElementAt(i);
                 pair.Value.Break();
             }
             for (int i = 0; i < _crackingTiles.Count; i++)
@@ -154,34 +152,39 @@ namespace Tiles
             }
             
             _crackingTiles.Clear();
-            ActiveTiles.Clear();
             ClearLinksToCell(Vector3Int.zero);
         }
     
-        private void CrackTile(Vector3Int pos)
+        private void CrackTile(Vector3Int cell)
         {
-            if (_tileCrackEnabled && ActiveTiles.Remove(pos, out GroundTile tile))
+            var availableCells = AllTiles.Keys.Except(_crackingTiles.Keys).ToList();
+            if (_tileCrackEnabled && availableCells.Contains(cell))
             {
-                _crackingTiles.Add(pos, tile);
-                tile.Cracking = true;
+                if (AllTiles.TryGetValue(cell, out var tile))
+                {
+                    Debug.Log("cracking " + cell);
+                    _crackingTiles.Add(cell, tile);
+                    tile.Cracking = true;
+                }
             }
         }
     
-        public bool RemoveTile(Vector3Int pos)
+        public bool RemoveTile(Vector3Int cell)
         {
-            if (_crackingTiles.TryGetValue(pos, out var crackTile))
+            if (_crackingTiles.TryGetValue(cell, out var crackTile))
             {
-                ClearLinksToCell(pos);
-                GenerateNewLinks(pos);
-                _crackingTiles.Remove(pos);
+                ClearLinksToCell(cell);
+                GenerateNewLinks(cell);
+                _crackingTiles.Remove(cell);
                 return true;
             }
-            
-            if (ActiveTiles.TryGetValue(pos, out var activeTile))
+
+            if (AllTiles.TryGetValue(cell, out var activeTile))
             {
-                ClearLinksToCell(pos);
-                GenerateNewLinks(pos);
-                ActiveTiles.Remove(pos);
+                // activeTile.Break();
+                ClearLinksToCell(cell);
+                GenerateNewLinks(cell);
+                // AllTiles.Remove(cell);
                 return true;
             }
         
@@ -190,15 +193,17 @@ namespace Tiles
     
         private Vector3Int RandomTile()
         {
-            var keys = ActiveTiles.Keys.ToList();
-            var randomInt = Random.Range(0, keys.Count);
-            var key = keys[randomInt];
+            var availableCells = AllTiles.Keys.Except(_crackingTiles.Keys).ToList();
+            // var keys = ActiveTiles.Keys.ToList();
+            // var randomInt = Random.Range(0, keys.Count);
+            // var key = keys[randomInt];
+            var key = availableCells.ElementAt(Random.Range(0, availableCells.Count));
             return key;
         }
     
         private void CrackRandomTile()
         {
-            if (ActiveTiles.Count <= 0)
+            if (_crackingTiles.Count < AllTiles.Count)
             {
                 CancelInvoke(nameof(CrackRandomTile));
                 return;
@@ -210,9 +215,9 @@ namespace Tiles
          * OBSTACLES
          */
         
-        public bool RemoveObstacle(Vector3Int pos)
+        public bool RemoveObstacle(Vector3Int cell)
         {
-            return Obstacles.Remove(pos, out RockObstacle obstacle);
+            return Obstacles.Remove(cell, out RockObstacle obstacle);
         }
         
         private void ClearObstacles()
@@ -261,29 +266,51 @@ namespace Tiles
          */
 
         // TODO: find a better way to handle tile checks
-        public void UpdatePlayerLocation(int id, Vector3Int pos)
+        public void UpdatePlayerLocation(int id, Vector3Int newCell)
         {
-            if (_playerLocations.TryGetValue(id, out var cell))
+            Debug.Log("player " + id + " moved");
+            if (_playerLocations.TryGetValue(id, out var oldCell))
             {
-                ExitedTile(cell);
+                ExitedTile(oldCell);
             }
         
-            EnteredTile(pos);
-            _playerLocations[id] = pos;
+            EnteredTile(newCell);
+            _playerLocations[id] = newCell;
         }
 
-        private void EnteredTile(Vector3Int pos)
+        private void EnteredTile(Vector3Int cell)
         {
-            CrackTile(pos);
-            if(_crackingTiles.TryGetValue(pos, out var tile))
+            Debug.Log("player moved to " + cell);
+            CrackTile(cell);
+            if (AllTiles.TryGetValue(cell, out var tile))
                 tile.PlayerOnMe = true;
+            else
+            {
+                Debug.Log("Tile not found: " + cell);
+            }
+            // if(_crackingTiles.TryGetValue(pos, out var tile))
+            //     tile.PlayerOnMe = true;
+            // else if (ActiveTiles.TryGetValue(pos, out tile))
+            //     tile.PlayerOnMe = true;
+            // else
+            // {
+            //     Debug.Log("Tile not found: " + pos);
+            // }
         }
 
-        private void ExitedTile(Vector3Int pos)
+        private void ExitedTile(Vector3Int cell)
         {
             // CrackTile(pos);
-            if (_crackingTiles.TryGetValue(pos, out var tile))
+            if (AllTiles.TryGetValue(cell, out var tile))
                 tile.PlayerOnMe = false;
+            // if (_crackingTiles.TryGetValue(pos, out var tile))
+            //     tile.PlayerOnMe = false;
+            // else if (ActiveTiles.TryGetValue(pos, out tile))
+            //     tile.PlayerOnMe = false;
+            // else
+            // {
+            //     Debug.Log("Tile not found: " + pos);
+            // }
         }
 
         public void PlayerFell(BasePlayer player)
@@ -295,13 +322,13 @@ namespace Tiles
          * NAVMESH LINKS
          */
 
-        private void ClearLinksToCell(Vector3Int pos)
+        private void ClearLinksToCell(Vector3Int cell)
         {
             var removeList = new List<NavMeshLink>();
 
             foreach (var (key, tiles) in _navMeshLinks)
             {
-                if (tiles.Item1 == pos || tiles.Item2 == pos)
+                if (tiles.Item1 == cell || tiles.Item2 == cell)
                 {
                     removeList.Add(key);
                 }
@@ -324,29 +351,29 @@ namespace Tiles
             _navMeshLinks.Clear();
         }
 
-        public void GenerateNewLinks(Vector3Int pos)
+        public void GenerateNewLinks(Vector3Int cell)
         {
-            var n = pos + new Vector3Int(1, 1, 0);
-            var ne = pos + new Vector3Int(1, 0, 0);
-            var e = pos + new Vector3Int(1, -1, 0);
-            var se = pos + new Vector3Int(0, -1, 0);
-            var s = pos + new Vector3Int(-1, -1, 0);
-            var sw = pos + new Vector3Int(-1, 0, 0);
-            var w = pos + new Vector3Int(-1, 1, 0);
-            var nw = pos + new Vector3Int(0, 1, 0);
+            var n = cell + new Vector3Int(1, 1, 0);
+            var ne = cell + new Vector3Int(1, 0, 0);
+            var e = cell + new Vector3Int(1, -1, 0);
+            var se = cell + new Vector3Int(0, -1, 0);
+            var s = cell + new Vector3Int(-1, -1, 0);
+            var sw = cell + new Vector3Int(-1, 0, 0);
+            var w = cell + new Vector3Int(-1, 1, 0);
+            var nw = cell + new Vector3Int(0, 1, 0);
 
-            var allTiles = ActiveTiles.Concat(_crackingTiles).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // var allTiles = AllTiles(kvp => kvp.Key, kvp => kvp.Value);
 
-            if (allTiles.ContainsKey(n) && allTiles.ContainsKey(s))
+            if (AllTiles.ContainsKey(n) && AllTiles.ContainsKey(s))
                 CreateNavMeshLink(n, s, 0.2f);
-        
-            if (allTiles.ContainsKey(e) && allTiles.ContainsKey(w))
+
+            if (AllTiles.ContainsKey(e) && AllTiles.ContainsKey(w))
                 CreateNavMeshLink(e, w, 0.2f);
-        
-            if (allTiles.ContainsKey(ne) && allTiles.ContainsKey(sw))
+
+            if (AllTiles.ContainsKey(ne) && AllTiles.ContainsKey(sw))
                 CreateNavMeshLink(ne, sw, 0.8f);
-            
-            if (allTiles.ContainsKey(se) && allTiles.ContainsKey(nw))
+
+            if (AllTiles.ContainsKey(se) && AllTiles.ContainsKey(nw))
                 CreateNavMeshLink(se, nw, 0.8f);
         }
     
@@ -381,14 +408,15 @@ namespace Tiles
         public GroundTile GetTile(Vector3 pos)
         {
             var cell = _tilemap.WorldToCell(pos);
-            if (ActiveTiles.TryGetValue(cell, out var activeTile))
-                return activeTile;
-            return _crackingTiles.GetValueOrDefault(cell);
+            return AllTiles.GetValueOrDefault(cell);
+            // if (ActiveTiles.TryGetValue(cell, out var activeTile))
+            //     return activeTile;
+            // return _crackingTiles.GetValueOrDefault(cell);
         }
 
         private Vector3Int GetRandomFreeCell()
         {
-            var possibleCells = _allCellPositions.Except(Obstacles.Keys).ToList();
+            var possibleCells = AllTiles.Keys.Except(Obstacles.Keys).ToList();
             possibleCells = possibleCells.Where(
                 cell => cell.x >= _centerPos.x - _goldSpawnRadius.x / 2 
                         && cell.x <= _centerPos.x + _goldSpawnRadius.x / 2 

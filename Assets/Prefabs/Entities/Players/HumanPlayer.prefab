@@ -85,14 +85,13 @@ MonoBehaviour:
   _smoothTime: 0.1
   PickaxeCooldown: 0.5
   DesiredDirection: {x: 0, y: 0, z: 0}
-  TileMask:
-    serializedVersion: 2
-    m_Bits: 128
   AboveTile: 0
   Grounded: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
   _bombPrefab: {fileID: 1482070067295822981, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
+  _maxNumOfBombs: 10
+  _bombThrowCooldown: 1
 --- !u!114 &1931657400224951325
 MonoBehaviour:
   m_ObjectHideFlags: 0

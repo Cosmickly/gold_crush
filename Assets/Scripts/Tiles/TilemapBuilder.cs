@@ -20,28 +20,20 @@ namespace Tiles
     
         [SerializeField] [Range(0, 1)] private float _iceTileRateMax;
         private const float Scale = 0.1f;
-        // [SerializeField] [Range(0, 10)] private int _iceSmoothRate;
-    
+
         [Header("Obstacle Parameters")]
         [SerializeField] [Range(0, 100)] private int _obstacleFillRate;
         [SerializeField] [Range(0, 100)] private int _layoutFillRate;
         [SerializeField] [Range(0, 10)] private int _obstacleSmoothRate;
         [SerializeField] [Range(0, 100)] private int _goldChunkRateMax;
-        // [SerializeField] [Range(0, 1)] private float _obstacleRemoveRate;
-        // [SerializeField] [Range(0, 9)] private int _neighbourThreshold;
+
     
         [Header("Prefabs")] 
         [SerializeField] private GroundTile _groundTile;
         [SerializeField] private RockObstacle _rockObstaclePrefab;
         [SerializeField] private GoldOre _goldOrePrefab;
-        // [SerializeField] private GroundTile _iceTile;
-        // [SerializeField] private GoldPiece _goldPiecePrefab;
-        // [SerializeField] private List<GameObject> _layouts = new();
-        // [SerializeField] private List<GameObject> _obstacleLayouts = new();
-        // [SerializeField] private Vector2Int _layoutSize;
-        // [SerializeField] private Vector2Int _numOfLayouts;
 
-        private Dictionary<Vector3Int, GroundTile> _allTiles = new();
+
         private int[][] _obstacleMap;
 
         private float IntensityRatio => (float) _gameManager.CurrentLevel / _gameManager.MaxLevel;
@@ -70,7 +62,7 @@ namespace Tiles
                     GroundTile tile = Instantiate(_groundTile, pos, Quaternion.identity, transform);
                     tile.Cell = _tilemapManager.GetCell(pos);
                     tile.TilemapManager = _tilemapManager;
-                    _allTiles.Add(tile.Cell, tile);
+                    _tilemapManager.AllTiles.Add(tile.Cell, tile);
                 }
             }
         }
@@ -111,18 +103,12 @@ namespace Tiles
                 {
                     var pos = new Vector3Int(i, 0, j);
                     var cell = _tilemapManager.GetCell(pos);
-                    var tile = _allTiles[cell];
+                    var tile = _tilemapManager.AllTiles[cell];
                     tile.Rebuild();
                     tile.ToggleIce(groundTileMap[i][j] == 1);
-                    // GroundTile tile = Instantiate(_groundTile, pos, Quaternion.identity, transform);
-                    // if (groundTileMap[i][j] == 1) tile.ToggleIce(true);
-                    // tile.Cell = _tilemapManager.GetCell(pos);
-                    // tile.TilemapManager = _tilemapManager;
-                    // _tilemapManager.ActiveTiles.Add(tile.Cell, tile);
                 }
             }
 
-            _tilemapManager.ActiveTiles = new Dictionary<Vector3Int, GroundTile>(_allTiles);
         }
     
         private void CellularAutomataObstacles()
@@ -236,7 +222,7 @@ namespace Tiles
                 for (int j = 0; j < TilemapSize.y; j++)
                 {
                     var pos = new Vector3Int(i, j, 0);
-                    if (!_tilemapManager.ActiveTiles.ContainsKey(pos))
+                    if (!_tilemapManager.AllTiles.ContainsKey(pos))
                     {
                         _tilemapManager.GenerateNewLinks(pos);
                     }

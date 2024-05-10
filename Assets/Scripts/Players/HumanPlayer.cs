@@ -58,6 +58,7 @@ namespace Players
 
         protected void FixedUpdate()
         {
+            if (!TilemapManager.Active) return;
             Move();
             if(_desiredJump) Jump();
             Rotate(DesiredDirection);

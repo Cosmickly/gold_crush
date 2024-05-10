@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Interfaces;
 using Tiles;
 using UnityEngine;
@@ -9,13 +11,13 @@ namespace Players
     public abstract class BasePlayer : MonoBehaviour, IEntity
     {
         protected Rigidbody Rb;
-        protected Collider Collider;
+        private Collider _collider;
         protected MeshRenderer MeshRenderer;
-        protected Color PlayerColour;
-        protected GameObject MeshObject;
+        // protected Color PlayerColour;
+        // protected GameObject MeshObject;
         
         [Header("Animation")]
-        protected Animator Animator;
+        private Animator _animator;
         private int _pickaxeAnimationID;
         
         [Header("Parameters")]
@@ -23,34 +25,37 @@ namespace Players
         [SerializeField] protected float JumpForce;
         [SerializeField] private float _smoothTime;
         [SerializeField] protected float PickaxeCooldown = 1f;
-        protected float PickaxeTimer;
+        private float _pickaxeTimer;
 
         [SerializeField] protected Vector3 DesiredDirection;
         private Vector3 _velocityRef = Vector3.zero;
     
 
         public TilemapManager TilemapManager { get; set; }
-        [SerializeField] protected LayerMask TileMask;
+        protected int TileMask => 1 << LayerMask.NameToLayer("Tile");
         [SerializeField] protected bool AboveTile;
         [SerializeField] protected bool Grounded;
         [SerializeField] private Vector3Int _currentCell;
         [SerializeField] public bool Fell;
-        
+
         [SerializeField] private Bomb _bombPrefab;
         
         public int ID { get; set; }
 
         public int NumOfGold { get; private set; }
 
-        private bool bombActive;
+        [SerializeField] private int _maxNumOfBombs = 10;
+        private int _numOfBombs;
+        [SerializeField] private float _bombThrowCooldown = 0.5f;
+        private float _bombThrowTimer;
 
         protected virtual void Awake()
         {
             Rb = GetComponent<Rigidbody>();
-            Collider = GetComponent<CapsuleCollider>();
+            _collider = GetComponent<CapsuleCollider>();
             MeshRenderer = GetComponentInChildren<MeshRenderer>();
-            MeshObject = MeshRenderer.gameObject;
-            Animator = GetComponent<Animator>();
+            // MeshObject = MeshRenderer.gameObject;
+            _animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
         }
 
@@ -59,7 +64,8 @@ namespace Players
             GroundCheck();
             TileCheck();
             
-            if (PickaxeTimer > 0) PickaxeTimer -= Time.deltaTime;
+            if (_pickaxeTimer > 0) _pickaxeTimer -= Time.deltaTime;
+            if (_bombThrowTimer > 0) _bombThrowTimer -= Time.deltaTime;
         }
 
         /*
@@ -69,7 +75,7 @@ namespace Players
         protected virtual void GroundCheck()
         {
             Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down, out var hit,
-                Quaternion.identity,  Collider.bounds.extents.y + 0.05f, TileMask);
+                Quaternion.identity,  _collider.bounds.extents.y + 0.05f, TileMask);
         
             if (Grounded && hit.transform.TryGetComponent(out GroundTile tile))
             {
@@ -91,9 +97,12 @@ namespace Players
         
             _currentCell = cell;
             TilemapManager.UpdatePlayerLocation(ID, _currentCell);
-        
-            // var flatPos = new Vector3(pos.x, 0, pos.z);
-            // if (Grounded && AboveTile) TilemapManager.UpdatePlayerLocation(ID, TilemapManager.GetCell(flatPos));
+        }
+
+        private IEnumerator UpdateOnLand()
+        {
+            yield return new WaitUntil(() => Grounded);
+            TilemapManager.UpdatePlayerLocation(ID, _currentCell);
         }
     
         /*
@@ -129,8 +138,8 @@ namespace Players
 
         protected virtual void SwingPickaxe()
         {
-            if (!Grounded || PickaxeTimer > 0) return;
-            PickaxeTimer = PickaxeCooldown;
+            if (!Grounded || _pickaxeTimer > 0) return;
+            _pickaxeTimer = PickaxeCooldown;
             RaycastHit[] hits = new RaycastHit[10];
             int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f),
                 transform.forward, hits, transform.rotation, 0.5f);
@@ -142,7 +151,7 @@ namespace Players
                     hittable.Hit();
                 }
             }
-            Animator.SetTrigger(_pickaxeAnimationID);
+            _animator.SetTrigger(_pickaxeAnimationID);
         }
 
         private void OnDrawGizmosSelected()
@@ -158,12 +167,12 @@ namespace Players
         
         protected void ThrowBomb()
         {
-            if (!bombActive) return;
-            var randomX = Random.Range(-1f, 1f);
-            var randomZ = Random.Range(-1f, 1f);
+
+            if (_numOfBombs <= 0 || _bombThrowTimer > 0) return;
+            _bombThrowTimer = _bombThrowCooldown;
             var bomb = Instantiate(_bombPrefab, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
-            bomb.Push(new Vector3(randomX, 10f, randomZ));
-            bombActive = false;
+            bomb.Push(DesiredDirection * 3f + new Vector3(0, 5f, 0));
+            _numOfBombs--;
         }
     
         /*
@@ -186,13 +195,13 @@ namespace Players
         public void SetMaterial(Material material)
         {
             MeshRenderer.material = material;
-            PlayerColour = material.color;
+            // PlayerColour = material.color;
         }
 
         public void Fall()
         {
             Fell = true;
-            bombActive = true;
+            _numOfBombs = _maxNumOfBombs;
         }
 
         protected Vector3 GetRotatedVector(Vector3 vector)
@@ -200,14 +209,15 @@ namespace Players
             return Quaternion.Euler(0f, 45f, 0f) * vector;
         }
 
-        public void TogglePlayerEnabled(bool enable)
+        public virtual void TogglePlayerEnabled(bool enable)
         {
-            Collider.enabled = enable;
+            _collider.enabled = enable;
             Rb.useGravity = enable;   
             Rb.velocity = Vector3.zero;
             if (enable)
             {
-               bombActive = false;
+                _numOfBombs = 0;
+                StartCoroutine(UpdateOnLand());
             }
         }
     }

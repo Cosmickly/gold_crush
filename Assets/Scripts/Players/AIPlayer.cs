@@ -43,22 +43,26 @@ namespace Players
 			var size = TilemapManager.TilemapSize;
 			_centerPos = new Vector3Int(size.x / 2, 0, size.y / 2);
 			_target = transform;
-			StartCoroutine(AiPause(1f));
+			StartCoroutine(AIPause(1f));
 		}
 
 		protected override void Update()
 		{
 			base.Update();
-		
+
+			// Try to get gold
 			_target = GetNearestGoldPiece();
 
-			// if (nearestGoldPiece != _target)
-			// {
-			// 	Debug.Log("changed target");
-			// 	StartCoroutine(BriefAiPause());
-			// 	_target = nearestGoldPiece;
-			// }
-			
+			// if no gold, but center, move to center
+			if (_target == transform && TilemapManager.GetTile(_centerPos) is not null)
+			{
+				_target = TilemapManager.GetTile(_centerPos).transform;
+			}
+
+			// if no gold or center, stop
+			if (_target)
+				_distanceToTarget = Vector3.Distance(_target.position, transform.position);
+
 			_agent.enabled = Grounded;
 			
 			if (!_agent.enabled) return; 
@@ -100,11 +104,6 @@ namespace Players
 			{
 				StartCoroutine(RigidBodyJump());
 			}
-
-			_distanceToTarget = Vector3.Distance(_target.position, transform.position);
-			// if (_distanceToTarget < 1.5f) _target = _centerPos;
-			if (_distanceToTarget < 1.5f) _target = TilemapManager.GetTile(_centerPos).transform;
-			// if (Rb.velocity.magnitude < 1.5f && _distanceToTarget > 1.5f) SwingPickaxe();
 		}
 
 		private void OnCollisionStay(Collision other)
@@ -137,42 +136,6 @@ namespace Players
 	
 			_agent.CompleteOffMeshLink();
 		}
-
-		// Deprecated, use RigidBodyJump
-		private IEnumerator ParabolaJump(float height, float duration)
-		{
-			OffMeshLinkData data = _agent.currentOffMeshLinkData;
-			Vector3 startPos = _agent.transform.position;
-			Vector3 endPos = data.endPos + Vector3.up * _agent.baseOffset;
-			float normalizedTime = 0f;
-			_agent.enabled = false;
-			while (normalizedTime < 1f)
-			{
-				float yOffset = height * 4f * (normalizedTime - normalizedTime * normalizedTime);
-				Rb.velocity = Vector3.Lerp(startPos, endPos, normalizedTime) + new Vector3(0, yOffset, 0);
-			
-				normalizedTime += Time.deltaTime / duration;
-				yield return null;
-			}
-		
-			_agent.enabled = true;
-			_agent.CompleteOffMeshLink();
-		}
-
-		// No Longer needed with auto braking
-		// private void CheckTarget()
-		// {
-		// 	if (_target == null) return;
-		// 	
-		// 	var pos = transform.position;
-		// 	var target = (Vector3)_target;
-		// 	var diff = (new Vector3(pos.x, 0, pos.z) - new Vector3(target.x, 0, target.z)).magnitude;
-		// 	
-		// 	if (diff <= 0.1f)
-		// 	{
-		// 		_target = null;
-		// 	}
-		// }
 	
 		private void DrawPath()
 		{
@@ -206,16 +169,44 @@ namespace Players
 		public override void AddGold()
 		{
 			base.AddGold();
-			StartCoroutine(AiPause(0.25f));
+			StartCoroutine(AIPause(0.25f));
 		}
 
 
-		private IEnumerator AiPause(float pauseTime)
+		private IEnumerator AIPause(float pauseTime)
 		{
-			Debug.Log("Pauseing");
 			_active = false;
 			yield return new WaitForSeconds(pauseTime);
 			_active = true;
 		}
+
+		public override void TogglePlayerEnabled(bool enable)
+		{
+			base.TogglePlayerEnabled(enable);
+			_target = transform;
+			if (enable)
+				StartCoroutine(AIPause(1f));
+		}
 	}
+
+	// Deprecated, use RigidBodyJump
+	// private IEnumerator ParabolaJump(float height, float duration)
+	// {
+	// 	OffMeshLinkData data = _agent.currentOffMeshLinkData;
+	// 	Vector3 startPos = _agent.transform.position;
+	// 	Vector3 endPos = data.endPos + Vector3.up * _agent.baseOffset;
+	// 	float normalizedTime = 0f;
+	// 	_agent.enabled = false;
+	// 	while (normalizedTime < 1f)
+	// 	{
+	// 		float yOffset = height * 4f * (normalizedTime - normalizedTime * normalizedTime);
+	// 		Rb.velocity = Vector3.Lerp(startPos, endPos, normalizedTime) + new Vector3(0, yOffset, 0);
+	//
+	// 		normalizedTime += Time.deltaTime / duration;
+	// 		yield return null;
+	// 	}
+	//
+	// 	_agent.enabled = true;
+	// 	_agent.CompleteOffMeshLink();
+	// }
 }
