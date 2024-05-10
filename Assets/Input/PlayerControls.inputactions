@@ -266,7 +266,7 @@
                 {
                     "name": "",
                     "id": "1c4139cf-a74d-4995-982d-343800a1771b",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player0",
@@ -277,7 +277,7 @@
                 {
                     "name": "",
                     "id": "aa94f0b0-52bf-4bd4-859b-6b6119519756",
-                    "path": "<Keyboard>/rightShift",
+                    "path": "<Keyboard>/slash",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player1",
@@ -288,7 +288,7 @@
                 {
                     "name": "",
                     "id": "22ccaefb-428d-4c0e-b7d7-12406e3cb684",
-                    "path": "<Keyboard>/n",
+                    "path": "<Keyboard>/v",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player2",
@@ -299,7 +299,7 @@
                 {
                     "name": "",
                     "id": "644b6555-246b-4fea-8c65-9e731a25671a",
-                    "path": "<Keyboard>/p",
+                    "path": "<Keyboard>/m",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player3",
@@ -321,10 +321,43 @@
                 {
                     "name": "",
                     "id": "4fc1ff15-e8b1-4d1e-a67d-0c6cdb04964d",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player0",
+                    "action": "Pickaxe",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c6951c0-6d2f-4a57-ad6e-e68a1667ac82",
+                    "path": "<Keyboard>/rightShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player1",
+                    "action": "Pickaxe",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2a99eb29-fee1-4077-be77-1c97110f2af8",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player2",
+                    "action": "Pickaxe",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2d4b0a44-222f-4394-a7ef-0402e816e90a",
+                    "path": "<Keyboard>/comma",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player3",
                     "action": "Pickaxe",
                     "isComposite": false,
                     "isPartOfComposite": false

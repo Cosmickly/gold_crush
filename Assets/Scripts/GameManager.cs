@@ -152,6 +152,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Over!");
         _tilemapManager.enabled = false;
+        _scoreboard.gameObject.SetActive(false);
         _finalScreen.gameObject.SetActive(true);
         _finalScreen.SetText(_players.Values.ToArray());
     }
