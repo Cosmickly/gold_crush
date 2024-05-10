@@ -167,11 +167,10 @@ namespace Players
         
         protected void ThrowBomb()
         {
-
             if (_numOfBombs <= 0 || _bombThrowTimer > 0) return;
             _bombThrowTimer = _bombThrowCooldown;
-            var bomb = Instantiate(_bombPrefab, transform.position + new Vector3(0, 2, 0), Quaternion.identity);
-            bomb.Push(DesiredDirection * 3f + new Vector3(0, 5f, 0));
+            var bomb = Instantiate(_bombPrefab, transform.position + new Vector3(0, 2.5f, 0), Quaternion.identity);
+            bomb.Push(DesiredDirection * 3f + new Vector3(0, 8f, 0));
             _numOfBombs--;
         }
     

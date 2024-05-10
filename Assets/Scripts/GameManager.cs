@@ -22,15 +22,25 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Material[] _playerColours;
     [SerializeField] private Transform[] _spawnPoints;
-    private Dictionary<int, BasePlayer> _players = new ();
-    
-    [Header("Parameters")]
-    [SerializeField] [Range(0, 4)] private int _numOfHumans; 
-    [SerializeField] [Range(0, 4)] private int _totalPlayers;
-    
-    public int MaxLevel => _maxLevel;
+    public Dictionary<int, BasePlayer> _players = new ();
 
-    [SerializeField] [Range(1, 100)] private int _maxLevel;
+    [Header("Parameters")]
+    private readonly int _maxPlayers = 4;
+
+    [SerializeField] public int NumOfHumans;
+    // {
+    //     get => NumOfHumans;
+    //     private set => NumOfHumans = Mathf.Clamp(value, 0, _maxPlayers); 
+    // }
+
+    [SerializeField] public int NumOfAis;
+    // {
+    //     get => NumOfAIs;
+    //     private set => NumOfAIs = Mathf.Clamp(value, 0, _maxPlayers - NumOfHumans); 
+    // }
+
+
+    public int MaxLevel = 1;
     public int CurrentLevel { get; private set; } = 1;
 
     [SerializeField] private CameraController _cameraController;
@@ -47,9 +57,18 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < _totalPlayers; i++)
+        MaxLevel = PlayerPrefs.GetInt("LevelCount", 1);
+        NumOfHumans = PlayerPrefs.GetInt("HumanCount", 1);
+        NumOfAis = PlayerPrefs.GetInt("AIcount", 0);
+        
+        for (int i = 0; i < NumOfHumans; i++)
         {
-            _players.Add(i, i < _numOfHumans ? CreateHumanPlayer(i) : CreateAIPlayer(i));
+            _players.Add(i, CreateHumanPlayer(i));
+        }
+        
+        for (int j = NumOfHumans; j < NumOfHumans + NumOfAis; j++)
+        {
+            _players.Add(j, CreateAIPlayer(j));
         }
 
         _scoreboard.Players = _players.Values.ToList();

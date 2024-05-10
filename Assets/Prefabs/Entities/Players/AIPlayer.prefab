@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2983752196467883518, guid: b89a93b685fc31ac889ea571b02657bf, type: 3}
       propertyPath: m_Name
-      value: AiPlayer
+      value: AIPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 8225320285397141797, guid: b89a93b685fc31ac889ea571b02657bf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -80,20 +80,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36816dd05dd5644499d6b53c6dfd755e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ModelHolder: {fileID: 0}
   MoveSpeed: 3
   JumpForce: 3.5
   _smoothTime: 0.1
   PickaxeCooldown: 0.5
   DesiredDirection: {x: 0, y: 0, z: 0}
-  TileMask:
-    serializedVersion: 2
-    m_Bits: 128
   AboveTile: 0
   Grounded: 0
   _currentCell: {x: 0, y: 0, z: 0}
   Fell: 0
+  _bombPrefab: {fileID: 1482070067295822981, guid: fa291064e6812f314937ab9b19dd9a5f, type: 3}
+  _maxNumOfBombs: 10
+  _bombThrowCooldown: 1
   _searchRadius: 10
-  _target: {x: 0, y: 0, z: 0}
+  _target: {fileID: 0}
   _distanceToTarget: 0
   _drawPath: 1
 --- !u!195 &4217237202956493257

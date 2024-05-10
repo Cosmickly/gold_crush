@@ -222,7 +222,7 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldSpawnRadius: {x: 0, y: 0}
-  _goldEnabled: 0
+  _goldEnabled: 1
   _goldSpawnTimeMax: 1
   _goldSpawnTimeMin: 0.25
   _tileCrackEnabled: 1
@@ -276,7 +276,7 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   _boundary: {fileID: 824523846}
   TilemapSize: {x: 25, y: 25}
-  _iceTileRateMax: 0.4
+  _iceTileRateMax: 0.3
   _obstacleFillRate: 15
   _layoutFillRate: 75
   _obstacleSmoothRate: 3
@@ -1125,6 +1125,22 @@ PrefabInstance:
 
 '
       objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.21333328
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291573289
+      objectReference: {fileID: 0}
     - target: {fileID: 6708798776248688463, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1230,6 +1246,22 @@ PrefabInstance:
     - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_text
       value: P2
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4280887756
       objectReference: {fileID: 0}
     - target: {fileID: 6708798776248688463, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_Pivot.x
@@ -1473,8 +1505,24 @@ PrefabInstance:
 '
       objectReference: {fileID: 0}
     - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.13999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.32666662
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_fontSizeBase
       value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4280595027
       objectReference: {fileID: 0}
     - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_hasFontAssetChanged
@@ -1689,6 +1737,22 @@ PrefabInstance:
     - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_text
       value: P3
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.6933334
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 868003449061533920, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4280922572
       objectReference: {fileID: 0}
     - target: {fileID: 6708798776248688463, guid: 98bb8351c4e21724fa7330f56032d117, type: 3}
       propertyPath: m_Pivot.x
@@ -2762,9 +2826,9 @@ MonoBehaviour:
   - {fileID: 2127851623}
   - {fileID: 1339196529}
   - {fileID: 159034701}
-  _numOfHumans: 1
-  _totalPlayers: 1
-  _maxLevel: 3
+  NumOfHumans: 0
+  NumOfAis: 0
+  MaxLevel: 0
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}
   _scoreboard: {fileID: 1315929202}

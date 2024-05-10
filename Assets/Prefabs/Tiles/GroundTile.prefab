@@ -201,10 +201,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47398b1f305813d49b732dc270074980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cracking: 0
-  _crackTimer: 0
-  _crackTime: 5
-  _crackMultiplier: 4
+  _crackTime: 6
+  _crackMultiplier: 3
   _amplitude: 0.05
   _frequency: 4
   Ice: 0

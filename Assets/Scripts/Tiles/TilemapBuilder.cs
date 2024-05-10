@@ -36,7 +36,7 @@ namespace Tiles
 
         private int[][] _obstacleMap;
 
-        private float IntensityRatio => (float) _gameManager.CurrentLevel / _gameManager.MaxLevel;
+        private float IntensityRatio => Mathf.Clamp(_gameManager.CurrentLevel / _gameManager.MaxLevel, 0, 1);
         
         private void Awake()
         {
@@ -93,7 +93,7 @@ namespace Tiles
                     }
 
                     var perlin = Mathf.PerlinNoise(Scale * i + offsetX, Scale * j + offsetY);
-                    groundTileMap[i][j] = perlin < IntensityRatio * _iceTileRateMax ? 1 : 0;
+                    groundTileMap[i][j] = perlin < (IntensityRatio * _iceTileRateMax) ? 1 : 0;
                 }
             }
             
