@@ -14,8 +14,12 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Prefabs")]
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _aiPlayer;
+
+    [SerializeField] private GameObject[] _playerModels;
+
     [SerializeField] private Material[] _playerColours;
     [SerializeField] private Transform[] _spawnPoints;
     private Dictionary<int, BasePlayer> _players = new ();
@@ -89,7 +93,10 @@ public class GameManager : MonoBehaviour
         var player = playerObject.GetComponent<BasePlayer>();
         player.ID = id;
         player.TilemapManager = _tilemapManager;
-        player.SetMaterial(_playerColours[id]);
+        var model = Instantiate(_playerModels[id], playerObject.transform.position, Quaternion.identity, player.ModelHolder);
+        model.transform.localScale = new Vector3(2f, 2f, 2f);
+        model.transform.localPosition = new Vector3(0, -1, 0);
+        // player.SetMaterial(_playerColours[id]);
         player.transform.position = _spawnPoints[id].position;
         
         return player;

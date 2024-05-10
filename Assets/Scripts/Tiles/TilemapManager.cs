@@ -162,7 +162,6 @@ namespace Tiles
             {
                 if (AllTiles.TryGetValue(cell, out var tile))
                 {
-                    Debug.Log("cracking " + cell);
                     _crackingTiles.Add(cell, tile);
                     tile.Cracking = true;
                 }
@@ -268,7 +267,6 @@ namespace Tiles
         // TODO: find a better way to handle tile checks
         public void UpdatePlayerLocation(int id, Vector3Int newCell)
         {
-            Debug.Log("player " + id + " moved");
             if (_playerLocations.TryGetValue(id, out var oldCell))
             {
                 ExitedTile(oldCell);
@@ -280,22 +278,9 @@ namespace Tiles
 
         private void EnteredTile(Vector3Int cell)
         {
-            Debug.Log("player moved to " + cell);
             CrackTile(cell);
             if (AllTiles.TryGetValue(cell, out var tile))
                 tile.PlayerOnMe = true;
-            else
-            {
-                Debug.Log("Tile not found: " + cell);
-            }
-            // if(_crackingTiles.TryGetValue(pos, out var tile))
-            //     tile.PlayerOnMe = true;
-            // else if (ActiveTiles.TryGetValue(pos, out tile))
-            //     tile.PlayerOnMe = true;
-            // else
-            // {
-            //     Debug.Log("Tile not found: " + pos);
-            // }
         }
 
         private void ExitedTile(Vector3Int cell)
@@ -303,14 +288,6 @@ namespace Tiles
             // CrackTile(pos);
             if (AllTiles.TryGetValue(cell, out var tile))
                 tile.PlayerOnMe = false;
-            // if (_crackingTiles.TryGetValue(pos, out var tile))
-            //     tile.PlayerOnMe = false;
-            // else if (ActiveTiles.TryGetValue(pos, out tile))
-            //     tile.PlayerOnMe = false;
-            // else
-            // {
-            //     Debug.Log("Tile not found: " + pos);
-            // }
         }
 
         public void PlayerFell(BasePlayer player)
@@ -422,7 +399,7 @@ namespace Tiles
                         && cell.x <= _centerPos.x + _goldSpawnRadius.x / 2 
                         && cell.y >= _centerPos.y - _goldSpawnRadius.y / 2 
                         && cell.y <= _centerPos.y + _goldSpawnRadius.y / 2 ).ToList();
-            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count));
+            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count-1));
         }
     
         // public bool HasTile(Vector3Int pos)

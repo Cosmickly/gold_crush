@@ -9,8 +9,8 @@ namespace Entities
     {
         private ParticleSystem _particleSystem;
         private Collider _collider;
-        private MeshRenderer _meshRenderer;
-        
+        private GameObject _meshObject;
+
         public TilemapManager TilemapManager { protected get; set; }
         public Vector3Int Cell { get; set; }
         public int HitsToBreak;
@@ -19,9 +19,7 @@ namespace Entities
         {
             _particleSystem = GetComponent<ParticleSystem>();
             _collider = GetComponent<Collider>();
-            _meshRenderer = GetComponent<MeshRenderer>();
-            var main = _particleSystem.main;
-            main.startColor = _meshRenderer.material.color;
+            _meshObject = transform.GetChild(0).gameObject;
         }
 
         public void Fall()
@@ -53,11 +51,8 @@ namespace Entities
         {
             if (TilemapManager.RemoveObstacle(Cell))
             {
-                // gameObject.SetActive(false);
                 _collider.enabled = false;
-                _meshRenderer.enabled = false;
-                // _emissionModule.burstCount = _initialBurstCount;
-                // _mainModule.startSize = _initialParticleSize;
+                _meshObject.SetActive(false);
             }
         }
     }

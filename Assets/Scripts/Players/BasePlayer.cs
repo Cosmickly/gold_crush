@@ -12,13 +12,12 @@ namespace Players
     {
         protected Rigidbody Rb;
         private Collider _collider;
-        protected MeshRenderer MeshRenderer;
-        // protected Color PlayerColour;
-        // protected GameObject MeshObject;
+        public Transform ModelHolder;
         
         [Header("Animation")]
         private Animator _animator;
         private int _pickaxeAnimationID;
+        private int _desiredDirectionAnimationID;
         
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
@@ -53,10 +52,10 @@ namespace Players
         {
             Rb = GetComponent<Rigidbody>();
             _collider = GetComponent<CapsuleCollider>();
-            MeshRenderer = GetComponentInChildren<MeshRenderer>();
-            // MeshObject = MeshRenderer.gameObject;
+            ModelHolder = transform.GetChild(0);
             _animator = GetComponent<Animator>();
             _pickaxeAnimationID = Animator.StringToHash("Pickaxe");
+            _desiredDirectionAnimationID = Animator.StringToHash("DesiredDirection");
         }
 
         protected virtual void Update()
@@ -66,6 +65,8 @@ namespace Players
             
             if (_pickaxeTimer > 0) _pickaxeTimer -= Time.deltaTime;
             if (_bombThrowTimer > 0) _bombThrowTimer -= Time.deltaTime;
+
+            _animator.SetBool(_desiredDirectionAnimationID, DesiredDirection != Vector3.zero);
         }
 
         /*
@@ -147,7 +148,6 @@ namespace Players
             {
                 if (hits[i].transform.TryGetComponent(out IHittable hittable))
                 {
-                    Debug.Log("HIT");
                     hittable.Hit();
                 }
             }
@@ -194,7 +194,7 @@ namespace Players
 
         public void SetMaterial(Material material)
         {
-            MeshRenderer.material = material;
+            // MeshRenderer.material = material;
             // PlayerColour = material.color;
         }
 
@@ -211,6 +211,7 @@ namespace Players
 
         public virtual void TogglePlayerEnabled(bool enable)
         {
+            // ModelObject.SetActive(enable);
             _collider.enabled = enable;
             Rb.useGravity = enable;   
             Rb.velocity = Vector3.zero;

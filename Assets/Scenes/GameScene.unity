@@ -220,10 +220,10 @@ MonoBehaviour:
   _gameManager: {fileID: 1919680840}
   GoldPiecePrefab: {fileID: 7583429412908308514, guid: 3371719a8f2a12f4ca012d7f9bd53607, type: 3}
   _goldSpawnRadius: {x: 0, y: 0}
-  _goldEnabled: 1
+  _goldEnabled: 0
   _goldSpawnTimeMax: 1
   _goldSpawnTimeMin: 0.25
-  _tileCrackEnabled: 1
+  _tileCrackEnabled: 0
   _tileCrackTimeMax: 1
   _tileCrackTimeMin: 0.25
   _maxIntensity: 40
@@ -2105,6 +2105,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 9079997550181142078, guid: c5006b011e94bb5d18aba705668de899, type: 3}
   _aiPlayer: {fileID: 4933396742051619548, guid: 28d837ebd5fb34b6daa7476b49ef21fc, type: 3}
+  _playerModels:
+  - {fileID: 919132149155446097, guid: d36d0758b2c4c4044b6008862c469ab0, type: 3}
+  - {fileID: 919132149155446097, guid: cc9f8000a9a5120458017f77ba9f753c, type: 3}
+  - {fileID: 919132149155446097, guid: 5c767e09b4ca97441af6e0c950f5bae7, type: 3}
+  - {fileID: 919132149155446097, guid: b88a633feb3faf6438389b2ed4bc3e24, type: 3}
   _playerColours:
   - {fileID: 2100000, guid: e428eca1e8062a64aad57db1fd41f2ff, type: 2}
   - {fileID: 2100000, guid: 46c7e1fc66dc1754db0673da30c2c5a3, type: 2}
@@ -2116,7 +2121,7 @@ MonoBehaviour:
   - {fileID: 1339196529}
   - {fileID: 159034701}
   _numOfHumans: 1
-  _totalPlayers: 2
+  _totalPlayers: 1
   _maxLevel: 90
   _cameraController: {fileID: 1910385157}
   _tilemapManager: {fileID: 40266295}

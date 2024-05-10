@@ -141,7 +141,7 @@ namespace Players
 		{
 			for (int i = 0; i < _path.corners.Length - 1; i++)
 			{
-				Debug.DrawLine(_path.corners[i], _path.corners[i + 1], MeshRenderer.material.color);
+				// Debug.DrawLine(_path.corners[i], _path.corners[i + 1], MeshRenderer.material.color);
 			}
 		}
 
