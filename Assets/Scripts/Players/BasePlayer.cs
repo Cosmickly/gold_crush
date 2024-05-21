@@ -108,7 +108,8 @@ namespace Players
         {
             yield return new WaitUntil(() => Grounded);
             yield return new WaitForSeconds(2f);
-            TilemapManager.CrackTile(CurrentCell);
+            TilemapManager.UpdatePlayerLocation(ID, CurrentCell);
+            // TilemapManager.CrackTile(CurrentCell);
         }
     
         /*

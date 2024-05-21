@@ -265,6 +265,28 @@
                 },
                 {
                     "name": "",
+                    "id": "1c16a127-89e0-486f-872e-0c6fd1f7f249",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player0",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7aa8e4a0-952c-4a7c-b97b-b6c1bf680b00",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player0;Player1;Player2;Player3",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "1c4139cf-a74d-4995-982d-343800a1771b",
                     "path": "<Keyboard>/z",
                     "interactions": "",
@@ -309,11 +331,66 @@
                 },
                 {
                     "name": "",
+                    "id": "8c0264f9-9d3e-4e62-b0d7-2e660379fe1c",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player0;Player1;Player2;Player3",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "4f4301df-66b0-4047-ab01-f10cf60d2cbf",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Player0;Player1;Player2;Player3",
+                    "groups": "Player0",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "032af940-13a3-4088-8a75-54c448324029",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player0",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1f9eca65-7a15-4653-b9c8-44389a8e6d7b",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player1",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d80f569-dc99-4ef9-b18c-19c9879ada30",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player2",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aed75382-d051-4883-9f17-835ccb09948e",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player3",
                     "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -358,6 +435,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Player3",
+                    "action": "Pickaxe",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "22057f91-c314-46ea-9e38-3925bbfff2d3",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Player0;Player1;Player2;Player3",
                     "action": "Pickaxe",
                     "isComposite": false,
                     "isPartOfComposite": false

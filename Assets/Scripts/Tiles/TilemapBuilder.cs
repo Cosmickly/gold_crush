@@ -36,7 +36,7 @@ namespace Tiles
 
         private int[][] _obstacleMap;
 
-        private float IntensityRatio => Mathf.Clamp(_gameManager.CurrentLevel / _gameManager.MaxLevel, 0, 1);
+        private float _intensityRatio;
         
         private void Awake()
         {
@@ -69,6 +69,7 @@ namespace Tiles
         
         public void Build()
         {
+            _intensityRatio = (float) _gameManager.CurrentLevel / _gameManager.MaxLevel;
             CellularAutomataGround();
             CellularAutomataObstacles();
             InstantiateObstacles();
@@ -93,7 +94,7 @@ namespace Tiles
                     }
 
                     var perlin = Mathf.PerlinNoise(Scale * i + offsetX, Scale * j + offsetY);
-                    groundTileMap[i][j] = perlin < (IntensityRatio * _iceTileRateMax) ? 1 : 0;
+                    groundTileMap[i][j] = perlin < (_intensityRatio * _iceTileRateMax) ? 1 : 0;
                 }
             }
             
@@ -152,7 +153,7 @@ namespace Tiles
                     var pos = new Vector3Int(i, 0, j) + _topLayerOffset;
                     RockObstacle obstacle;
                     if (i is > 5 and < 20 && j is > 5 and < 20 
-                                          && Random.Range(0, 100) < IntensityRatio * _goldChunkRateMax)
+                                          && Random.Range(0, 100) < _intensityRatio * _goldChunkRateMax)
                     {
                         obstacle = Instantiate(_goldOrePrefab, pos, Quaternion.identity, transform);
                             

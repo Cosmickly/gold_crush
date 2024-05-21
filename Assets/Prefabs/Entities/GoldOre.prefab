@@ -98,6 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5e1f6212778def4696ccb753eb270de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BreakSound: {fileID: 8300000, guid: 8990e895d87cd3f549a0893079147d1e, type: 3}
+  HitSound: {fileID: 8300000, guid: 3b4a5a6906791bc0182023b0e7513cd9, type: 3}
   HitsToBreak: 3
 --- !u!4 &5731387813289237088 stripped
 Transform:

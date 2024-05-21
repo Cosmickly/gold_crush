@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -9,22 +10,23 @@ namespace Players
         private bool _desiredJump;
         private bool _desiredPickaxe;
 
-
         [Header("Input")]
         private InputActionAsset _actionAsset;
         private InputAction _moveAction;
         private InputAction _jumpAction;
         private InputAction _pickaxeAction;
-    
-    
+        private InputAction _pauseAction;
+
         private void OnEnable()
         {
-            _actionAsset.Enable();
+            if (_pauseAction != null) _pauseAction.started += PausePressed;
+            // _actionAsset.Enable();
         }
         
         private void OnDisable()
         {
-            _actionAsset.Disable();
+            if (_pauseAction != null) _pauseAction.started -= PausePressed;
+            // _actionAsset.Disable();
         }
 
         protected override void Awake()
@@ -34,9 +36,7 @@ namespace Players
             _moveAction = _actionAsset.FindActionMap("Gameplay").FindAction("Move");
             _jumpAction = _actionAsset.FindActionMap("Gameplay").FindAction("Jump");
             _pickaxeAction = _actionAsset.FindActionMap("Gameplay").FindAction("Pickaxe");
-
-            // TODO replace with actual pause
-            // _actionAsset.FindActionMap("Gameplay").FindAction("Pause").performed += callbackContext => Reset();
+            _pauseAction = _actionAsset.FindActionMap("Gameplay").FindAction("Pause");
         }
 
         protected override void Update()
@@ -72,23 +72,26 @@ namespace Players
             }
         }
 
-
-
-        protected void SpeedControl()
+        private void PausePressed(InputAction.CallbackContext context)
         {
-            var vel = Rb.velocity;
-            var flatVel = new Vector3(vel.x, 0, vel.z);
-
-            if (vel.magnitude > MoveSpeed)
-            {
-                var limitedVel = flatVel.normalized * MoveSpeed;
-                Rb.velocity = new Vector3(limitedVel.x, vel.y, limitedVel.z);
-            }
+            TilemapManager.Pause();
         }
+
+        // protected void SpeedControl()
+        // {
+        //     var vel = Rb.velocity;
+        //     var flatVel = new Vector3(vel.x, 0, vel.z);
+        //
+        //     if (vel.magnitude > MoveSpeed)
+        //     {
+        //         var limitedVel = flatVel.normalized * MoveSpeed;
+        //         Rb.velocity = new Vector3(limitedVel.x, vel.y, limitedVel.z);
+        //     }
+        // }
     
-        private void Reset()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
+        // private void Reset()
+        // {
+        //     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // }
     }
 }

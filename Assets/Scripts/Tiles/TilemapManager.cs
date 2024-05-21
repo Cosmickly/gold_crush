@@ -6,6 +6,7 @@ using Entities;
 using Players;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
@@ -45,6 +46,7 @@ namespace Tiles
         [SerializeField] private int _maxIntensity;
         [SerializeField] private float _currentIntensity;
 
+        private bool _paused;
         public bool Active { get; private set; } = true;
 
         private Vector2Int _centerPos;
@@ -100,7 +102,7 @@ namespace Tiles
                     _tileCrackTimer = _tileCrackTime;
                 }
             }
-            
+
             // if (Input.GetKeyDown(KeyCode.R) && Active) RebuildTilesOnly();
         }
 
@@ -110,6 +112,7 @@ namespace Tiles
 
         private void StartLevel()
         {
+            Time.timeScale = 1;
             _currentIntensity = 0;
             _tilemapBuilder.Build();
             Active = true;
@@ -132,6 +135,14 @@ namespace Tiles
             ClearAllLinks();
             _tilemapBuilder.Build();
             // _allCellPositions = new HashSet<Vector3Int>(AllTiles.Keys);
+        }
+
+        public void Pause()
+        {
+            Debug.Log("PAUSE");
+            _paused = !_paused;
+            _gameManager.SetActivePauseScreen(_paused);
+            Time.timeScale = _paused ? 0 : 1;
         }
 
         /*
@@ -245,6 +256,17 @@ namespace Tiles
                 goldPiece.TilemapManager = this;
                 // _goldPieces.Add(goldPiece);
             }
+        }
+
+        private Vector3Int GetRandomFreeCell()
+        {
+            var possibleCells = AllTiles.Keys.Except(Obstacles.Keys).ToList();
+            possibleCells = possibleCells.Where(
+                cell => cell.x >= _centerPos.x - _goldSpawnRadius.x / 2
+                        && cell.x <= _centerPos.x + _goldSpawnRadius.x / 2
+                        && cell.y >= _centerPos.y - _goldSpawnRadius.y / 2
+                        && cell.y <= _centerPos.y + _goldSpawnRadius.y / 2 ).ToList();
+            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count)); // TODO sometimes nullpointerexception
         }
 
         // public bool RemoveGoldPiece(GoldPiece goldPiece)
@@ -391,17 +413,6 @@ namespace Tiles
             // if (ActiveTiles.TryGetValue(cell, out var activeTile))
             //     return activeTile;
             // return _crackingTiles.GetValueOrDefault(cell);
-        }
-
-        private Vector3Int GetRandomFreeCell()
-        {
-            var possibleCells = AllTiles.Keys.Except(Obstacles.Keys).ToList();
-            possibleCells = possibleCells.Where(
-                cell => cell.x >= _centerPos.x - _goldSpawnRadius.x / 2 
-                        && cell.x <= _centerPos.x + _goldSpawnRadius.x / 2 
-                        && cell.y >= _centerPos.y - _goldSpawnRadius.y / 2 
-                        && cell.y <= _centerPos.y + _goldSpawnRadius.y / 2 ).ToList();
-            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count-1));
         }
     
         // public bool HasTile(Vector3Int pos)

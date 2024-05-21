@@ -98,7 +98,7 @@ namespace Tiles
             _collider.enabled = false;
             _navMeshObstacle.enabled = true;
             _particle.Play();
-            _audioSource.Play();
+            if (_audioSource.enabled) _audioSource.Play();
             // _navMeshModifier.overrideArea = true;
         }
 

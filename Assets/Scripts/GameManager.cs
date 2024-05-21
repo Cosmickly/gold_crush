@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Material[] _playerColours;
     [SerializeField] private Transform[] _spawnPoints;
-    public Dictionary<int, BasePlayer> _players = new ();
+    private Dictionary<int, BasePlayer> _players = new ();
 
     [Header("Parameters")]
     private readonly int _maxPlayers = 4;
@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Scoreboard _scoreboard;
     [SerializeField] private FinalScreen _finalScreen;
     [SerializeField] private TextMeshProUGUI _levelText;
+    [SerializeField] private GameObject _pauseScreen;
 
     [Header("Random")] 
     [SerializeField] public int RandomSeed;
@@ -87,16 +88,13 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _finalScreen.gameObject.SetActive(false);
+        _pauseScreen.SetActive(false);
         _audioSource.Play();
-    }
-
-    private void Update()
-    {
-        // if (Input.GetKeyDown(KeyCode.Escape)) ReloadGameScene();
     }
 
     public void ReloadGameScene()
     {
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -178,5 +176,10 @@ public class GameManager : MonoBehaviour
         _scoreboard.gameObject.SetActive(false);
         _finalScreen.gameObject.SetActive(true);
         _finalScreen.SetText(_players.Values.ToArray());
+    }
+
+    public void SetActivePauseScreen(bool toggle)
+    {
+        if (_pauseScreen) _pauseScreen.SetActive(toggle);
     }
 }
