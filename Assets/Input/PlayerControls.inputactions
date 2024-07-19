@@ -299,7 +299,7 @@
                 {
                     "name": "",
                     "id": "aa94f0b0-52bf-4bd4-859b-6b6119519756",
-                    "path": "<Keyboard>/slash",
+                    "path": "<Keyboard>/period",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player1",
@@ -409,7 +409,7 @@
                 {
                     "name": "",
                     "id": "7c6951c0-6d2f-4a57-ad6e-e68a1667ac82",
-                    "path": "<Keyboard>/rightShift",
+                    "path": "<Keyboard>/slash",
                     "interactions": "",
                     "processors": "",
                     "groups": "Player1",

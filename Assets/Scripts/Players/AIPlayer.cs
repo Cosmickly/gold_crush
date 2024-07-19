@@ -60,8 +60,9 @@ namespace Players
 			}
 
 			// if no gold or center, stop
-			if (_target)
-				_distanceToTarget = Vector3.Distance(_target.position, transform.position);
+			if (!_target) return;
+
+			_distanceToTarget = Vector3.Distance(_target.position, transform.position);
 
 			_agent.enabled = Grounded;
 			
