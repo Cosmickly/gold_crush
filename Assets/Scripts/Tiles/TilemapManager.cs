@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Entities;
 using Players;
+using TMPro;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -59,6 +60,8 @@ namespace Tiles
                 _centerPos = new Vector2Int(TilemapSize.x / 2, TilemapSize.y / 2);
             }
         }
+
+        public TextMeshProUGUI DebugLabel;
         
         private void Awake()
         {
@@ -75,10 +78,14 @@ namespace Tiles
         private void Update()
         {
             if (!Active) return;
-            
-            if (_currentIntensity < _maxIntensity) _currentIntensity += Time.deltaTime;
+
+            if (_currentIntensity < _maxIntensity)
+            {
+                _currentIntensity += Time.deltaTime;
+                // DebugLabel.text = $"Intensity: {_currentIntensity}";
+            }
             var intensityRatio = _currentIntensity / _maxIntensity;
-            
+
             _goldSpawnRadius = Vector2.Lerp(new Vector2(5, 5), TilemapSize, intensityRatio);
 
             if (_goldEnabled)
@@ -94,16 +101,18 @@ namespace Tiles
 
             if (_tileCrackEnabled)
             {
-                _tileCrackTime = Mathf.Lerp(_goldSpawnTimeMax, _goldSpawnTimeMin, intensityRatio);
+                _tileCrackTime = Mathf.Lerp(_tileCrackTimeMax, _tileCrackTimeMin, intensityRatio);
                 _tileCrackTimer -= Time.deltaTime;
                 if (_tileCrackTimer <= 0)
                 {
                     CrackRandomTile();
                     _tileCrackTimer = _tileCrackTime;
                 }
+                DebugLabel.text = $"TileCrackTime: {_tileCrackTime}";
             }
 
             // if (Input.GetKeyDown(KeyCode.R) && Active) RebuildTilesOnly();
+
         }
 
         /*
@@ -215,12 +224,13 @@ namespace Tiles
     
         private void CrackRandomTile()
         {
-            if (_crackingTiles.Count < AllTiles.Count)
-            {
-                CancelInvoke(nameof(CrackRandomTile));
-                return;
-            }
-            CrackTile(RandomTile());
+            // if (_crackingTiles.Count >= AllTiles.Count)
+            // {
+            //     CancelInvoke(nameof(CrackRandomTile));
+            //     return;
+            // }
+            var randomCell = RandomTile();
+            CrackTile(randomCell);
         }
         
         /*
@@ -317,6 +327,7 @@ namespace Tiles
         public void PlayerFell(BasePlayer player)
         {
             ExitedTile(_playerLocations[player.PlayerId]);
+            AddIntensity(5f);
         }
     
         /*
@@ -413,6 +424,13 @@ namespace Tiles
             // if (ActiveTiles.TryGetValue(cell, out var activeTile))
             //     return activeTile;
             // return _crackingTiles.GetValueOrDefault(cell);
+        }
+
+        public void AddIntensity(float value)
+        {
+            _currentIntensity += value;
+            _currentIntensity = Mathf.Clamp(_currentIntensity, 0, _maxIntensity);
+            DebugLabel.text = $"Intensity: {_currentIntensity}";
         }
     
         // public bool HasTile(Vector3Int pos)

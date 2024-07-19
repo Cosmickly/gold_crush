@@ -135,7 +135,7 @@ namespace Players
 			yield return new WaitForSeconds(0.2f);
 			yield return new WaitUntil(() => Grounded);
 	
-			_agent.CompleteOffMeshLink();
+			// _agent.CompleteOffMeshLink();
 		}
 	
 		private void DrawPath()
