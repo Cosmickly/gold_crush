@@ -14,7 +14,7 @@ namespace UI
             Array.Sort(players, (BasePlayer x, BasePlayer y) => y.NumOfGold.CompareTo(x.NumOfGold));
             foreach (var player in players)
             {
-                _finalText.text += "Player " + (player.ID + 1) + ": " + player.NumOfGold + "\n";
+                _finalText.text += "Player " + (player.PlayerId + 1) + ": " + player.NumOfGold + "\n";
             }
         }
     }

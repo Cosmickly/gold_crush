@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AIPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 3194590449174307023, guid: b89a93b685fc31ac889ea571b02657bf, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -180565532097369072, guid: 75241a67fcde07b4bb75fde685c3c0aa, type: 2}
     - target: {fileID: 8225320285397141797, guid: b89a93b685fc31ac889ea571b02657bf, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

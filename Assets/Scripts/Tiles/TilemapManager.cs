@@ -316,7 +316,7 @@ namespace Tiles
 
         public void PlayerFell(BasePlayer player)
         {
-            ExitedTile(_playerLocations[player.ID]);
+            ExitedTile(_playerLocations[player.PlayerId]);
         }
     
         /*

@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     //     private set => NumOfHumans = Mathf.Clamp(value, 0, _maxPlayers); 
     // }
 
-    [SerializeField] public int NumOfAis;
+    [SerializeField] public int NumOfAIs;
     // {
     //     get => NumOfAIs;
     //     private set => NumOfAIs = Mathf.Clamp(value, 0, _maxPlayers - NumOfHumans); 
@@ -62,14 +62,14 @@ public class GameManager : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         MaxLevel = PlayerPrefs.GetInt("LevelCount", 1);
         NumOfHumans = PlayerPrefs.GetInt("HumanCount", 1);
-        NumOfAis = PlayerPrefs.GetInt("AIcount", 0);
+        NumOfAIs = PlayerPrefs.GetInt("AIcount", 0);
         
         for (int i = 0; i < NumOfHumans; i++)
         {
             _players.Add(i, CreateHumanPlayer(i));
         }
         
-        for (int j = NumOfHumans; j < NumOfHumans + NumOfAis; j++)
+        for (int j = NumOfHumans; j < NumOfHumans + NumOfAIs; j++)
         {
             _players.Add(j, CreateAIPlayer(j));
         }
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
     private BasePlayer PlayerSetup(GameObject playerObject, int id)
     {
         var player = playerObject.GetComponent<BasePlayer>();
-        player.ID = id;
+        player.PlayerId = id;
         player.TilemapManager = _tilemapManager;
         var model = Instantiate(_playerModels[id], playerObject.transform.position, Quaternion.identity, player.ModelHolder);
         model.transform.localScale = new Vector3(2f, 2f, 2f);

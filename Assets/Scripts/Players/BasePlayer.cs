@@ -13,9 +13,11 @@ namespace Players
         protected Rigidbody Rb;
         private Collider _collider;
         public Transform ModelHolder;
+
+        [Header("Audio")]
         private AudioSource _audioSource;
-        public AudioClip CollectSound;
-        public AudioClip FallSound;
+        [SerializeField] private AudioClip CollectSound;
+        [SerializeField] private AudioClip FallSound;
         
         [Header("Animation")]
         private Animator _animator;
@@ -40,12 +42,12 @@ namespace Players
         [SerializeField] public Vector3Int CurrentCell;
         [SerializeField] public bool Fell;
 
-        [SerializeField] private Bomb _bombPrefab;
-        
-        public int ID { get; set; }
+        public int PlayerId { get; set; }
 
         public int NumOfGold { get; private set; }
 
+        [Header("Bombs")]
+        [SerializeField] private Bomb _bombPrefab;
         [SerializeField] private int _maxNumOfBombs = 10;
         private int _numOfBombs;
         [SerializeField] private float _bombThrowCooldown = 0.5f;
@@ -101,14 +103,14 @@ namespace Players
             if (CurrentCell == cell) return;
         
             CurrentCell = cell;
-            TilemapManager.UpdatePlayerLocation(ID, CurrentCell);
+            TilemapManager.UpdatePlayerLocation(PlayerId, CurrentCell);
         }
 
         private IEnumerator UpdateOnLand()
         {
             yield return new WaitUntil(() => Grounded);
             yield return new WaitForSeconds(2f);
-            TilemapManager.UpdatePlayerLocation(ID, CurrentCell);
+            TilemapManager.UpdatePlayerLocation(PlayerId, CurrentCell);
             // TilemapManager.CrackTile(CurrentCell);
         }
     
