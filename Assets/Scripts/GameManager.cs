@@ -7,6 +7,7 @@ using Tiles;
 using TMPro;
 using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private FinalScreen _finalScreen;
     [SerializeField] private TextMeshProUGUI _levelText;
     [SerializeField] private GameObject _pauseScreen;
+    [SerializeField] private GameObject _pauseFirstSelected;
 
     [Header("Random")] 
     [SerializeField] public int RandomSeed;
@@ -180,6 +182,13 @@ public class GameManager : MonoBehaviour
 
     public void SetActivePauseScreen(bool toggle)
     {
-        if (_pauseScreen) _pauseScreen.SetActive(toggle);
+        if (_pauseScreen)
+        {
+            _pauseScreen.SetActive(toggle);
+            if (toggle)
+            {
+                EventSystem.current.SetSelectedGameObject(_pauseFirstSelected);
+            }
+        }
     }
 }

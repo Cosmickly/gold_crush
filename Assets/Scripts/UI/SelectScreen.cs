@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class MainMenu : MonoBehaviour
+    public class SelectScreen : MonoBehaviour
     {
         public Slider LevelCountSlider;
         private TextMeshProUGUI _levelCountSliderLabel;
@@ -20,9 +21,13 @@ namespace UI
         [SerializeField] private int _aiCount;
         [SerializeField] private int _levelCount;
 
-        private void Start()
+        public void Awake()
         {
             LoadSettings();
+        }
+
+        private void Start()
+        {
             _humanCountSliderLabel = HumanCountSlider.GetComponentInChildren<TextMeshProUGUI>();
             HumanCountSlider.onValueChanged.AddListener(delegate { HumanCountChange(); });
             HumanCountSlider.value = _humanCount;
@@ -62,11 +67,6 @@ namespace UI
             _aiCount = (int) AICountSlider.value;
             if (_aiCount + _humanCount > _maxPlayers) HumanCountSlider.value = _maxPlayers - _aiCount;
             _aiCountSliderLabel.text = _aiCount.ToString();
-        }
-
-        public void Quit()
-        {
-            Application.Quit();
         }
 
         public void StartGame()

@@ -11,9 +11,9 @@ namespace UI
         [Header("Audio")]
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private Slider _musicSlider;
-        [SerializeField] private TextMeshProUGUI _musicSliderLabel;
+        [SerializeField] private TextMeshProUGUI _musicSliderNumber;
         [SerializeField] private Slider _sfxSlider;
-        [SerializeField] private TextMeshProUGUI _sfxSliderLabel;
+        [SerializeField] private TextMeshProUGUI _sfxSliderNumber;
 
         private float _musicVolume;
         private float _sfxVolume;
@@ -25,11 +25,11 @@ namespace UI
 
         private void Start()
         {
-            _musicSliderLabel = _musicSlider.GetComponentInChildren<TextMeshProUGUI>();
+            _musicSliderNumber = _musicSlider.GetComponentInChildren<TextMeshProUGUI>();
             _musicSlider.onValueChanged.AddListener(delegate { MusicSliderChange(); });
             _musicSlider.value = _musicVolume;
 
-            _sfxSliderLabel = _sfxSlider.GetComponentInChildren<TextMeshProUGUI>();
+            _sfxSliderNumber = _sfxSlider.GetComponentInChildren<TextMeshProUGUI>();
             _sfxSlider.onValueChanged.AddListener(delegate { SfxSliderChange(); });
             _sfxSlider.value = _sfxVolume;
         }
@@ -47,7 +47,7 @@ namespace UI
             _musicVolume = _musicSlider.value;
             float trueVolume = SliderValueToVolume(_musicVolume);
             _audioMixer.SetFloat("Music", trueVolume);
-            _musicSliderLabel.text = ((int) _musicVolume).ToString();
+            _musicSliderNumber.text = ((int) _musicVolume).ToString();
         }
 
         private void SfxSliderChange()
@@ -55,7 +55,7 @@ namespace UI
             _sfxVolume = _sfxSlider.value;
             float trueVolume = SliderValueToVolume(_sfxVolume);
             _audioMixer.SetFloat("SFX", trueVolume);
-            _sfxSliderLabel.text = ((int) _sfxVolume).ToString();
+            _sfxSliderNumber.text = ((int) _sfxVolume).ToString();
         }
 
         public void SaveSettings()
