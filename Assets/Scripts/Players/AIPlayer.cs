@@ -68,13 +68,13 @@ namespace Players
 			
 			if (!_agent.enabled) return; 
 		
-			if (Input.GetMouseButton(0) && _cam && _agent.enabled)
-			{
-				if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
-				{
-					_target = hit.transform;
-				}
-			}
+			// if (Input.GetMouseButton(0) && _cam && _agent.enabled)
+			// {
+			// 	if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
+			// 	{
+			// 		_target = hit.transform;
+			// 	}
+			// }
 
 			_agent.destination = _target.position;
 		

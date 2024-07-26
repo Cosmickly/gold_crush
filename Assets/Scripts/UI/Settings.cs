@@ -36,8 +36,8 @@ namespace UI
 
         private void LoadSettings()
         {
-            _musicVolume = PlayerPrefs.GetFloat("MusicVolume", 75);
-            _sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 75);
+            _musicVolume = PlayerPrefs.GetFloat("MusicVolume", 70);
+            _sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 70);
             _audioMixer.SetFloat("Music", SliderValueToVolume(_musicVolume));
             _audioMixer.SetFloat("SFX", SliderValueToVolume(_sfxVolume));
         }

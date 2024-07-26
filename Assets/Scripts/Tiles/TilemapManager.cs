@@ -29,14 +29,15 @@ namespace Tiles
     
         [Header("Prefabs")] 
         [SerializeField] public GoldPiece GoldPiecePrefab;
-        [SerializeField] private Vector2 _goldSpawnRadius;
+        // [SerializeField] private Vector2 _goldSpawnArea;
+        [SerializeField] private float _goldSpawnRadius;
     
         [Header("Parameters")] 
         [SerializeField] private bool _goldEnabled;
         [SerializeField] private float _goldSpawnTimeMax;
         [SerializeField] private float _goldSpawnTimeMin;
         private float _goldSpawnTime;
-        private float _goldSpawnTimer;
+        private float _goldSpawnTimer = 99f;
         
         [SerializeField] private bool _tileCrackEnabled;
         [SerializeField] private float _tileCrackTimeMax;
@@ -50,24 +51,27 @@ namespace Tiles
         private bool _paused;
         public bool Active { get; private set; } = true;
 
-        private Vector2Int _centerPos;
+        private Vector3Int _centerPos;
         public Vector2Int TilemapSize
         {
             get => _tilemapBuilder.TilemapSize;
             private set
             {
                 _tilemapBuilder.TilemapSize = value;
-                _centerPos = new Vector2Int(TilemapSize.x / 2, TilemapSize.y / 2);
+                _centerPos = new Vector3Int(TilemapSize.x / 2, TilemapSize.y / 2, 0);
             }
         }
 
-        public TextMeshProUGUI DebugLabel;
+        // public TextMeshProUGUI DebugLabel;
         
         private void Awake()
         {
             _tilemapBuilder = GetComponent<TilemapBuilder>();
             TilemapSize = _tilemapBuilder.TilemapSize;
             _tilemap = GetComponent<Tilemap>();
+
+            _goldSpawnTimer = _goldSpawnTime;
+            _tileCrackTimer = _tileCrackTime;
         }
 
         private void Start()
@@ -84,9 +88,10 @@ namespace Tiles
                 _currentIntensity += Time.deltaTime;
                 // DebugLabel.text = $"Intensity: {_currentIntensity}";
             }
-            var intensityRatio = _currentIntensity / _maxIntensity;
 
-            _goldSpawnRadius = Vector2.Lerp(new Vector2(5, 5), TilemapSize, intensityRatio);
+            var intensityRatio = _currentIntensity / _maxIntensity;
+            // _goldSpawnArea = Vector2.Lerp(new Vector2(5, 5), TilemapSize, intensityRatio);
+            _goldSpawnRadius = Mathf.Lerp(5, _centerPos.x, intensityRatio);
 
             if (_goldEnabled)
             {
@@ -108,11 +113,10 @@ namespace Tiles
                     CrackRandomTile();
                     _tileCrackTimer = _tileCrackTime;
                 }
-                DebugLabel.text = $"TileCrackTime: {_tileCrackTime}";
             }
 
+            // DebugLabel.text = $"TileCrackTime: {_tileCrackTime}";
             // if (Input.GetKeyDown(KeyCode.R) && Active) RebuildTilesOnly();
-
         }
 
         /*
@@ -123,6 +127,8 @@ namespace Tiles
         {
             Time.timeScale = 1;
             _currentIntensity = 0;
+            _goldSpawnTimer = _goldSpawnTime;
+            _tileCrackTimer = _tileCrackTime;
             _tilemapBuilder.Build();
             Active = true;
         }
@@ -148,10 +154,16 @@ namespace Tiles
 
         public void Pause()
         {
-            Debug.Log("PAUSE");
+            if (!Active) return;
+            // Debug.Log("PAUSE");
             _paused = !_paused;
             _gameManager.SetActivePauseScreen(_paused);
             Time.timeScale = _paused ? 0 : 1;
+        }
+
+        public void DisableTilemapManager()
+        {
+            Active = false;
         }
 
         /*
@@ -176,8 +188,8 @@ namespace Tiles
             _crackingTiles.Clear();
             ClearLinksToCell(Vector3Int.zero);
         }
-    
-        public void CrackTile(Vector3Int cell)
+
+        private void CrackTile(Vector3Int cell)
         {
             var availableCells = AllTiles.Keys.Except(_crackingTiles.Keys).ToList();
             if (_tileCrackEnabled && availableCells.Contains(cell))
@@ -270,13 +282,25 @@ namespace Tiles
 
         private Vector3Int GetRandomFreeCell()
         {
-            var possibleCells = AllTiles.Keys.Except(Obstacles.Keys).ToList();
-            possibleCells = possibleCells.Where(
-                cell => cell.x >= _centerPos.x - _goldSpawnRadius.x / 2
-                        && cell.x <= _centerPos.x + _goldSpawnRadius.x / 2
-                        && cell.y >= _centerPos.y - _goldSpawnRadius.y / 2
-                        && cell.y <= _centerPos.y + _goldSpawnRadius.y / 2 ).ToList();
-            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count)); // TODO sometimes nullpointerexception
+            // var possibleCells = AllTiles.Keys.Except(Obstacles.Keys).ToList();
+            // possibleCells = possibleCells.Where(
+            //     cell => cell.x >= _centerPos.x - _goldSpawnArea.x / 2
+            //             && cell.x <= _centerPos.x + _goldSpawnArea.x / 2
+            //             && cell.y >= _centerPos.y - _goldSpawnArea.y / 2
+            //             && cell.y <= _centerPos.y + _goldSpawnArea.y / 2 ).ToList();
+            // return possibleCells.ElementAt(Random.Range(0, possibleCells.Count)); // TODO sometimes nullpointerexception
+
+            float radiusSquared = _goldSpawnRadius * _goldSpawnRadius;
+
+            var possibleCells = AllTiles.Keys.Where(
+                cell => !(Vector3.SqrMagnitude(cell - _centerPos) > radiusSquared) && !Obstacles.ContainsKey(cell)).ToList();
+
+            if (possibleCells.Count == 0)
+            {
+                Debug.Log("no possible cells");
+                return _centerPos;
+            }
+            return possibleCells.ElementAt(Random.Range(0, possibleCells.Count));
         }
 
         // public bool RemoveGoldPiece(GoldPiece goldPiece)
@@ -430,9 +454,8 @@ namespace Tiles
         {
             _currentIntensity += value;
             _currentIntensity = Mathf.Clamp(_currentIntensity, 0, _maxIntensity);
-            DebugLabel.text = $"Intensity: {_currentIntensity}";
         }
-    
+
         // public bool HasTile(Vector3Int pos)
         // {
         //     return ActiveTiles.ContainsKey(pos);

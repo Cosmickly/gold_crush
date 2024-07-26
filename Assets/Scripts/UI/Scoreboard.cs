@@ -13,15 +13,25 @@ public class Scoreboard : MonoBehaviour
     private void Awake()
     {
         _scoreUIs = GetComponentsInChildren<TextMeshProUGUI>();
+
+        for (int i = 0; i < _scoreUIs.Length; i++)
+        {
+            _scoreUIs[i].gameObject.SetActive(false);
+        }
     }
     
     private void Start()
     {
+        for (int i = 0; i < Players.Count; i++)
+        {
+            _scoreUIs[i].gameObject.SetActive(true);
+        }
+
         foreach (var player in Players)
         {
             player.onUpdateUI += UpdateUI;
         }
-        
+
         UpdateUI();
     }
     

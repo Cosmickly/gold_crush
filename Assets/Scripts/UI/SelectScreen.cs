@@ -10,11 +10,11 @@ namespace UI
     public class SelectScreen : MonoBehaviour
     {
         public Slider LevelCountSlider;
-        private TextMeshProUGUI _levelCountSliderLabel;
+        private TextMeshProUGUI _levelCountSliderNumber;
         public Slider HumanCountSlider;
-        private TextMeshProUGUI _humanCountSliderLabel;
+        private TextMeshProUGUI _humanCountSliderNumber;
         public Slider AICountSlider;
-        private TextMeshProUGUI _aiCountSliderLabel;
+        private TextMeshProUGUI _aiCountSliderNumber;
 
         private readonly int _maxPlayers = 4;
         [SerializeField] private int _humanCount;
@@ -28,17 +28,21 @@ namespace UI
 
         private void Start()
         {
-            _humanCountSliderLabel = HumanCountSlider.GetComponentInChildren<TextMeshProUGUI>();
+            // Ensure Number is first in Slider hierarchy
+            _humanCountSliderNumber = HumanCountSlider.GetComponentInChildren<TextMeshProUGUI>();
             HumanCountSlider.onValueChanged.AddListener(delegate { HumanCountChange(); });
             HumanCountSlider.value = _humanCount;
+            _humanCountSliderNumber.text = _humanCount.ToString();
 
-            _aiCountSliderLabel = AICountSlider.GetComponentInChildren<TextMeshProUGUI>();
+            _aiCountSliderNumber = AICountSlider.GetComponentInChildren<TextMeshProUGUI>();
             AICountSlider.onValueChanged.AddListener(delegate { AICountChange(); });
             AICountSlider.value = _aiCount;
+            _aiCountSliderNumber.text = _aiCount.ToString();
 
-            _levelCountSliderLabel = LevelCountSlider.GetComponentInChildren<TextMeshProUGUI>();
+            _levelCountSliderNumber = LevelCountSlider.GetComponentInChildren<TextMeshProUGUI>();
             LevelCountSlider.onValueChanged.AddListener(delegate { LevelCountChange(); });
             LevelCountSlider.value = _levelCount;
+            _levelCountSliderNumber.text = _levelCount.ToString();
         }
 
         private void LoadSettings()
@@ -52,21 +56,21 @@ namespace UI
         private void LevelCountChange()
         {
             _levelCount = (int) LevelCountSlider.value;
-            _levelCountSliderLabel.text = _levelCount.ToString();
+            _levelCountSliderNumber.text = _levelCount.ToString();
         }
         
         private void HumanCountChange()
         {
             _humanCount = (int) HumanCountSlider.value;
             if (_aiCount + _humanCount > _maxPlayers) AICountSlider.value = _maxPlayers - _humanCount;
-            _humanCountSliderLabel.text = _humanCount.ToString();
+            _humanCountSliderNumber.text = _humanCount.ToString();
         }
         
         private void AICountChange()
         {
             _aiCount = (int) AICountSlider.value;
             if (_aiCount + _humanCount > _maxPlayers) HumanCountSlider.value = _maxPlayers - _aiCount;
-            _aiCountSliderLabel.text = _aiCount.ToString();
+            _aiCountSliderNumber.text = _aiCount.ToString();
         }
 
         public void StartGame()
