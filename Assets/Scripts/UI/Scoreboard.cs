@@ -1,53 +1,40 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Players;
 using TMPro;
 using UnityEngine;
 
-public class Scoreboard : MonoBehaviour
+namespace UI
 {
-    public List<BasePlayer> Players = new ();
-    private TextMeshProUGUI[] _scoreUIs;
-    
-    private void Awake()
+    public class Scoreboard : MonoBehaviour
     {
-        _scoreUIs = GetComponentsInChildren<TextMeshProUGUI>();
+        public List<BasePlayer> Players = new();
+        private TextMeshProUGUI[] _scoreUIs;
 
-        for (int i = 0; i < _scoreUIs.Length; i++)
+        private void Awake()
         {
-            _scoreUIs[i].gameObject.SetActive(false);
-        }
-    }
-    
-    private void Start()
-    {
-        for (int i = 0; i < Players.Count; i++)
-        {
-            _scoreUIs[i].gameObject.SetActive(true);
+            _scoreUIs = GetComponentsInChildren<TextMeshProUGUI>();
+
+            foreach (var t in _scoreUIs)
+                t.gameObject.SetActive(false);
         }
 
-        foreach (var player in Players)
+        private void Start()
         {
-            player.onUpdateUI += UpdateUI;
+            for (var i = 0; i < Players.Count; i++) _scoreUIs[i].gameObject.SetActive(true);
+
+            foreach (var player in Players) player.OnUpdateScore += UpdateUI;
+
+            UpdateUI();
         }
 
-        UpdateUI();
-    }
-    
-    private void UpdateUI()
-    {
-        for (int i = 0; i < Players.Count; i++)
+        private void OnDisable()
         {
-            _scoreUIs[i].text = "P" + (i + 1) + ": " + Players[i].NumOfGold;
+            foreach (var player in Players) player.OnUpdateScore -= UpdateUI;
         }
-    }
 
-    private void OnDisable()
-    {
-        foreach (var player in Players)
+        private void UpdateUI()
         {
-            player.onUpdateUI -= UpdateUI;
+            for (var i = 0; i < Players.Count; i++) _scoreUIs[i].text = "P" + (i + 1) + ": " + Players[i].NumOfGold;
         }
     }
 }

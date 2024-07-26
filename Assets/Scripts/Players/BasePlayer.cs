@@ -1,57 +1,63 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
+using Entities;
 using Interfaces;
 using Tiles;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Players
 {
     public abstract class BasePlayer : MonoBehaviour, IEntity
     {
-        protected Rigidbody Rb;
-        private Collider _collider;
-        public Transform ModelHolder;
+        /*
+         * EVENTS
+         */
 
-        [Header("Audio")]
-        private AudioSource _audioSource;
+        public delegate void OnUpdateUI();
+
+        public Transform ModelHolder;
         [SerializeField] private AudioClip CollectSound;
         [SerializeField] private AudioClip FallSound;
-        
-        [Header("Animation")]
-        private Animator _animator;
-        private int _pickaxeAnimationID;
-        private int _desiredDirectionAnimationID;
-        
+
         [Header("Parameters")]
         [SerializeField] protected float MoveSpeed;
         [SerializeField] protected float JumpForce;
         [SerializeField] private float _smoothTime;
         [SerializeField] protected float PickaxeCooldown = 1f;
-        private float _pickaxeTimer;
 
         [SerializeField] protected Vector3 DesiredDirection;
-        private Vector3 _velocityRef = Vector3.zero;
-    
-
-        public TilemapManager TilemapManager { get; set; }
-        protected int TileMask => 1 << LayerMask.NameToLayer("Tile");
         [SerializeField] protected bool AboveTile;
         [SerializeField] protected bool Grounded;
         [SerializeField] public Vector3Int CurrentCell;
         [SerializeField] public bool Fell;
 
-        public int PlayerId { get; set; }
-
-        public int NumOfGold { get; private set; }
-
         [Header("Bombs")]
         [SerializeField] private Bomb _bombPrefab;
         [SerializeField] private int _maxNumOfBombs = 10;
-        private int _numOfBombs;
         [SerializeField] private float _bombThrowCooldown = 0.5f;
+
+        [Header("Animation")]
+        private Animator _animator;
+
+        [Header("Audio")]
+        private AudioSource _audioSource;
+
         private float _bombThrowTimer;
+        private Collider _collider;
+        private int _desiredDirectionAnimationID;
+        private int _numOfBombs;
+        private int _pickaxeAnimationID;
+        private float _pickaxeTimer;
+        private Vector3 _velocityRef = Vector3.zero;
+        public OnUpdateUI OnUpdateScore;
+        protected Rigidbody Rb;
+
+
+        public TilemapManager TilemapManager { get; set; }
+        private int TileMask => 1 << LayerMask.NameToLayer("Tile");
+
+        public int PlayerId { get; set; }
+
+        public int NumOfGold { get; private set; }
 
         protected virtual void Awake()
         {
@@ -63,16 +69,34 @@ namespace Players
             _desiredDirectionAnimationID = Animator.StringToHash("DesiredDirection");
             _audioSource = GetComponent<AudioSource>();
         }
-        
+
         protected virtual void Update()
         {
             GroundCheck();
             TileCheck();
-            
+
             if (_pickaxeTimer > 0) _pickaxeTimer -= Time.deltaTime;
             if (_bombThrowTimer > 0) _bombThrowTimer -= Time.deltaTime;
 
             _animator.SetBool(_desiredDirectionAnimationID, DesiredDirection != Vector3.zero);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.green;
+            var center = transform.position;
+            center += transform.forward * 0.5f;
+
+            var rotationMatrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
+            Gizmos.matrix = rotationMatrix;
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(0.5f, 0.5f, 0.5f));
+        }
+
+        public void Fall()
+        {
+            Fell = true;
+            _numOfBombs = _maxNumOfBombs;
+            _audioSource.PlayOneShot(FallSound);
         }
 
         /*
@@ -82,12 +106,9 @@ namespace Players
         protected virtual void GroundCheck()
         {
             Grounded = Physics.BoxCast(transform.position, new Vector3(0.2f, 0f, 0.2f), Vector3.down, out var hit,
-                Quaternion.identity,  _collider.bounds.extents.y + 0.05f, TileMask);
-        
-            if (Grounded && hit.transform.TryGetComponent(out GroundTile tile))
-            {
-                _smoothTime = tile.Slipperiness;
-            }
+                Quaternion.identity, _collider.bounds.extents.y + 0.05f, TileMask);
+
+            if (Grounded && hit.transform.TryGetComponent(out GroundTile tile)) _smoothTime = tile.Slipperiness;
         }
 
 
@@ -97,11 +118,11 @@ namespace Players
                 Quaternion.identity, 10f, TileMask);
 
             if (!Grounded || !AboveTile) return;
-        
+
             var cell = TilemapManager.GetCell(hit.transform.position);
-        
+
             if (CurrentCell == cell) return;
-        
+
             CurrentCell = cell;
             TilemapManager.UpdatePlayerLocation(PlayerId, CurrentCell);
         }
@@ -113,7 +134,7 @@ namespace Players
             TilemapManager.UpdatePlayerLocation(PlayerId, CurrentCell);
             // TilemapManager.CrackTile(CurrentCell);
         }
-    
+
         /*
          * MOVEMENT
          */
@@ -127,11 +148,11 @@ namespace Players
         protected virtual void Jump()
         {
             if (!Grounded) return;
-    
+
             var velocity = Rb.velocity;
             velocity = new Vector3(velocity.x, 0, velocity.z);
             Rb.velocity = velocity;
-        
+
             Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
 
@@ -140,7 +161,7 @@ namespace Players
             if (forward == Vector3.zero) return;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), 1f);
         }
-    
+
         /*
          * ABILITIES
          */
@@ -149,30 +170,15 @@ namespace Players
         {
             if (!Grounded || _pickaxeTimer > 0) return;
             _pickaxeTimer = PickaxeCooldown;
-            RaycastHit[] hits = new RaycastHit[10];
+            var hits = new RaycastHit[10];
             int numFound = Physics.BoxCastNonAlloc(transform.position, new Vector3(0.25f, 0.25f, 0.25f),
                 transform.forward, hits, transform.rotation, 0.5f);
-            for (int i=0; i<numFound; i++)
-            {
+            for (var i = 0; i < numFound; i++)
                 if (hits[i].transform.TryGetComponent(out IHittable hittable))
-                {
                     hittable.Hit();
-                }
-            }
             _animator.SetTrigger(_pickaxeAnimationID);
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.green;
-            var center = transform.position;
-            center += (transform.forward * 0.5f);
-
-            Matrix4x4 rotationMatrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
-            Gizmos.matrix = rotationMatrix;
-            Gizmos.DrawWireCube(Vector3.zero, new Vector3(0.5f, 0.5f, 0.5f));
-        }
-        
         protected void ThrowBomb()
         {
             if (_numOfBombs <= 0 || _bombThrowTimer > 0) return;
@@ -181,21 +187,14 @@ namespace Players
             bomb.Push(DesiredDirection * 3f + new Vector3(0, 8f, 0));
             _numOfBombs--;
         }
-    
-        /*
-         * EVENTS
-         */
-    
-        public delegate void OnUpdateUI();
-        public OnUpdateUI onUpdateUI;
 
         public virtual void AddGold()
         {
             NumOfGold++;
-            onUpdateUI.Invoke();
+            OnUpdateScore.Invoke();
             _audioSource.PlayOneShot(CollectSound);
         }
-    
+
         /*
          * MISC
          */
@@ -204,13 +203,6 @@ namespace Players
         {
             // MeshRenderer.material = material;
             // PlayerColour = material.color;
-        }
-
-        public void Fall()
-        {
-            Fell = true;
-            _numOfBombs = _maxNumOfBombs;
-            _audioSource.PlayOneShot(FallSound);
         }
 
         protected Vector3 GetRotatedVector(Vector3 vector)
@@ -222,7 +214,7 @@ namespace Players
         {
             // ModelObject.SetActive(enable);
             _collider.enabled = enable;
-            Rb.useGravity = enable;   
+            Rb.useGravity = enable;
             Rb.velocity = Vector3.zero;
             if (enable)
             {

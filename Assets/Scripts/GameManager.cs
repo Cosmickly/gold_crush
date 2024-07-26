@@ -14,20 +14,17 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Prefabs")] [SerializeField] private GameObject _playerPrefab;
-
+    [Header("Prefabs")]
+    [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _aiPlayer;
 
     [SerializeField] private GameObject[] _playerModels;
-
     [SerializeField] private Material[] _playerColours;
     [SerializeField] private Transform[] _spawnPoints;
 
-    [Header("Parameters")] [SerializeField]
-    public int NumOfHumans;
-
+    [Header("Parameters")]
+    [SerializeField] public int NumOfHumans;
     [SerializeField] public int NumOfAIs;
-
     public int MaxLevel = 1;
 
     [SerializeField] private CameraController _cameraController;
@@ -41,12 +38,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _pauseFirstSelected;
 
-    [Header("Random")] [SerializeField] public int RandomSeed;
+    [Header("Random")]
+    [SerializeField] public int RandomSeed;
+
+    private readonly Dictionary<int, BasePlayer> _players = new();
 
     private AudioSource _audioSource;
 
     private IDisposable _menuSubscription;
-    private readonly Dictionary<int, BasePlayer> _players = new();
+
     public int CurrentLevel { get; private set; } = 1;
 
 
@@ -185,10 +185,8 @@ public class GameManager : MonoBehaviour
 
     public void SetActivePauseScreen(bool toggle)
     {
-        if (_pauseScreen)
-        {
-            _pauseScreen.SetActive(toggle);
-            if (toggle) EventSystem.current.SetSelectedGameObject(_pauseFirstSelected);
-        }
+        if (!_pauseScreen) return;
+        _pauseScreen.SetActive(toggle);
+        if (toggle) EventSystem.current.SetSelectedGameObject(_pauseFirstSelected);
     }
 }

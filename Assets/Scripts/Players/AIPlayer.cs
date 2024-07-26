@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Linq;
 using Interfaces;
@@ -7,207 +6,194 @@ using UnityEngine.AI;
 
 namespace Players
 {
-	public class AIPlayer : BasePlayer
-	{
-		[SerializeField] private float _searchRadius;
+    public class AIPlayer : BasePlayer
+    {
+        [SerializeField] private float _searchRadius;
+        [SerializeField] private Transform _target;
 
-		[SerializeField] private Transform _target;
-			
-		[SerializeField] private float _distanceToTarget;
-		private Camera _cam;
-		private NavMeshPath _path;
-		private NavMeshAgent _agent;
-	
-		private int GoldPieceMask => 1 << LayerMask.NameToLayer("GoldPiece");
+        // public float JumpHeight;
+        // public float JumpDuration;
+        // private Camera _cam;
 
-		private Vector3Int _centerPos;
+        [SerializeField] private bool _drawPath;
 
-		private bool _active = true;
+        private bool _active = true;
+        private NavMeshAgent _agent;
 
-		// public float JumpHeight;
-		// public float JumpDuration;
+        private Vector3Int _centerPos;
 
-		[SerializeField] private bool _drawPath;
-	
-		protected override void Awake()
-		{
-			base.Awake();
-		
-			_cam = Camera.main;
-			_path = new NavMeshPath();
-			_agent = GetComponent<NavMeshAgent>();
-		}
+        private NavMeshPath _path;
 
-		private void Start()
-		{
-			var size = TilemapManager.TilemapSize;
-			_centerPos = new Vector3Int(size.x / 2, 0, size.y / 2);
-			_target = transform;
-			StartCoroutine(AIPause(1f));
-		}
+        private int GoldPieceMask => 1 << LayerMask.NameToLayer("GoldPiece");
 
-		protected override void Update()
-		{
-			base.Update();
+        protected override void Awake()
+        {
+            base.Awake();
 
-			// Try to get gold
-			_target = GetNearestGoldPiece();
+            // _cam = Camera.main;
+            _path = new NavMeshPath();
+            _agent = GetComponent<NavMeshAgent>();
+        }
 
-			// if no gold, but center, move to center
-			if (_target == transform && TilemapManager.GetTile(_centerPos) is not null)
-			{
-				_target = TilemapManager.GetTile(_centerPos).transform;
-			}
+        private void Start()
+        {
+            var size = TilemapManager.TilemapSize;
+            _centerPos = new Vector3Int(size.x / 2, 0, size.y / 2);
+            _target = transform;
+            StartCoroutine(AIPause(1f));
+        }
 
-			// if no gold or center, stop
-			if (!_target) return;
+        protected override void Update()
+        {
+            base.Update();
 
-			_distanceToTarget = Vector3.Distance(_target.position, transform.position);
+            // Try to get gold
+            _target = GetNearestGoldPiece();
 
-			_agent.enabled = Grounded;
-			
-			if (!_agent.enabled) return; 
-		
-			// if (Input.GetMouseButton(0) && _cam && _agent.enabled)
-			// {
-			// 	if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
-			// 	{
-			// 		_target = hit.transform;
-			// 	}
-			// }
+            // if no gold, but center, move to center
+            if (_target == transform && TilemapManager.GetTile(_centerPos) is not null)
+                _target = TilemapManager.GetTile(_centerPos).transform;
 
-			_agent.destination = _target.position;
-		
-			switch (_path.corners.Length)
-			{
-				case > 1:
-					DesiredDirection = (_path.corners[1] - transform.position).normalized; break;
-				case > 0:
-					DesiredDirection = (_path.corners.Last() - transform.position).normalized; break;
-			}
-			DesiredDirection.y = 0;
-		
-			
-			NavMesh.CalculatePath(transform.position, _target.position, NavMesh.AllAreas, _path);
-			if (_drawPath) DrawPath();
-		}
+            // if no gold or center, stop
+            if (!_target) return;
 
-		protected void FixedUpdate()
-		{
-			if (!Grounded) return;
+            _agent.enabled = Grounded;
 
-			if (!_active) DesiredDirection = Vector3.zero;
-			
-			Move();
-			Rotate(DesiredDirection);
-		
-			if(_agent.isOnOffMeshLink)
-			{
-				StartCoroutine(RigidBodyJump());
-			}
-		}
+            if (!_agent.enabled) return;
 
-		private void OnCollisionStay(Collision other)
-		{
-			if (other.gameObject.TryGetComponent(out IHittable hittable))
-			{
-				SwingPickaxe();
-			}
-		}
+            // if (Input.GetMouseButton(0) && _cam && _agent.enabled)
+            // {
+            // 	if (Physics.Raycast(_cam.ScreenPointToRay(Input.mousePosition), out var hit, 100f, TileMask))
+            // 	{
+            // 		_target = hit.transform;
+            // 	}
+            // }
 
-		private void OnDisable()
-		{
-			_agent.enabled = true;
-		}
+            _agent.destination = _target.position;
 
-		private IEnumerator RigidBodyJump()
-		{
-			var pos = transform.position;
-			var data = _agent.currentOffMeshLinkData;
-			var endPos = data.endPos;
-			var direction = (new Vector3(endPos.x, pos.y, endPos.z) - pos).normalized;
-			Rotate(direction);
-	
-			_agent.enabled = false;
-			Rb.velocity = MoveSpeed * direction;
-			Jump();
-	
-			yield return new WaitForSeconds(0.2f);
-			yield return new WaitUntil(() => Grounded);
-	
-			// _agent.CompleteOffMeshLink();
-		}
-	
-		private void DrawPath()
-		{
-			for (int i = 0; i < _path.corners.Length - 1; i++)
-			{
-				// Debug.DrawLine(_path.corners[i], _path.corners[i + 1], MeshRenderer.material.color);
-			}
-		}
+            switch (_path.corners.Length)
+            {
+                case > 1:
+                    DesiredDirection = (_path.corners[1] - transform.position).normalized;
+                    break;
+                case > 0:
+                    DesiredDirection = (_path.corners.Last() - transform.position).normalized;
+                    break;
+            }
 
-		private Transform GetNearestGoldPiece()
-		{
-			float closestDistance = float.MaxValue;
-			Transform nextTarget = _target;
-		
-			int maxSearch = 10;
-			Collider[] hits = new Collider[maxSearch];
-			int numFound = Physics.OverlapSphereNonAlloc(transform.position, _searchRadius, hits, GoldPieceMask);
-			for (int i = 0; i < numFound; i++)
-			{
-				var distance = Vector3.Distance(transform.position, hits[i].transform.position);
-				if (distance < closestDistance)
-				{
-					closestDistance = distance;
-					nextTarget = hits[i].transform;
-				}
-			}
-		
-			return nextTarget;
-		}
-
-		public override void AddGold()
-		{
-			base.AddGold();
-			StartCoroutine(AIPause(0.25f));
-		}
+            DesiredDirection.y = 0;
 
 
-		private IEnumerator AIPause(float pauseTime)
-		{
-			_active = false;
-			yield return new WaitForSeconds(pauseTime);
-			_active = true;
-		}
+            NavMesh.CalculatePath(transform.position, _target.position, NavMesh.AllAreas, _path);
+            if (_drawPath) DrawPath();
+        }
 
-		public override void TogglePlayerEnabled(bool enable)
-		{
-			base.TogglePlayerEnabled(enable);
-			_target = transform;
-			if (enable)
-				StartCoroutine(AIPause(1f));
-		}
-	}
+        protected void FixedUpdate()
+        {
+            if (!Grounded) return;
 
-	// Deprecated, use RigidBodyJump
-	// private IEnumerator ParabolaJump(float height, float duration)
-	// {
-	// 	OffMeshLinkData data = _agent.currentOffMeshLinkData;
-	// 	Vector3 startPos = _agent.transform.position;
-	// 	Vector3 endPos = data.endPos + Vector3.up * _agent.baseOffset;
-	// 	float normalizedTime = 0f;
-	// 	_agent.enabled = false;
-	// 	while (normalizedTime < 1f)
-	// 	{
-	// 		float yOffset = height * 4f * (normalizedTime - normalizedTime * normalizedTime);
-	// 		Rb.velocity = Vector3.Lerp(startPos, endPos, normalizedTime) + new Vector3(0, yOffset, 0);
-	//
-	// 		normalizedTime += Time.deltaTime / duration;
-	// 		yield return null;
-	// 	}
-	//
-	// 	_agent.enabled = true;
-	// 	_agent.CompleteOffMeshLink();
-	// }
+            if (!_active) DesiredDirection = Vector3.zero;
+
+            Move();
+            Rotate(DesiredDirection);
+
+            if (_agent.isOnOffMeshLink) StartCoroutine(RigidBodyJump());
+        }
+
+        private void OnDisable()
+        {
+            _agent.enabled = true;
+        }
+
+        private void OnCollisionStay(Collision other)
+        {
+            if (other.gameObject.TryGetComponent(out IHittable hittable)) SwingPickaxe();
+        }
+
+        private IEnumerator RigidBodyJump()
+        {
+            var pos = transform.position;
+            var data = _agent.currentOffMeshLinkData;
+            var endPos = data.endPos;
+            var direction = (new Vector3(endPos.x, pos.y, endPos.z) - pos).normalized;
+            Rotate(direction);
+
+            _agent.enabled = false;
+            Rb.velocity = MoveSpeed * direction;
+            Jump();
+
+            yield return new WaitForSeconds(0.2f);
+            yield return new WaitUntil(() => Grounded);
+        }
+
+        private void DrawPath()
+        {
+            for (var i = 0; i < _path.corners.Length - 1; i++)
+                Debug.DrawLine(_path.corners[i], _path.corners[i + 1], Color.magenta);
+        }
+
+        private Transform GetNearestGoldPiece()
+        {
+            var closestDistance = float.MaxValue;
+            var nextTarget = _target;
+
+            var maxSearch = 10;
+            var hits = new Collider[maxSearch];
+            int numFound = Physics.OverlapSphereNonAlloc(transform.position, _searchRadius, hits, GoldPieceMask);
+            for (var i = 0; i < numFound; i++)
+            {
+                float distance = Vector3.Distance(transform.position, hits[i].transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    nextTarget = hits[i].transform;
+                }
+            }
+
+            return nextTarget;
+        }
+
+        public override void AddGold()
+        {
+            base.AddGold();
+            StartCoroutine(AIPause(0.25f));
+        }
+
+
+        private IEnumerator AIPause(float pauseTime)
+        {
+            _active = false;
+            yield return new WaitForSeconds(pauseTime);
+            _active = true;
+        }
+
+        public override void TogglePlayerEnabled(bool enable)
+        {
+            base.TogglePlayerEnabled(enable);
+            _target = transform;
+            if (enable)
+                StartCoroutine(AIPause(1f));
+        }
+    }
+
+    // Deprecated, use RigidBodyJump
+    // private IEnumerator ParabolaJump(float height, float duration)
+    // {
+    // 	OffMeshLinkData data = _agent.currentOffMeshLinkData;
+    // 	Vector3 startPos = _agent.transform.position;
+    // 	Vector3 endPos = data.endPos + Vector3.up * _agent.baseOffset;
+    // 	float normalizedTime = 0f;
+    // 	_agent.enabled = false;
+    // 	while (normalizedTime < 1f)
+    // 	{
+    // 		float yOffset = height * 4f * (normalizedTime - normalizedTime * normalizedTime);
+    // 		Rb.velocity = Vector3.Lerp(startPos, endPos, normalizedTime) + new Vector3(0, yOffset, 0);
+    //
+    // 		normalizedTime += Time.deltaTime / duration;
+    // 		yield return null;
+    // 	}
+    //
+    // 	_agent.enabled = true;
+    // 	_agent.CompleteOffMeshLink();
+    // }
 }

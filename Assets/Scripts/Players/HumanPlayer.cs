@@ -1,33 +1,18 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 namespace Players
 {
     public class HumanPlayer : BasePlayer
     {
-        private bool _desiredJump;
-        private bool _desiredPickaxe;
-
         [Header("Input")]
         private InputActionAsset _actionAsset;
-        private InputAction _moveAction;
+        private bool _desiredJump;
+        private bool _desiredPickaxe;
         private InputAction _jumpAction;
-        private InputAction _pickaxeAction;
+        private InputAction _moveAction;
         private InputAction _pauseAction;
-
-        private void OnEnable()
-        {
-            if (_pauseAction != null) _pauseAction.started += PausePressed;
-            // _actionAsset.Enable();
-        }
-        
-        private void OnDisable()
-        {
-            if (_pauseAction != null) _pauseAction.started -= PausePressed;
-            // _actionAsset.Disable();
-        }
+        private InputAction _pickaxeAction;
 
         protected override void Awake()
         {
@@ -44,23 +29,12 @@ namespace Players
             base.Update();
             Input();
         }
-        
-
-        private void Input()
-        {
-            var input = _moveAction.ReadValue<Vector2>();
-            DesiredDirection = new Vector3(input.x, 0, input.y);
-            DesiredDirection = GetRotatedVector(DesiredDirection).normalized;
-        
-            _desiredJump = _jumpAction.IsPressed();
-            _desiredPickaxe = _pickaxeAction.IsPressed();
-        }
 
         protected void FixedUpdate()
         {
             if (!TilemapManager.Active) return;
             Move();
-            if(_desiredJump) Jump();
+            if (_desiredJump) Jump();
             Rotate(DesiredDirection);
 
             if (_desiredPickaxe)
@@ -70,6 +44,27 @@ namespace Players
                 else
                     ThrowBomb();
             }
+        }
+
+        private void OnEnable()
+        {
+            if (_pauseAction != null) _pauseAction.started += PausePressed;
+        }
+
+        private void OnDisable()
+        {
+            if (_pauseAction != null) _pauseAction.started -= PausePressed;
+        }
+
+
+        private void Input()
+        {
+            var input = _moveAction.ReadValue<Vector2>();
+            DesiredDirection = new Vector3(input.x, 0, input.y);
+            DesiredDirection = GetRotatedVector(DesiredDirection).normalized;
+
+            _desiredJump = _jumpAction.IsPressed();
+            _desiredPickaxe = _pickaxeAction.IsPressed();
         }
 
         private void PausePressed(InputAction.CallbackContext context)
@@ -88,7 +83,7 @@ namespace Players
         //         Rb.velocity = new Vector3(limitedVel.x, vel.y, limitedVel.z);
         //     }
         // }
-    
+
         // private void Reset()
         // {
         //     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
